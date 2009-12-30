@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- EN-Revision: 19887 -->
+<!-- Reviewed: no -->
+
+<!-- links -->
+<!ENTITY lang                                   'de'>
+<!ENTITY zf.manual.link                         'http://framework.zend.com/manual/de/'>
+<!ENTITY php.manual.link                        'http://www.php.net/manual/de/'>
+
+<!-- manual.xml.in -->
+<!ENTITY book.title                             'Referenzhandbuch für Programmierer'>
+<!ENTITY book.pdf1.title                        'Referenzhandbuch für Programmierer: Band 1'>
+<!ENTITY book.pdf2.title                        'Referenzhandbuch für Programmierer: Band 2'>
+<!ENTITY book.subtitle                          'Zend Framework'>
+<!ENTITY book.edition                           'Referenzhandbuch für Programmierer des Zend Frameworks'>
+
+<!ENTITY chapter.introduction.title             'Einführung zum Zend Framework'>
+
+<!ENTITY part.learning.title                    'Zend Framework lernen'>
+<!ENTITY part.learning.quickstart.title         'Zend Framework Schnellstart'>
+<!ENTITY part.learning.autoloading.title        'Autoloading im Zend Framework'>
+<!ENTITY part.learning.plugins.title            'Plugins im Zend Framework'>
+<!ENTITY part.learning.layout.title             'Mit Zend_Layout beginnen'>
+<!ENTITY part.learning.view.placeholders.title  'Mit Zend_View Placeholders beginnen'>
+<!ENTITY part.learning.form.decorators.title    'Zend Form Decorator verstehen und verwenden'>
+<!ENTITY part.learning.multiuser.title          'Mit Zend_Session, Zend_Auth, und Zend_Acl beginnen'>
+<!ENTITY part.learning.lucene.title             'Mit Zend_Search_Lucene beginnen'>
+<!ENTITY part.learning.paginator.title          'Mit Zend_Paginator beginnen'>
+
+<!ENTITY part.reference.title                   'Zend Framework Referenz'>
+
+<!ENTITY appendix.migration.title               'Zend Framework Migrations Notizen'>
+
+<!ENTITY appendix.performance.title             'Zend Framework Performance Handbuch'>
