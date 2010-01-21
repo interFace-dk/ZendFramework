@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Validate_File
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -41,7 +41,7 @@ require_once 'Zend/Validate/File/MimeType.php';
  * @category   Zend
  * @package    Zend_Validate_File
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Validate
  */
@@ -186,6 +186,19 @@ class Zend_Validate_File_MimeTypeTest extends PHPUnit_Framework_TestCase
     {
         $validator = new Zend_Validate_File_MimeType(array('image/gif', 'magicfile' => __FILE__));
         $this->assertEquals(__FILE__, $validator->getMagicFile());
+    }
+
+    public function testOptionsAtConstructor()
+    {
+        $validator = new Zend_Validate_File_MimeType(array(
+            'image/gif',
+            'image/jpg',
+            'magicfile' => __FILE__,
+            'headerCheck' => true));
+
+        $this->assertEquals(__FILE__, $validator->getMagicFile());
+        $this->assertTrue($validator->getHeaderCheck());
+        $this->assertEquals('image/gif,image/jpg', $validator->getMimeType());
     }
 }
 

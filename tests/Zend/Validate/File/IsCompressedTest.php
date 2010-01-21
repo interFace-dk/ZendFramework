@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Validate_File
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -41,7 +41,7 @@ require_once 'Zend/Validate/File/IsCompressed.php';
  * @category   Zend
  * @package    Zend_Validate_File
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Validate
  */
@@ -65,6 +65,15 @@ class Zend_Validate_File_IsCompressedTest extends PHPUnit_Framework_TestCase
      */
     public function testBasic()
     {
+        if (!extension_loaded('fileinfo') &&
+            function_exists('mime_content_type') && ini_get('mime_magic.magicfile') &&
+            (mime_content_type(dirname(__FILE__) . '/_files/test.zip') == 'text/plain')
+            ) {
+            $this->markTestSkipped('This PHP Version has no finfo, has mime_content_type, '
+                . ' but mime_content_type exhibits buggy behavior on this system.'
+                );
+        }
+        
         $valuesExpected = array(
             array(null, true),
             array('zip', true),
@@ -175,6 +184,19 @@ class Zend_Validate_File_IsCompressedTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($validator->isValid(dirname(__FILE__) . '/_files/picture.jpg', $files));
         $error = $validator->getMessages();
         $this->assertTrue(array_key_exists('fileIsCompressedFalseType', $error));
+    }
+
+    public function testOptionsAtConstructor()
+    {
+        $validator = new Zend_Validate_File_IsCompressed(array(
+            'image/gif',
+            'image/jpg',
+            'magicfile' => __FILE__,
+            'headerCheck' => true));
+
+        $this->assertEquals(__FILE__, $validator->getMagicFile());
+        $this->assertTrue($validator->getHeaderCheck());
+        $this->assertEquals('image/gif,image/jpg', $validator->getMimeType());
     }
 }
 

@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Barcode
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -29,7 +29,7 @@ require_once dirname(__FILE__) . '/../../../TestHelper.php';
  * @category   Zend
  * @package    Zend_Barcode
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 abstract class Zend_Barcode_Renderer_TestCommon extends PHPUnit_Framework_TestCase
@@ -272,6 +272,19 @@ abstract class Zend_Barcode_Renderer_TestCommon extends PHPUnit_Framework_TestCa
         $this->assertEquals(289, $renderer->getLeftOffset());
     }
 
+    public function testLeftOffsetOverrideHorizontalPosition()
+    {
+        $renderer = $this->_getRendererWithWidth500AndHeight300();
+        $renderer->setModuleSize(1);
+        $barcode = new Zend_Barcode_Object_Code39(array('text' => '0123456789'));
+        $this->assertEquals(211, $barcode->getWidth());
+        $renderer->setBarcode($barcode);
+        $renderer->setLeftOffset(12);
+        $renderer->setHorizontalPosition('center');
+        $renderer->draw();
+        $this->assertEquals(12, $renderer->getLeftOffset());
+    }
+
     public function testVerticalPositionToTop()
     {
         $renderer = $this->_getRendererWithWidth500AndHeight300();
@@ -306,5 +319,18 @@ abstract class Zend_Barcode_Renderer_TestCommon extends PHPUnit_Framework_TestCa
         $renderer->setVerticalPosition('bottom');
         $renderer->draw();
         $this->assertEquals(238, $renderer->getTopOffset());
+    }
+
+    public function testTopOffsetOverrideVerticalPosition()
+    {
+        $renderer = $this->_getRendererWithWidth500AndHeight300();
+        $renderer->setModuleSize(1);
+        $barcode = new Zend_Barcode_Object_Code39(array('text' => '0123456789'));
+        $this->assertEquals(62, $barcode->getHeight());
+        $renderer->setBarcode($barcode);
+        $renderer->setTopOffset(12);
+        $renderer->setVerticalPosition('middle');
+        $renderer->draw();
+        $this->assertEquals(12, $renderer->getTopOffset());
     }
 }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- EN-Revision: 18840 -->
+<!-- EN-Revision: 20282 -->
 <!-- Reviewed: no -->
 <sect1 id="zend.loader.autoloader">
     <title>Der Autoloader</title>
@@ -63,7 +63,7 @@ $autoloader->registerNamespace('My_');
             <title>Namespace Präfixe</title>
 
             <para>
-                Man sollte beachten das das vorhergehende Beispiel "My_" verwendet und nicht "My".
+                Man sollte beachten dass das vorhergehende Beispiel "My_" verwendet und nicht "My".
                 Der Grund ist, das <classname>Zend_Loader_Autoloader</classname> als Autoloader für
                 generelle Anwendungsfälle gedacht ist, und deshalb nicht die Annahme macht das ein
                 angegebener Präfix eines Klassen Namespaces einen Unterstrich enthalten muß. Wenn
@@ -124,6 +124,75 @@ $autoloader->suppressNotFoundWarnings(true);
         <programlisting language="php"><![CDATA[
 $autoloader->setFallbackAutoloader(true);
 ]]></programlisting>
+
+        <note>
+            <title>Klassen von PHP Namespaces laden</title>
+
+            <para>
+                Beginnend mit Version 1.10.0 erlaubt Zend Framework das Laden von Klassen aus PHP
+                Namespaces. Diese Unterstützung folgt den gleichen Richtlinien und Implementationen
+                wie Sie in der <ulink
+                    url="http://groups.google.com/group/php-standards/web/psr-0-final-proposal">PHP
+                Framework Interop Group PSR-0</ulink> Referenz Implementation gefunden werden
+                können.
+            </para>
+
+            <para>
+                Mit dieser Richtlinie werden die folgenden Regeln angewandt:
+            </para>
+
+            <itemizedlist>
+                <listitem>
+                    <para>
+                        Jeder Separator für Namespaces wird zu einem
+                        <constant>DIRECTORY_SEPARATOR</constant> konvertiert wenn er vom Dateisystem
+                        geladen wird.
+                    </para>
+                </listitem>
+
+                <listitem>
+                    <para>
+                        Jedes "_" Zeichen im <emphasis>CLASS NAME</emphasis> wird zu einem
+                        <constant>DIRECTORY_SEPARATOR</constant> konvertiert. Das "_" Zeichen hat
+                        keine spezielle Bedeutung im Namespace.
+                    </para>
+                </listitem>
+
+                <listitem>
+                    <para>
+                        Dem voll-qualifizierte Namespace und der Klasse wird ".php" angehängt wenn
+                        Sie vom Dateisystem geladen werden.
+                    </para>
+                </listitem>
+            </itemizedlist>
+
+            <para>
+                Als Beispiel:
+            </para>
+
+            <itemizedlist>
+                <listitem>
+                    <para>
+                        <classname>\Doctrine\Common\IsolatedClassLoader</classname> =&gt;
+                        <filename>/path/to/project/lib/vendor/Doctrine/Common/IsolatedClassLoader.php</filename>
+                    </para>
+                </listitem>
+
+                <listitem>
+                    <para>
+                        <classname>\namespace\package\Class_Name</classname> =&gt;
+                        <filename>/path/to/project/lib/vendor/namespace/package/Class/Name.php</filename>
+                    </para>
+                </listitem>
+
+                <listitem>
+                    <para>
+                        <classname>\namespace\package_name\Class_Name</classname> =&gt;
+                        <filename>/path/to/project/lib/vendor/namespace/package_name/Class/Name.php</filename>
+                    </para>
+                </listitem>
+            </itemizedlist>
+        </note>
     </sect2>
 
     <sect2 id="zend.loader.autoloader.zf-version">
@@ -370,7 +439,7 @@ $autoloader->pushAutoloader($foo, 'Foo_');
 
                     <row>
                         <entry><methodname>autoload($class)</methodname></entry>
-                        <entry><code>string|false</code></entry>
+                        <entry><code>string|<constant>FALSE</constant></code></entry>
                         <entry><itemizedlist>
                             <listitem><para>
                                 <varname>$class</varname>, <emphasis>Benötigt</emphasis>.
@@ -478,7 +547,7 @@ $autoloader->pushAutoloader($foo, 'Foo_');
                     </row>
 
                     <row>
-                        <entry><methodname>getRegisteredNamespace()</methodname></entry>
+                        <entry><methodname>getRegisteredNamespaces()</methodname></entry>
                         <entry><type>Array</type></entry>
                         <entry>N/A</entry>
                         <entry><para>
@@ -501,10 +570,10 @@ $autoloader->pushAutoloader($foo, 'Foo_');
                             Setzt oder Empfängt den Wert des Flags das verwendet wird um anzuzeigen
                             ob die standardmäßige Autoloader Implementation "file not found"
                             Warnungen unterdrücken soll oder nicht. Wenn keine Argumente oder ein
-                            null Wert übergeben wird, wird ein Boolscher Wert zurückgegeben der den
-                            Status des Flags anzeigt; wenn ein Boolean übergeben wurde, wird das
-                            Flag auf den Wert gesetzt und die Autoloader Instanz wird zurückgegeben
-                            (um die Verkettung von Methoden zu erlauben).
+                            <constant>NULL</constant> Wert übergeben wird, wird ein Boolscher Wert
+                            zurückgegeben der den Status des Flags anzeigt; wenn ein Boolean
+                            übergeben wurde, wird das Flag auf den Wert gesetzt und die Autoloader
+                            Instanz wird zurückgegeben (um die Verkettung von Methoden zu erlauben).
                         </para></entry>
                     </row>
 
@@ -527,21 +596,25 @@ $autoloader->pushAutoloader($foo, 'Foo_');
                         <entry><methodname>isFallbackAutoloader()</methodname></entry>
                         <entry><type>Boolean</type></entry>
                         <entry>N/A</entry>
+
                         <entry><para>
                             Empfängt den Wert des Flags das verwendet wird um anzuzeigen ob der
                             standardmäßige Autoloader als Fallback, oder Catch-All Autoloader
-                            für alle Namespaces verwendet wird. Standardmäßig ist er false.
+                            für alle Namespaces verwendet wird. Standardmäßig ist er
+                            <constant>FALSE</constant>.
                         </para></entry>
                     </row>
 
                     <row>
                         <entry><methodname>getClassAutoloaders($class)</methodname></entry>
                         <entry><type>Array</type></entry>
+
                         <entry><itemizedlist>
                             <listitem><para>
                                 <varname>$class</varname>, <emphasis>Benötigt</emphasis>.
                             </para></listitem>
                         </itemizedlist></entry>
+
                         <entry><para>
                             Gibt eine Liste von Namespaced Autoloadern zurück die der angegebenen
                             Klasse potentiell entsprechen. Wenn keine passt, werden alle globalen

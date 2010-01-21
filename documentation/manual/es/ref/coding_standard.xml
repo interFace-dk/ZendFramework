@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-    <!-- EN-Revision: 18940 -->
+<!-- EN-Revision: 20096 -->
     <!-- Reviewed: no -->
 <appendix id="coding-standard">
     <title>Estándares de codificación de Zend Framework para PHP</title>
@@ -410,9 +410,8 @@ $greeting = "Hello $name, welcome back!";
 $greeting = "Hello {$name}, welcome back!";
 ]]></programlisting>
 
-                <para> Por consistencia, esta forma no está permitida:
-                </para>
-                    <programlisting language="php"><![CDATA[
+                <para> Por consistencia, esta forma no está permitida: </para>
+                <programlisting language="php"><![CDATA[
 $greeting = "Hello ${name}, welcome back!";
 ]]></programlisting>
 
@@ -975,7 +974,7 @@ switch ($numPeople) {
  * @category   Zend
  * @package    Zend_Magic
  * @subpackage Wand
- * @copyright  2008 Zend Technologies
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license   BSD License
  * @version    $Id:$
  * @link       http://framework.zend.com/package/PackageName
@@ -1015,7 +1014,7 @@ switch ($numPeople) {
  * @category   Zend
  * @package    Zend_Magic
  * @subpackage Wand
- * @copyright  2008 Zend Technologies
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license   BSD License
  * @version    Release: @package_version@
  * @link       http://framework.zend.com/package/PackageName

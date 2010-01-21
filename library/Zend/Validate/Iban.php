@@ -14,7 +14,7 @@
  *
  * @category   Zend
  * @package    Zend_Validate
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -29,7 +29,7 @@ require_once 'Zend/Validate/Abstract.php';
  *
  * @category   Zend
  * @package    Zend_Validate
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Validate_Iban extends Zend_Validate_Abstract
@@ -44,9 +44,9 @@ class Zend_Validate_Iban extends Zend_Validate_Abstract
      * @var array
      */
     protected $_messageTemplates = array(
-        self::NOTSUPPORTED => "'%value%' does not have IBAN",
-        self::FALSEFORMAT  => "'%value%' has a false format",
-        self::CHECKFAILED  => "'%value%' has failed the IBAN check"
+        self::NOTSUPPORTED => "Unknown country within the IBAN '%value%'",
+        self::FALSEFORMAT  => "'%value%' has a false IBAN format",
+        self::CHECKFAILED  => "'%value%' has failed the IBAN check",
     );
 
     /**
@@ -113,12 +113,10 @@ class Zend_Validate_Iban extends Zend_Validate_Abstract
     {
         if ($locale instanceof Zend_Config) {
             $locale = $locale->toArray();
-            if (array_key_exists('locale', $locale)) {
-                $locale = $locale['locale'];
-            } else {
-                require_once 'Zend/Validate/Exception.php';
-                throw new Zend_Validate_Exception("Missing option 'locale'");
-            }
+        }
+
+        if (is_array($locale) && array_key_exists('locale', $locale)) {
+            $locale = $locale['locale'];
         }
 
         if ($locale !== null) {

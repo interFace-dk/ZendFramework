@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Validate
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -35,7 +35,7 @@ require_once 'Zend/Validate/Barcode.php';
  * @package    Zend_Validate
  * @subpackage UnitTests
  * @uses       Zend_Validate_Barcode
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Validate
  */
@@ -55,10 +55,10 @@ class Zend_Validate_BarcodeTest extends PHPUnit_Framework_TestCase
     public function testNoneExisting()
     {
         try {
-            $barcode = new Zend_Validate_Barcode('Zend');
-            $this->fail("'Zend' is not a valid barcode type'");
+            $barcode = new Zend_Validate_Barcode('Zend_Validate_BarcodeTest_NonExistentClassName');
+            $this->fail("'Zend_Validate_BarcodeTest_NonExistentClassName' is not a valid barcode type'");
         } catch (Exception $e) {
-            $this->assertContains("No such file", $e->getMessage());
+            $this->assertRegExp('#not found|No such file#', $e->getMessage());
         }
     }
 
@@ -345,6 +345,24 @@ class Zend_Validate_BarcodeTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($barcode->isValid('564000000051'));
     }
 
+    public function testINTELLIGENTMAIL()
+    {
+        $barcode = new Zend_Validate_Barcode('intelligentmail');
+        $this->assertTrue($barcode->isValid('01234567094987654321'));
+        $this->assertFalse($barcode->isValid('123'));
+        $this->assertFalse($barcode->isValid('5555512371'));
+    }
+
+    public function testISSN()
+    {
+        $barcode = new Zend_Validate_Barcode('issn');
+        $this->assertTrue($barcode->isValid('1144875X'));
+        $this->assertFalse($barcode->isValid('123'));
+        $this->assertFalse($barcode->isValid('1144874X'));
+
+        $this->assertTrue($barcode->isValid('9771144875007'));
+    }
+
     public function testITF14()
     {
         $barcode = new Zend_Validate_Barcode('itf14');
@@ -360,6 +378,33 @@ class Zend_Validate_BarcodeTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($barcode->isValid('123'));
         $this->assertFalse($barcode->isValid('021348075016401'));
         $this->assertFalse($barcode->isValid('21348075016402'));
+    }
+
+    public function testPLANET()
+    {
+        $barcode = new Zend_Validate_Barcode('planet');
+        $this->assertTrue($barcode->isValid('401234567891'));
+        $this->assertFalse($barcode->isValid('123'));
+        $this->assertFalse($barcode->isValid('401234567892'));
+    }
+
+    public function testPOSTNET()
+    {
+        $barcode = new Zend_Validate_Barcode('postnet');
+        $this->assertTrue($barcode->isValid('5555512372'));
+        $this->assertFalse($barcode->isValid('123'));
+        $this->assertFalse($barcode->isValid('5555512371'));
+    }
+
+    public function testROYALMAIL()
+    {
+        $barcode = new Zend_Validate_Barcode('royalmail');
+        $this->assertTrue($barcode->isValid('SN34RD1AK'));
+        $this->assertFalse($barcode->isValid('123'));
+        $this->assertFalse($barcode->isValid('SN34RD1AW'));
+
+        $this->assertTrue($barcode->isValid('012345W'));
+        $this->assertTrue($barcode->isValid('06CIOUH'));
     }
 
     public function testSSCC()

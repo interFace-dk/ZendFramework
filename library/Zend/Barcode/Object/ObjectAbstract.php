@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Barcode
  * @subpackage Object
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -25,7 +25,7 @@
  *
  * @category   Zend
  * @package    Zend_Barcode
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 abstract class Zend_Barcode_Object_ObjectAbstract
@@ -206,6 +206,7 @@ abstract class Zend_Barcode_Object_ObjectAbstract
      */
     public function __construct($options = null)
     {
+        $this->_getDefaultOptions();
         if (self::$_staticFont !== null) {
             $this->_font = self::$_staticFont;
         }
@@ -220,6 +221,14 @@ abstract class Zend_Barcode_Object_ObjectAbstract
             $this->_withChecksum = true;
             $this->_withChecksumInText = true;
         }
+    }
+
+    /**
+     * Set default options for particular object
+     * @return void
+     */
+    protected function _getDefaultOptions()
+    {
     }
 
     /**
@@ -1194,6 +1203,11 @@ abstract class Zend_Barcode_Object_ObjectAbstract
         $this->_validateText($value);
     }
 
+    /**
+     * Standard validation for most of barcode objects
+     * @param string $value
+     * @param array  $options
+     */
     protected function _validateText($value, $options = array())
     {
         $validatorName = (isset($options['validator'])) ? $options['validator'] : $this->getType();

@@ -1,36 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- EN-Revision: 19832 -->
+<!-- EN-Revision: 20191 -->
 <!-- Reviewed: no -->
 <sect1 id="zend.feed.pubsubhubbub.introduction">
     <title>Zend_Feed_Pubsubhubbub</title>
 
     <para>
-        <classname>Zend_Feed_Pubsubhubbub</classname> is an implementation of the PubSubHubbub Core
-        0.2 Specification (Working Draft). It offers implementations of a Pubsubhubbub Publisher and
-        Subscriber suited to Zend Framework and other PHP applications.
+        <classname>Zend_Feed_Pubsubhubbub</classname> ist eine Implementation der PubSubHubbub Core
+        0.2 Spezifikation (Working Draft). Sie bietet eine Implementation eines Pubsubhubbub
+        Publizisten und Abonnenten geeignet für den Zend Framework und andere PHP Anwendungen.
     </para>
 
     <sect2 id="zend.feed.pubsubhubbub.what.is.pubsubhubbub">
-        <title>What is Pubsubhubbub?</title>
+        <title>Was ist Pubsubhubbub?</title>
 
         <para>
-            Pubsubhubbub is an open, simple web-scale pubsub protocol. A common use case to enable
-            blogs (Publishers) to "push" updates from their RSS or Atom feeds (Topics) to end
-            Subscribers. These Subscribers will have subscribed to the blog's RSS or Atom feed via a
-            Hub, a central server which is notified of any updates by the Publisher and which then
-            distributes these updates to all Subscribers. Any feed may advertise that it supports
-            one or more Hubs using an Atom namespaced link element with a rel attribute of "hub".
+            Pubsubhubbub ist ein offenes, einfaches Web-skalierbares Pubsub Protokoll. Der normale
+            Anwendungsfall ist es Blogs (Publizist) zu erlauben Aktualisierungen von deren RSS oder
+            Atom Feeds (Themen) an Abonnenten zu "senden". Diese Abonenten müssen dem RSS oder Atom
+            Feed des Blogs über einen Hub abonniert haben. Das ist ein zentraler Server der
+            benachrichtigt wird wenn es Aktualisierungen des Publizisten gibt und diese anschließend
+            an alle Abonnenten verteilt. Jeder Feed kann bekanntgeben das er ein oder mehrere Hubs
+            unterstützen indem ein Atom Namespaced Linkelement mit dem Rel Attribut "hub" verwendet
+            wird.
         </para>
 
         <para>
-            Pubsubhubbub has garnered attention because it is a pubsub protocol which is easy to
-            implement and which operates over HTTP. Its philosophy is to replace the traditional
-            model where blog feeds have been polled at regular intervals to detect and retrieve
-            updates.  Depending on the frequency of polling, this can take a lot of time to
-            propagate updates to interested parties from planet aggregators to desktop readers. With
-            a pubsub system in place, updates are not simply polled by Subscribers, they are pushed to
-            Subscribers, elimenating any delay. For this reason, Pubsubhubbub forms part of what has
-            been dubbed the real-time web.
+            Pubsubhubbub hat Aufmerksamkeit erlangt weil es ein Pubsub Protokoll ist das einfach zu
+            implementieren ist und über HTTP arbeitet. Seine Philosophie ist es das traditionelle
+            Modell zu ersetzen indem Blog Feeds mit einem regulären Interfall abgefragt werden um
+            Aktualisierungen zu erkennen und zu empfangen. Abhängig von der Frequenz der Abfrage
+            kann es viel Zeit in Anspruch nehmen Aktualisierungen an interessierte Menschen bei
+            Sammelstellen bis zu Desktop Lesern, bekannt zu machen. Mit der Verwendung eines
+            Pubsub Systems werden Aktualisierungen nicht einfach von Abonnenten abgefragt sondern
+            an die Abonnenten geschickt, was jegliche Verzögerung ausschaltet. Aus diesem Grund
+            fungiert Pubsubhubbub als Teil von dem was als Echt-Zeit Web bekannt ist.
         </para>
 
         <para>
@@ -255,7 +258,7 @@ if (!$publisher->isSuccess()) {
                 demonstrated below:
             </para>
 
-            <programlisting lang="php"><![CDATA[
+            <programlisting language="php"><![CDATA[
     $storage = new Zend_Feed_Pubsubhubbub_Model_Subscription;
 
     $subscriber = new Zend_Feed_Pubsubhubbub_Subscriber;
@@ -284,6 +287,27 @@ if (!$publisher->isSuccess()) {
                 resulting class implements the interface
                 <classname>Zend_Feed_Pubsubhubbub_Model_SubscriptionInterface</classname>.
             </para>
+
+            <para>
+                An example schema (MySQL) for a subscription table accessible by the provided model
+                may look similar to:
+            </para>
+
+            <programlisting language="sql"><![CDATA[
+CREATE TABLE IF NOT EXISTS `subscription` (
+  `id` varchar(32) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `topic_url` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `hub_url` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `created_time` datetime DEFAULT NULL,
+  `last_modified` datetime DEFAULT NULL,
+  `lease_seconds` bigint(20) DEFAULT NULL,
+  `verify_token` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `secret` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `expiration_time` datetime DEFAULT NULL,
+  `subscription_state` varchar(12) COLLATE utf8_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+]]></programlisting>
 
             <para>
                 Behind the scenes, the Subscriber above will send a request to the Hub endpoint containing the
@@ -494,7 +518,7 @@ if (!$publisher->isSuccess()) {
                 class. Using it is quite simple since most of its work is performed internally.
             </para>
 
-            <programlisting lang="php"><![CDATA[
+            <programlisting language="php"><![CDATA[
     $storage = new Zend_Feed_Pubsubhubbub_Model_Subscription;
     $callback = new Zend_Feed_Pubsubhubbub_Subscriber_Callback;
     $callback->setStorage($storage);
@@ -574,7 +598,7 @@ if (!$publisher->isSuccess()) {
             with the parameter being the key value available from the Router. The example below
             demonstrates this using a Zend Framework controller.</para>
 
-            <programlisting lang="php"><![CDATA[
+            <programlisting language="php"><![CDATA[
 class CallbackController extends Zend_Controller_Action
 {
 

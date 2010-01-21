@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Application
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -43,7 +43,7 @@ require_once 'Zend/Controller/Front.php';
  * @category   Zend
  * @package    Zend_Application
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Application
  */
@@ -172,18 +172,31 @@ class Zend_Application_Resource_FrontcontrollerTest extends PHPUnit_Framework_Te
     {
         require_once 'Zend/Application/Resource/Frontcontroller.php';
         $resource = new Zend_Application_Resource_Frontcontroller(array(
-            'moduleDirectory' => dirname(__FILE__) . '/../_files/modules',
+            'moduleDirectory' => dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR
+                               . '_files' . DIRECTORY_SEPARATOR . 'modules',
         ));
         $resource->init();
         $front = $resource->getFrontController();
         $dir   = $front->getControllerDirectory();
         $expected = array(
-            'bar'     => dirname(__FILE__) . '/../_files/modules/bar/controllers',
-            'default' => dirname(__FILE__) . '/../_files/modules/default/controllers',
-            'foo-bar' => dirname(__FILE__) . '/../_files/modules/foo-bar/controllers',
-            'foo'     => dirname(__FILE__) . '/../_files/modules/foo/controllers',
-            'baz'     => dirname(__FILE__) . '/../_files/modules/baz/controllers',
-            'zfappbootstrap' => dirname(__FILE__) . '/../_files/modules/zfappbootstrap/controllers',
+            'bar'     => dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR
+                       . '_files' . DIRECTORY_SEPARATOR . 'modules' . DIRECTORY_SEPARATOR
+                       . 'bar' . DIRECTORY_SEPARATOR . 'controllers',
+            'default' => dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR
+                       . '_files' . DIRECTORY_SEPARATOR . 'modules' . DIRECTORY_SEPARATOR
+                       . 'default' . DIRECTORY_SEPARATOR . 'controllers',
+            'foo-bar' => dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR
+                       . '_files' . DIRECTORY_SEPARATOR . 'modules' . DIRECTORY_SEPARATOR
+                       . 'foo-bar' . DIRECTORY_SEPARATOR . 'controllers',
+            'foo'     => dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR
+                       . '_files' . DIRECTORY_SEPARATOR . 'modules' . DIRECTORY_SEPARATOR
+                       . 'foo' . DIRECTORY_SEPARATOR . 'controllers',
+            'baz'     => dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR
+                       . '_files' . DIRECTORY_SEPARATOR . 'modules' . DIRECTORY_SEPARATOR
+                       . 'baz' . DIRECTORY_SEPARATOR . 'controllers',
+            'zfappbootstrap' => dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR
+                              . '_files' . DIRECTORY_SEPARATOR . 'modules' . DIRECTORY_SEPARATOR
+                              . 'zfappbootstrap' . DIRECTORY_SEPARATOR . 'controllers',
         );
         $this->assertEquals($expected, $dir);
     }

@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Barcode
  * @subpackage Object
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -31,7 +31,7 @@ require_once 'Zend/Validate/Barcode.php';
  *
  * @category   Zend
  * @package    Zend_Barcode
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Barcode_Object_Code25interleaved extends Zend_Barcode_Object_Code25
@@ -43,10 +43,13 @@ class Zend_Barcode_Object_Code25interleaved extends Zend_Barcode_Object_Code25
     private $_withBearerBars = false;
 
     /**
-     * Number of characters in the barcode
-     * @var $_barcodeLength integer | string
+     * Default options for Code25interleaved barcode
+     * @return void
      */
-    protected $_barcodeLength = 'even';
+    protected function _getDefaultOptions()
+    {
+        $this->_barcodeLength = 'even';
+    }
 
     /**
      * Activate/deactivate drawing of bearer bars

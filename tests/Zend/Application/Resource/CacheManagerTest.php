@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Application
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -48,7 +48,7 @@ require_once 'Zend/Application/Resource/Cachemanager.php';
  * @category   Zend
  * @package    Zend_Application
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Application
  */
@@ -103,14 +103,6 @@ class Zend_Application_Resource_CacheManagerTest extends PHPUnit_Framework_TestC
         $resource = new Zend_Application_Resource_Cachemanager(array());
         $resource->init();
         $this->assertTrue($resource->getCachemanager() instanceof Zend_Cache_Manager);
-    }
-
-    public function testInitializationPushesCacheManagerToBootstrapWhenPresent()
-    {
-        $resource = new Zend_Application_Resource_Cachemanager(array());
-        $resource->setBootstrap($this->bootstrap);
-        $resource->init();
-        $this->assertSame($resource->getCachemanager(), $this->bootstrap->cacheManager);
     }
 
     public function testShouldReturnCacheManagerWhenComplete()

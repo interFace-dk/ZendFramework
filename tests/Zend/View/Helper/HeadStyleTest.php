@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_View
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -44,7 +44,7 @@ require_once 'Zend/Registry.php';
  * @category   Zend
  * @package    Zend_View
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_View
  * @group      Zend_View_Helper
@@ -427,34 +427,23 @@ a {
     public function testContainerMaintainsCorrectOrderOfItems()
     {
 
-        $this->helper->offsetSetStyle(10, '
-a {
-    display: none;
-}');
-        $this->helper->offsetSetStyle(5, '
-h1 {
-    font-weight: bold
-}');
+        $style1 = 'a {display: none;}';
+        $this->helper->offsetSetStyle(10, $style1);
 
+        $style2 = 'h1 {font-weight: bold}';
+        $this->helper->offsetSetStyle(5, $style2);
 
         $test = $this->helper->toString();
-
-        $expected = '<style type="text/css" media="screen">
-<!--
-
-h1 {
-    font-weight: bold
-}
--->
-</style>
-<style type="text/css" media="screen">
-<!--
-
-a {
-    display: none;
-}
--->
-</style>';
+        $expected = '<style type="text/css" media="screen">' . PHP_EOL
+                  . '<!--' . PHP_EOL
+                  . $style2 . PHP_EOL
+                  . '-->' . PHP_EOL
+                  . '</style>' . PHP_EOL
+                  . '<style type="text/css" media="screen">' . PHP_EOL
+                  . '<!--' . PHP_EOL
+                  . $style1 . PHP_EOL
+                  . '-->' . PHP_EOL
+                  . '</style>';
 
         $this->assertEquals($expected, $test);
     }

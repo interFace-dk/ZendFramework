@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Feed_Pubsubhubbub
  * @subpackage Entity
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -29,7 +29,7 @@ require_once 'Zend/Feed/Pubsubhubbub/Model/SubscriptionInterface.php';
  * @category   Zend
  * @package    Zend_Feed_Pubsubhubbub
  * @subpackage Entity
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Feed_Pubsubhubbub_Model_Subscription
@@ -54,6 +54,10 @@ class Zend_Feed_Pubsubhubbub_Model_Subscription
         $result = $this->_db->find($data['id']);
         if ($result) {
             $data['created_time'] = $result->current()->created_time;
+            $now = new Zend_Date;
+            $data['last_modified'] = $now->get('yyyy-MM-dd HH:mm:ss');
+            $data['expiration_time'] = $now->add($result->current()->lease_seconds, Zend_Date::SECOND)
+                ->get('yyyy-MM-dd HH:mm:ss');
             $this->_db->update(
                 $data,
                 $this->_db->getAdapter()->quoteInto('id = ?', $data['id'])

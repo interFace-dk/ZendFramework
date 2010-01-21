@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Application
  * @subpackage Resource
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -28,7 +28,7 @@ require_once 'Zend/Application/Resource/ResourceAbstract.php';
  * @category   Zend
  * @package    Zend_Application
  * @subpackage Resource
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Application_Resource_Cachemanager extends Zend_Application_Resource_ResourceAbstract
@@ -45,33 +45,29 @@ class Zend_Application_Resource_Cachemanager extends Zend_Application_Resource_R
      */
     public function init()
     {
-        $manager = $this->getCacheManager();
-
-        foreach ($this->getOptions() as $key => $value) {
-            if ($manager->hasCacheTemplate($key)) {
-                $manager->setTemplateOptions($key, $value);
-            } else {
-                $manager->setCacheTemplate($key, $value);
-            }
-        }
-
-        if (null !== ($bootstrap = $this->getBootstrap())) {
-            $this->getBootstrap()->cacheManager = $manager;
-        }
-
-        return $manager;
+        return $this->getCacheManager();
     }
 
     /**
-     * Retrieve front controller instance
+     * Retrieve Zend_Cache_Manager instance
      *
-     * @return Zend_Controller_Front
+     * @return Zend_Cache_Manager
      */
     public function getCacheManager()
     {
         if (null === $this->_manager) {
             $this->_manager = new Zend_Cache_Manager;
+            
+            $options = $this->getOptions();
+            foreach ($options as $key => $value) {
+                if ($this->_manager->hasCacheTemplate($key)) {
+                    $this->_manager->setTemplateOptions($key, $value);
+                } else {
+                    $this->_manager->setCacheTemplate($key, $value);
+                }
+            }
         }
+        
         return $this->_manager;
     }
 }

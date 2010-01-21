@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_View
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -47,7 +47,7 @@ require_once 'Zend/View.php';
  * @category   Zend
  * @package    Zend_View
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_View
  * @group      Zend_View_Helper
@@ -456,10 +456,10 @@ class Zend_View_Helper_HeadLinkTest extends PHPUnit_Framework_TestCase
 
         $test = $this->helper->toString();
 
-        $expected = '<link href="/test1.css" media="screen" rel="stylesheet" type="text/css" >
-<link href="/test4.css" media="screen" rel="stylesheet" type="text/css" >
-<link href="/test2.css" media="screen" rel="stylesheet" type="text/css" >
-<link href="/test3.css" media="screen" rel="stylesheet" type="text/css" >';
+        $expected = '<link href="/test1.css" media="screen" rel="stylesheet" type="text/css" >' . PHP_EOL
+                  . '<link href="/test4.css" media="screen" rel="stylesheet" type="text/css" >' . PHP_EOL
+                  . '<link href="/test2.css" media="screen" rel="stylesheet" type="text/css" >' . PHP_EOL
+                  . '<link href="/test3.css" media="screen" rel="stylesheet" type="text/css" >';
 
         $this->assertEquals($expected, $test);
     }

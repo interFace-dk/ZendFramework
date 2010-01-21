@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Barcode
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -44,6 +44,19 @@ require_once 'Zend/Barcode/Object/Code25interleavedTest.php';
 require_once 'Zend/Barcode/Object/Itf14Test.php';
 require_once 'Zend/Barcode/Object/IdentcodeTest.php';
 require_once 'Zend/Barcode/Object/LeitcodeTest.php';
+
+require_once 'Zend/Barcode/Object/Ean13Test.php';
+require_once 'Zend/Barcode/Object/Ean2Test.php';
+require_once 'Zend/Barcode/Object/Ean5Test.php';
+require_once 'Zend/Barcode/Object/Ean8Test.php';
+require_once 'Zend/Barcode/Object/UpcaTest.php';
+require_once 'Zend/Barcode/Object/UpceTest.php';
+
+require_once 'Zend/Barcode/Object/PostnetTest.php';
+require_once 'Zend/Barcode/Object/PlanetTest.php';
+
+require_once 'Zend/Barcode/Object/RoyalmailTest.php';
+
 require_once 'Zend/Barcode/Object/ErrorTest.php';
 
 require_once 'Zend/Barcode/Renderer/ImageTest.php';
@@ -53,7 +66,7 @@ require_once 'Zend/Barcode/Renderer/PdfTest.php';
  * @category   Zend
  * @package    Zend_Barcode
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Feed
  */
@@ -76,7 +89,19 @@ class Zend_Barcode_AllTests
         $suite->addTestSuite('Zend_Barcode_Object_Itf14Test');
         $suite->addTestSuite('Zend_Barcode_Object_IdentcodeTest');
         $suite->addTestSuite('Zend_Barcode_Object_LeitcodeTest');
+
+        $suite->addTestSuite('Zend_Barcode_Object_Ean13Test');
+        $suite->addTestSuite('Zend_Barcode_Object_Ean2Test');
+        $suite->addTestSuite('Zend_Barcode_Object_Ean5Test');
+        $suite->addTestSuite('Zend_Barcode_Object_Ean8Test');
+        $suite->addTestSuite('Zend_Barcode_Object_UpcaTest');
+        $suite->addTestSuite('Zend_Barcode_Object_UpceTest');
         $suite->addTestSuite('Zend_Barcode_Object_ErrorTest');
+
+        $suite->addTestSuite('Zend_Barcode_Object_PostnetTest');
+        $suite->addTestSuite('Zend_Barcode_Object_PlanetTest');
+
+        $suite->addTestSuite('Zend_Barcode_Object_RoyalmailTest');
 
         $suite->addTestSuite('Zend_Barcode_Renderer_ImageTest');
         $suite->addTestSuite('Zend_Barcode_Renderer_PdfTest');

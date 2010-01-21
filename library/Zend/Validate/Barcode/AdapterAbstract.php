@@ -14,7 +14,7 @@
  *
  * @category   Zend
  * @package    Zend_Validate
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: Ean13.php 18028 2009-09-08 20:52:23Z thomas $
  */
@@ -27,7 +27,7 @@ require_once 'Zend/Validate/Barcode/AdapterInterface.php';
 /**
  * @category   Zend
  * @package    Zend_Validate
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 abstract class Zend_Validate_Barcode_AdapterAbstract
@@ -136,6 +136,10 @@ abstract class Zend_Validate_Barcode_AdapterAbstract
      */
     public function checksum($value)
     {
+        if (!is_array($value)) {
+            $value = array($value);
+        }
+        
         $checksum = $this->getChecksum();
         if (!empty($checksum)) {
             if (method_exists($this, $checksum)) {
@@ -285,5 +289,31 @@ abstract class Zend_Validate_Barcode_AdapterAbstract
         }
 
         return true;
+    }
+
+    /**
+     * Validates the checksum ()
+     * POSTNET implementation
+     *
+     * @param  string $value The barcode to validate
+     * @return boolean
+     */
+    protected function _postnet($value)
+    {
+        $checksum = substr($value, -1, 1);
+        $values   = str_split(substr($value, 0, -1));
+
+        $check = 0;
+        foreach($values as $row) {
+            $check += $row;
+        }
+
+        $check %= 10;
+        $check = 10 - $check;
+        if ($check == $checksum) {
+            return true;
+        }
+
+        return false;
     }
 }

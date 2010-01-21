@@ -14,7 +14,7 @@
  *
  * @category   Zend
  * @package    Zend_Validate
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -32,7 +32,7 @@ require_once 'Zend/Locale/Format.php';
 /**
  * @category   Zend
  * @package    Zend_Validate
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Validate_Float extends Zend_Validate_Abstract
@@ -45,7 +45,7 @@ class Zend_Validate_Float extends Zend_Validate_Abstract
      */
     protected $_messageTemplates = array(
         self::INVALID   => "Invalid type given, value should be float, string, or integer",
-        self::NOT_FLOAT => "'%value%' does not appear to be a float"
+        self::NOT_FLOAT => "'%value%' does not appear to be a float",
     );
 
     protected $_locale;
@@ -59,12 +59,10 @@ class Zend_Validate_Float extends Zend_Validate_Abstract
     {
         if ($locale instanceof Zend_Config) {
             $locale = $locale->toArray();
-            if (array_key_exists('locale', $locale)) {
-                $locale = $locale['locale'];
-            } else {
-                require_once 'Zend/Validate/Exception.php';
-                throw new Zend_Validate_Exception("Missing option 'locale'");
-            }
+        }
+
+        if (is_array($locale) && array_key_exists('locale', $locale)) {
+            $locale = $locale['locale'];
         }
 
         if ($locale === null) {
