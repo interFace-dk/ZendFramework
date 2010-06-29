@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- EN-Revision: 20115 -->
+<!-- EN-Revision: 21829 -->
 <!-- Reviewed: no -->
 <sect1 id="zend.search.lucene.overview">
     <title>Überblick</title>
@@ -57,44 +57,44 @@
                 kompatibel die in Zend Framework 1.0.x enthalten sind.
             </para>
         </note>
-
     </sect2>
 
     <sect2 id="zend.search.lucene.index-creation.documents-and-fields">
         <title>Dokumenten- und Feldobjekte</title>
-            <para>
-                Für die Indizierung verarbeitet <classname>Zend_Search_Lucene</classname> Dokumente
-                als atomare Objekte. Ein Dokument wird in benannte Felder unterteilt und diese
-                Felder enthalten Inhalte, die durchsucht werden können.
-            </para>
 
-            <para>
-                Ein Dokument wird durch die <classname>Zend_Search_Lucene_Document</classname>
-                Klasse abgebildet und die Objekte dieser Klasse enthalten Instanzen von
-                <classname>Zend_Search_Lucene_Field</classname>, welche die Felder dieses Objektes
-                repräsentieren.
-            </para>
+        <para>
+            Für die Indizierung verarbeitet <classname>Zend_Search_Lucene</classname> Dokumente
+            als atomare Objekte. Ein Dokument wird in benannte Felder unterteilt und diese
+            Felder enthalten Inhalte, die durchsucht werden können.
+        </para>
 
-            <para>
-                Es ist wichtig zu beachten, dass dem Index jegliche Informationen hinzugefügt werden
-                können. Anwendungsspezifische Informationen oder Metadaten können in den
-                Dokumentfeldern gespeichert und später bei der Suche aus dem Dokument zurückgeholt
-                werden.
-            </para>
+        <para>
+            Ein Dokument wird durch die <classname>Zend_Search_Lucene_Document</classname>
+            Klasse abgebildet und die Objekte dieser Klasse enthalten Instanzen von
+            <classname>Zend_Search_Lucene_Field</classname>, welche die Felder dieses Objektes
+            repräsentieren.
+        </para>
 
-            <para>
-                Es liegt in der Verantwortung deiner Anwendung, den Indexer zu kontrollieren. Das
-                bedeutet, dass die Daten aus jeder Quelle indiziert werden können, die von deiner
-                Anwendung aus ansprechbar ist. Zum Beispiel könnten dies das Dateisystem, eine
-                Datenbank, ein HTML Formular, usw. sein.
-            </para>
+        <para>
+            Es ist wichtig zu beachten, dass dem Index jegliche Informationen hinzugefügt werden
+            können. Anwendungsspezifische Informationen oder Metadaten können in den
+            Dokumentfeldern gespeichert und später bei der Suche aus dem Dokument zurückgeholt
+            werden.
+        </para>
 
-            <para>
-                Die <classname>Zend_Search_Lucene_Field</classname> Klasse stellt verschiedene
-                statische Methoden zum Erstellen mit unterschiedlichen Charakteristika bereit:
-            </para>
+        <para>
+            Es liegt in der Verantwortung deiner Anwendung, den Indexer zu kontrollieren. Das
+            bedeutet, dass die Daten aus jeder Quelle indiziert werden können, die von deiner
+            Anwendung aus ansprechbar ist. Zum Beispiel könnten dies das Dateisystem, eine
+            Datenbank, ein <acronym>HTML</acronym> Formular, usw. sein.
+        </para>
 
-            <programlisting language="php"><![CDATA[
+        <para>
+            Die <classname>Zend_Search_Lucene_Field</classname> Klasse stellt verschiedene
+            statische Methoden zum Erstellen mit unterschiedlichen Charakteristika bereit:
+        </para>
+
+        <programlisting language="php"><![CDATA[
 $doc = new Zend_Search_Lucene_Document();
 
 // Feld wird nicht in Token aufgeteilt, aber indiziert und im Index
@@ -120,18 +120,19 @@ $doc->addField(Zend_Search_Lucene_Field::UnStored('contents',
                                                   'My document content'));
 ]]></programlisting>
 
-            <para>
-                Jede dieser Methoden (ausser der
-                <methodname>Zend_Search_Lucene_Field::Binary()</methodname> Methode) hat einen
-                optionalen <varname>$encoding</varname> Parameter. Er definiert das Encoding für
-                Eingabedaten.
-            </para>
+        <para>
+            Jede dieser Methoden (ausser der
+            <methodname>Zend_Search_Lucene_Field::Binary()</methodname> Methode) hat einen
+            optionalen <varname>$encoding</varname> Parameter. Er definiert das Encoding für
+            Eingabedaten.
+        </para>
 
-            <para>
-                Die Codierung kann für unterschiedliche Dokumente verschieden sein genauso wie für
-                unterschiedliche Felder innerhalb eines Dokuments:
+        <para>
+            Die Codierung kann für unterschiedliche Dokumente verschieden sein genauso wie für
+            unterschiedliche Felder innerhalb eines Dokuments:
+        </para>
 
-                <programlisting language="php"><![CDATA[
+        <programlisting language="php"><![CDATA[
 $doc = new Zend_Search_Lucene_Document();
 $doc->addField(Zend_Search_Lucene_Field::Text('title',
                                               $title,
@@ -140,45 +141,46 @@ $doc->addField(Zend_Search_Lucene_Field::UnStored('contents',
                                                   $contents,
                                                   'utf-8'));
 ]]></programlisting>
-            </para>
 
-            <para>
-                Wenn der encoding Parameter nicht angegeben wurde, wird das aktuelle Gebietsschema
-                wärend der Verarbeitungzeit verwendet. Zum Beispiel:
-                <programlisting language="php"><![CDATA[
+        <para>
+            Wenn der encoding Parameter nicht angegeben wurde, wird das aktuelle Gebietsschema
+            wärend der Verarbeitungzeit verwendet. Zum Beispiel:
+        </para>
+
+        <programlisting language="php"><![CDATA[
 setlocale(LC_ALL, 'de_DE.iso-8859-1');
 ...
 $doc->addField(Zend_Search_Lucene_Field::UnStored('contents', $contents));
 ]]></programlisting>
-            </para>
 
-            <para>
-                Felder werden immer gespeichert und vom Index in UTF-8 Codierung zurückgegeben. Jede
-                notwendige Konvertierung zu UTF-8 geschieht automatisch.
-            </para>
+        <para>
+            Felder werden immer gespeichert und vom Index in UTF-8 Codierung zurückgegeben. Jede
+            notwendige Konvertierung zu UTF-8 geschieht automatisch.
+        </para>
 
-            <para>
-                Text Analysatoren (<link linkend="zend.search.lucene.extending.analysis">siehe
-                    unten</link>) können auch Text in andere Codierungen konvertieren. Aktuell
-                konvertiert der Standard Analysator Text in die 'ASCII//TRANSLIT' Codierung. Man
-                sollte aber vorsichtig sein; diese Übersetzung hängt vom aktuellen Gebietsschema ab.
-            </para>
+        <para>
+            Text Analysatoren (<link linkend="zend.search.lucene.extending.analysis">siehe
+                unten</link>) können auch Text in andere Codierungen konvertieren. Aktuell
+            konvertiert der Standard Analysator Text in die 'ASCII//TRANSLIT' Codierung. Man
+            sollte aber vorsichtig sein; diese Übersetzung hängt vom aktuellen Gebietsschema ab.
+        </para>
 
-            <para>
-                Feld Namen werden durch die Auswahl in der <methodname>addField()</methodname>
-                Methode definiert.
-            </para>
+        <para>
+            Feld Namen werden durch die Auswahl in der <methodname>addField()</methodname>
+            Methode definiert.
+        </para>
 
-            <para>
-                Java Lucene verwendet das "contents" Feld für die Suche als Standardfeld.
-                <classname>Zend_Search_Lucene</classname> durchsucht standardmäßig alle Felder,
-                aber dieses Verhalten ist konfigurierbar. Für Details siehe das Kapitel
-                <link linkend="zend.search.lucene.query-language.fields">"Standardsuchfeld"</link>.
-            </para>
+        <para>
+            Java Lucene verwendet das "contents" Feld für die Suche als Standardfeld.
+            <classname>Zend_Search_Lucene</classname> durchsucht standardmäßig alle Felder,
+            aber dieses Verhalten ist konfigurierbar. Für Details siehe das Kapitel
+            <link linkend="zend.search.lucene.query-language.fields">"Standardsuchfeld"</link>.
+        </para>
     </sect2>
 
     <sect2 id="zend.search.lucene.index-creation.understanding-field-types">
         <title>Verstehen der Feldtypen</title>
+
         <itemizedlist>
             <listitem>
                 <para>
@@ -189,6 +191,7 @@ $doc->addField(Zend_Search_Lucene_Field::UnStored('contents', $contents));
                     Felder für <classname>Zend_Search_Lucene</classname> überführen.
                 </para>
             </listitem>
+
             <listitem>
                 <para>
                     <code>UnIndexed</code> (unindizierte) Felder sind nicht durchsuchbar, werden
@@ -197,6 +200,7 @@ $doc->addField(Zend_Search_Lucene_Field::UnStored('contents', $contents));
                     für UnIndexed Felder.
                 </para>
             </listitem>
+
             <listitem>
                 <para>
                     <code>Binary</code> (binäre) Felder werden nicht in Token aufgeteilt und
@@ -205,6 +209,7 @@ $doc->addField(Zend_Search_Lucene_Field::UnStored('contents', $contents));
                     verwendet werden, wie z.B. eine Grafiksymbol.
                 </para>
             </listitem>
+
             <listitem>
                 <para>
                     <code>Text</code> Felder werden gespeichert, indiziert und in Token aufgeteilt.
@@ -213,6 +218,7 @@ $doc->addField(Zend_Search_Lucene_Field::UnStored('contents', $contents));
                     zurückgegeben werden müssen.
                 </para>
             </listitem>
+
             <listitem>
                 <para>
                     <code>UnStored</code> (nicht gespeicherte) Felder werden in Token aufgeteilt und
@@ -229,6 +235,7 @@ $doc->addField(Zend_Search_Lucene_Field::UnStored('contents', $contents));
 
                 <table id="zend.search.lucene.index-creation.understanding-field-types.table">
                     <title>Zend_Search_Lucene_Field Typen</title>
+
                     <tgroup cols="5">
                         <thead>
                             <row>
@@ -239,6 +246,7 @@ $doc->addField(Zend_Search_Lucene_Field::UnStored('contents', $contents));
                                 <entry>Binär</entry>
                             </row>
                         </thead>
+
                         <tbody>
                             <row>
                                 <entry>Keyword</entry>
@@ -247,6 +255,7 @@ $doc->addField(Zend_Search_Lucene_Field::UnStored('contents', $contents));
                                 <entry>Nein</entry>
                                 <entry>Nein</entry>
                             </row>
+
                             <row>
                                 <entry>UnIndexed</entry>
                                 <entry>Ja</entry>
@@ -254,6 +263,7 @@ $doc->addField(Zend_Search_Lucene_Field::UnStored('contents', $contents));
                                 <entry>Nein</entry>
                                 <entry>Nein</entry>
                             </row>
+
                             <row>
                                 <entry>Binary</entry>
                                 <entry>Ja</entry>
@@ -261,6 +271,7 @@ $doc->addField(Zend_Search_Lucene_Field::UnStored('contents', $contents));
                                 <entry>Nein</entry>
                                 <entry>Ja</entry>
                             </row>
+
                             <row>
                                 <entry>Text</entry>
                                 <entry>Ja</entry>
@@ -268,6 +279,7 @@ $doc->addField(Zend_Search_Lucene_Field::UnStored('contents', $contents));
                                 <entry>Ja</entry>
                                 <entry>Nein</entry>
                             </row>
+
                             <row>
                                 <entry>UnStored</entry>
                                 <entry>Nein</entry>
@@ -284,25 +296,28 @@ $doc->addField(Zend_Search_Lucene_Field::UnStored('contents', $contents));
 
     <sect2 id="zend.search.lucene.index-creation.html-documents">
         <title>HTML Dokumente</title>
+
         <para>
-            <classname>Zend_Search_Lucene</classname> bietet ein HTML Parsing Feature. Dokumente
-            können direkt von einer HTML Datei oder String erzeugt werden:
-            <programlisting language="php"><![CDATA[
+            <classname>Zend_Search_Lucene</classname> bietet ein <acronym>HTML</acronym> Parsing
+            Feature. Dokumente können direkt von einer <acronym>HTML</acronym> Datei oder String
+            erzeugt werden:
+        </para>
+
+        <programlisting language="php"><![CDATA[
 $doc = Zend_Search_Lucene_Document_Html::loadHTMLFile($filename);
 $index->addDocument($doc);
 ...
 $doc = Zend_Search_Lucene_Document_Html::loadHTML($htmlString);
 $index->addDocument($doc);
 ]]></programlisting>
-        </para>
 
         <para>
             Die <classname>Zend_Search_Lucene_Document_Html</classname> Klasse verwendet die
             <methodname>DOMDocument::loadHTML()</methodname> und die
-            <methodname>DOMDocument::loadHTMLFile()</methodname> Methode um die HTML Quelle zu
-            analysieren, deswegen benötigt Sie kein gut geformtes HTML noch ein
-            <acronym>XHTML</acronym>. Auf der anderen Seite ist es abhängig von der angegebenen
-            Codierung im "meta http-equiv" Tag Header.
+            <methodname>DOMDocument::loadHTMLFile()</methodname> Methode um die
+            <acronym>HTML</acronym> Quelle zu analysieren, deswegen benötigt Sie kein gut
+            geformtes <acronym>HTML</acronym> noch ein <acronym>XHTML</acronym>. Auf der anderen
+            Seite ist es abhängig von der angegebenen Codierung im "meta http-equiv" Tag Header.
         </para>
 
         <para>
@@ -316,8 +331,8 @@ $index->addDocument($doc);
         </para>
 
         <para>
-            Das 'body' Feld ist aktuell der Inhalt vom Body der HTML Datei oder des Strings. Er
-            enthält keine Skripte, Kommentare oder Attribute.
+            Das 'body' Feld ist aktuell der Inhalt vom Body der <acronym>HTML</acronym> Datei oder
+            des Strings. Er enthält keine Skripte, Kommentare oder Attribute.
         </para>
 
         <para>
@@ -332,8 +347,8 @@ $index->addDocument($doc);
         <para>
             Der dritte Parameter der <methodname>loadHTML()</methodname> und
             <methodname>loadHTMLFile()</methodname> Methoden spezifiziert optional die Kodierung des
-            Quell- HTML Dokuments. Er wird verwendet wenn die Kodierung nicht durch die Angabe des
-            Content-type MetaTags HTTP-EQUIV spezifiziert ist.
+            Quell- <acronym>HTML</acronym> Dokuments. Er wird verwendet wenn die Kodierung nicht
+            durch die Angabe des Content-type MetaTags HTTP-EQUIV spezifiziert ist.
         </para>
 
         <para>
@@ -346,7 +361,9 @@ $index->addDocument($doc);
         <para>
             Analysierte Dokumente können durch den Programmierer mit jedem anderen Feld ausgegeben
             werden:
-            <programlisting language="php"><![CDATA[
+        </para>
+
+        <programlisting language="php"><![CDATA[
 $doc = Zend_Search_Lucene_Document_Html::loadHTML($htmlString);
 $doc->addField(Zend_Search_Lucene_Field::UnIndexed('created',
                                                    time()));
@@ -356,19 +373,19 @@ $doc->addField(Zend_Search_Lucene_Field::Text('annotation',
                                               'Document annotation text'));
 $index->addDocument($doc);
 ]]></programlisting>
-        </para>
 
         <para>
             Dokument-Links sind im erstellten Dokument nicht enthalten, können aber mit den
             <methodname>Zend_Search_Lucene_Document_Html::getLinks()</methodname> und
             <methodname>Zend_Search_Lucene_Document_Html::getHeaderLinks()</methodname> Methoden
             empfangen werden:
-            <programlisting language="php"><![CDATA[
+        </para>
+
+        <programlisting language="php"><![CDATA[
 $doc = Zend_Search_Lucene_Document_Html::loadHTML($htmlString);
 $linksArray = $doc->getLinks();
 $headerLinksArray = $doc->getHeaderLinks();
 ]]></programlisting>
-        </para>
 
         <para>
             Beginnend mit Zend Framework 1.6 ist es auch möglich Links mit dem <code>rel</code>
@@ -376,6 +393,7 @@ $headerLinksArray = $doc->getHeaderLinks();
             <methodname>Zend_Search_Lucene_Document_Html::setExcludeNoFollowLinks($true)</methodname>
             verwenden um diese Option einzuschalten.
         </para>
+
         <para>
             Die <methodname>Zend_Search_Lucene_Document_Html::getExcludeNoFollowLinks()</methodname>
             Methode gibt den aktuellen Status des "Exclude nofollow links" Flags zurück.
@@ -384,14 +402,16 @@ $headerLinksArray = $doc->getHeaderLinks();
 
     <sect2 id="zend.search.lucene.index-creation.docx-documents">
         <title>Word 2007 Dokumente</title>
+
         <para>
             <classname>Zend_Search_Lucene</classname> bietet ein Word 2007 Parsing Feature.
             Dokumente können direkt aus einer Word 2007 Datei heraus erstellt werden:
-            <programlisting language="php"><![CDATA[
+        </para>
+
+        <programlisting language="php"><![CDATA[
 $doc = Zend_Search_Lucene_Document_Docx::loadDocxFile($filename);
 $index->addDocument($doc);
 ]]></programlisting>
-        </para>
 
         <para>
             Die <classname>Zend_Search_Lucene_Document_Docx</classname> Klasse verwendet die
@@ -467,7 +487,9 @@ $index->addDocument($doc);
         <para>
             Eingelesene Dokumente können vom Programierer mit jedem anderen Feld argumentiert
             werden:
-            <programlisting language="php"><![CDATA[
+        </para>
+
+        <programlisting language="php"><![CDATA[
 $doc = Zend_Search_Lucene_Document_Docx::loadDocxFile($filename);
 $doc->addField(Zend_Search_Lucene_Field::UnIndexed(
     'indexTime',
@@ -479,20 +501,20 @@ $doc->addField(Zend_Search_Lucene_Field::Text(
 );
 $index->addDocument($doc);
 ]]></programlisting>
-        </para>
-
     </sect2>
 
     <sect2 id="zend.search.lucene.index-creation.pptx-documents">
         <title>Powerpoint 2007 Dokumente</title>
+
         <para>
             <classname>Zend_Search_Lucene</classname> bietet ein Parsing Feature für Powerpoint
             2007. Dokumente können direkt auf einer Powerpoint 2007 Datei heraus erstellt werden:
-            <programlisting language="php"><![CDATA[
+        </para>
+
+        <programlisting language="php"><![CDATA[
 $doc = Zend_Search_Lucene_Document_Pptx::loadPptxFile($filename);
 $index->addDocument($doc);
 ]]></programlisting>
-        </para>
 
         <para>
             Die <classname>Zend_Search_Lucene_Document_Pptx</classname> Klasse verwendet die
@@ -568,7 +590,9 @@ $index->addDocument($doc);
         <para>
             Eingelesene Dokumente können vom Programierer mit jedem anderen Feld argumentiert
             werden:
-            <programlisting language="php"><![CDATA[
+        </para>
+
+        <programlisting language="php"><![CDATA[
 $doc = Zend_Search_Lucene_Document_Pptx::loadPptxFile($filename);
 $doc->addField(Zend_Search_Lucene_Field::UnIndexed(
     'indexTime',
@@ -578,19 +602,20 @@ $doc->addField(Zend_Search_Lucene_Field::Text(
     'Anmerkungstext des Dokuments'));
 $index->addDocument($doc);
 ]]></programlisting>
-        </para>
     </sect2>
 
     <sect2 id="zend.search.lucene.index-creation.xlsx-documents">
         <title>Excel 2007 Dokumente</title>
+
         <para>
             <classname>Zend_Search_Lucene</classname> bietet ein Parsing Feature für Excel 2007.
             Dokumente können direkt von einer Excel 2007 Datei erstellt werden:
-            <programlisting language="php"><![CDATA[
+        </para>
+
+        <programlisting language="php"><![CDATA[
 $doc = Zend_Search_Lucene_Document_Xlsx::loadXlsxFile($filename);
 $index->addDocument($doc);
 ]]></programlisting>
-        </para>
 
         <para>
             Die <classname>Zend_Search_Lucene_Document_Xlsx</classname> Klasse verwendet die
@@ -666,7 +691,9 @@ $index->addDocument($doc);
         <para>
             Eingelesene Dokumente können vom Programierer mit jedem anderen Feld argumentiert
             werden:
-            <programlisting language="php"><![CDATA[
+        </para>
+
+        <programlisting language="php"><![CDATA[
 $doc = Zend_Search_Lucene_Document_Xlsx::loadXlsxFile($filename);
 $doc->addField(Zend_Search_Lucene_Field::UnIndexed(
     'indexTime',
@@ -676,6 +703,5 @@ $doc->addField(Zend_Search_Lucene_Field::Text(
     'Anmerkungstext des Dokuments'));
 $index->addDocument($doc);
 ]]></programlisting>
-        </para>
     </sect2>
 </sect1>

@@ -4,15 +4,16 @@
     <title>Filters</title>
 
     <para>
-      A Filter object blocks a message from being written to the log.
+        A Filter object blocks a message from being written to the log.
     </para>
 
     <sect2 id="zend.log.filters.all-writers">
-      <title>Filtering for All Writers</title>
+        <title>Filtering for All Writers</title>
 
-      <para>
-        To filter before all writers, you can add any number of Filters to a
-        Log object using the <methodname>addFilter()</methodname> method:
+        <para>
+            To filter before all writers, you can add any number of Filters to a
+            Log object using the <methodname>addFilter()</methodname> method:
+        </para>
 
         <programlisting language="php"><![CDATA[
 $logger = new Zend_Log();
@@ -30,17 +31,19 @@ $logger->info('Informational message');
 $logger->emerg('Emergency message');
 ]]></programlisting>
 
-        When you add one or more Filters to the Log object, the message must pass
-        through all of the Filters before any Writers receives it.
-      </para>
+        <para>
+            When you add one or more Filters to the Log object, the message must pass
+            through all of the Filters before any Writers receives it.
+        </para>
     </sect2>
 
     <sect2 id="zend.log.filters.single-writer">
-      <title>Filtering for a Writer Instance</title>
+        <title>Filtering for a Writer Instance</title>
 
-      <para>
-        To filter only on a specific Writer instance, use the
-        <code>addFilter</code> method of that Writer:
+        <para>
+            To filter only on a specific Writer instance, use the
+            <methodname>addFilter()</methodname> method of that Writer:
+        </para>
 
         <programlisting language="php"><![CDATA[
 $logger = new Zend_Log();
@@ -61,6 +64,5 @@ $logger->info('Informational message');
 // logged by both writers
 $logger->emerg('Emergency message');
 ]]></programlisting>
-    </para>
-  </sect2>
+    </sect2>
 </sect1>

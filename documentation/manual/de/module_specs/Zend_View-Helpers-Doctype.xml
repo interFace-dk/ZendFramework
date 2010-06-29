@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- EN-Revision: 19771 -->
+<!-- EN-Revision: 21825 -->
 <!-- Reviewed: no -->
 <sect3 id="zend.view.helpers.initial.doctype">
     <title>Doctype Helfer</title>
 
     <para>
-        Gültige HTML und <acronym>XHTML</acronym> Dokumente sollten eine
+        Gültige <acronym>HTML</acronym> und <acronym>XHTML</acronym> Dokumente sollten eine
         <constant>DOCTYPE</constant> Deklaration enthalten. Neben der Schwierigkeit sich diese zu
         merken, können Sie auch beeinflussen wie bestimmte Elemente im Dokument dargestellt werden
         sollen (zum Beispiel, CDATA Kommentierung in <emphasis>&lt;script&gt;</emphasis> und
@@ -59,7 +59,6 @@ $doctypeHelper->doctype('XHTML1_STRICT');
         <programlisting language="php"><![CDATA[
 <?php echo $this->doctype() ?>
 ]]></programlisting>
-
     </example>
 
     <example id="zend.view.helpers.initial.doctype.retrieving">
@@ -96,6 +95,3 @@ if ($view->doctype()->isHtml5()) {
 ]]></programlisting>
     </example>
 </sect3>
-<!--
-vim:se ts=4 sw=4 et:
--->

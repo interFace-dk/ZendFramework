@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- EN-Revision: 18822 -->
+<!-- EN-Revision: 21263 -->
 <!-- Reviewed: no -->
 <sect2 id="zend.validate.sitemap">
     <title>Sitemap Prüfungen</title>
@@ -18,6 +18,7 @@
             <acronym>XML</acronym> Dokument zu verwenden. Gültige Elemente sind: 'always', 'hourly',
             'daily', 'weekly', 'monthly', 'yearly', oder 'never'.
         </para>
+
         <para>
             Gibt <constant>TRUE</constant> zurück wenn und nur wenn der Wert ein String ist und mit
             einer der oben spezifizierten Frequenzen übereinstimmt.
@@ -33,6 +34,7 @@
             <acronym>W3C</acronym> Datumsstring enthalten, und optional Informationen über die Zeit
             enthalten.
         </para>
+
         <para>
             Gibt <constant>TRUE</constant> zurück wenn, und nur wenn, der angegebene Wert ein String
             und in Bezug auf das Prokoll gültig ist.
@@ -96,5 +98,13 @@ $validator->isValid(0xFF); // false
 $validator->isValid('foo'); // false
 ]]></programlisting>
         </example>
+    </sect3>
+
+    <sect3 id="zend.validate.set.sitemap.options">
+        <title>Unterstützte Optionen für Zend_Validate_Sitemap_*</title>
+
+        <para>
+            Es gibt keine unterstützten Optionen für irgendeine der Sitemap Prüfungen.
+        </para>
     </sect3>
 </sect2>

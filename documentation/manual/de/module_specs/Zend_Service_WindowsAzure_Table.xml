@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- EN-Revision: 19993 -->
+<!-- EN-Revision: 21822 -->
 <!-- Reviewed: no -->
-<sect1 id="zend.service.windowsazure.storage.table">
+<sect2 id="zend.service.windowsazure.storage.table">
     <title>Zend_Service_WindowsAzure_Storage_Table</title>
 
     <para>
@@ -9,25 +9,27 @@
     </para>
 
     <para>
-        Tabellen Speicher wird von Windows Azure als REST API angeboten die von der Klasse
-        <classname>Zend_Service_WindowsAzure_Storage_Table</classname> umhüllt ist um ein natives
-        PHP Interface zum Speicher Konto zu bieten.
+        Tabellen Speicher wird von Windows Azure als REST <acronym>API</acronym> angeboten die von
+        der Klasse <classname>Zend_Service_WindowsAzure_Storage_Table</classname> umhüllt ist um ein
+        natives <acronym>PHP</acronym> Interface zum Speicher Konto zu bieten.
     </para>
 
     <para>
         Dieses Thema zeigt einige Beispiele der Verwendung der Klasse
         <classname>Zend_Service_WindowsAzure_Storage_Table</classname>. Andere Features sind im
-        Download Paket enthalten sowie in den detailierten API Dokumentationen dieser Features.
+        Download Paket enthalten sowie in den detailierten <acronym>API</acronym> Dokumentationen
+        dieser Features.
     </para>
 
     <para>
-        Es ist zu beachten das bei der Entwicklung der Tabellen Speicher (in der SDK von Windows
-        Azure) nicht alle Features unterstützt welche von dieser API angeboten werden. Deshalb sind
-        die Beispiele welche auf dieser Seite aufgeführt sind, dazu gedacht auf Windows Azure
-        Produktions Tabellen Speichern verwendet zu werden.
+        Es ist zu beachten das bei der Entwicklung der Tabellen Speicher (in der
+        <acronym>SDK</acronym> von Windows Azure) nicht alle Features unterstützt welche von dieser
+        <acronym>API</acronym> angeboten werden. Deshalb sind die Beispiele welche auf dieser Seite
+        aufgeführt sind, dazu gedacht auf Windows Azure Produktions Tabellen Speichern verwendet zu
+        werden.
     </para>
 
-    <sect2 id="zend.service.windowsazure.storage.table.api">
+    <sect3 id="zend.service.windowsazure.storage.table.api">
         <title>Operationen auf Tabellen</title>
 
         <para>
@@ -35,7 +37,7 @@
             werden können.
         </para>
 
-        <sect3 id="zend.service.windowsazure.storage.table.api.create">
+        <sect4 id="zend.service.windowsazure.storage.table.api.create">
             <title>Erstellung einer Tabelle</title>
 
             <para>
@@ -55,9 +57,9 @@ $result = $storageClient->createTable('testtable');
 echo 'Der neue Name der Tabelle ist: ' . $result->Name;
 ]]></programlisting>
             </example>
-        </sect3>
+        </sect4>
 
-        <sect3 id="zend.service.windowsazure.storage.table.api.list">
+        <sect4 id="zend.service.windowsazure.storage.table.api.list">
             <title>Ausgeben aller Tabellen</title>
 
             <para>
@@ -78,10 +80,10 @@ foreach ($result as $table) {
 }
 ]]></programlisting>
             </example>
-        </sect3>
-    </sect2>
+        </sect4>
+    </sect3>
 
-    <sect2 id="zend.service.windowsazure.storage.table.entities">
+    <sect3 id="zend.service.windowsazure.storage.table.entities">
         <title>Operationen auf Entitäten</title>
 
         <para>
@@ -103,17 +105,8 @@ foreach ($result as $table) {
         </para>
 
         <itemizedlist>
-            <listitem>
-                <para>
-                    Erzwungenes Schema
-                </para>
-            </listitem>
-
-            <listitem>
-                <para>
-                    Nicht erzwungenes Schema
-                </para>
-            </listitem>
+            <listitem><para>Erzwungenes Schema</para></listitem>
+            <listitem><para>Nicht erzwungenes Schema</para></listitem>
         </itemizedlist>
 
         <para>
@@ -150,7 +143,7 @@ class SampleEntity extends Zend_Service_WindowsAzure_Storage_TableEntity
             <classname>Zend_Service_WindowsAzure_Storage_DynamicTableEntity</classname> arbeitet.
         </para>
 
-        <sect3 id="zend.service.windowsazure.storage.table.entities.enforced">
+        <sect4 id="zend.service.windowsazure.storage.table.entities.enforced">
             <title>Erzwungene Schema Entitäten</title>
 
             <para>
@@ -254,7 +247,8 @@ public $<Name der Eigenschaft in PHP>;
                 Tabellen Speichers definiert wird:
             </para>
 
-            <example id="zend.service.windowsazure.storage.table.entities.enforced.schema-property-sample">
+            <example
+                id="zend.service.windowsazure.storage.table.entities.enforced.schema-property-sample">
                 <title>Beispiel einer erzwungenen Eigenschaft</title>
 
                 <programlisting language="php"><![CDATA[
@@ -299,9 +293,7 @@ public $Age;
                 </listitem>
 
                 <listitem>
-                    <para>
-                        <constant>Edm.Double</constant> - Eine 64-bit Gleitkommazahl.
-                    </para>
+                    <para><constant>Edm.Double</constant> - Eine 64-bit Gleitkommazahl.</para>
                 </listitem>
 
                 <listitem>
@@ -312,15 +304,11 @@ public $Age;
                 </listitem>
 
                 <listitem>
-                    <para>
-                        <constant>Edm.Int32</constant> - Ein 32-bit Integerwert.
-                    </para>
+                    <para><constant>Edm.Int32</constant> - Ein 32-bit Integerwert.</para>
                 </listitem>
 
                 <listitem>
-                    <para>
-                        <constant>Edm.Int64</constant> - Ein 64-bit Integerwert.
-                    </para>
+                    <para><constant>Edm.Int64</constant> - Ein 64-bit Integerwert.</para>
                 </listitem>
 
                 <listitem>
@@ -330,9 +318,9 @@ public $Age;
                     </para>
                 </listitem>
             </itemizedlist>
-        </sect3>
+        </sect4>
 
-        <sect3 id="zend.service.windowsazure.storage.table.entities.dynamic">
+        <sect4 id="zend.service.windowsazure.storage.table.entities.dynamic">
             <title>Entitäten ohne erzwungenes Schema (a.k.a. DynamicEntity)</title>
 
             <para>
@@ -405,7 +393,8 @@ $target->Age  = 25;     // Fügt die Eigenschaft "Age" vom Typ "Edm.Int32" hinzu
                 Optional kann der Typ einer Eigenschaft erzwungen werden:
             </para>
 
-            <example id="zend.service.windowsazure.storage.table.entities.dynamic.schema-forcedproperties">
+            <example
+                id="zend.service.windowsazure.storage.table.entities.dynamic.schema-forcedproperties">
                 <title>
                     Erzwingen von Eigenschaftstypen auf
                     Zend_Service_WindowsAzure_Storage_DynamicTableEntity
@@ -428,12 +417,12 @@ $target->setAzurePropertyType('Age', 'Edm.Int64');
                 automatisch mit <classname>Zend_Service_WindowsAzure_Storage_TableEntity</classname>
                 wenn an die Tabellen Speicher Methoden keine spezielle Klasse übergeben wurde.
             </para>
-        </sect3>
+        </sect4>
 
-        <sect3 id="zend.service.windowsazure.storage.table.entities.api">
+        <sect4 id="zend.service.windowsazure.storage.table.entities.api">
             <title>API Beispiele für Entitäten</title>
 
-            <sect4 id="zend.service.windowsazure.storage.table.entities.api.insert">
+            <sect5 id="zend.service.windowsazure.storage.table.entities.api.insert">
                 <title>Eine Entität hinzufügen</title>
 
                 <para>
@@ -461,9 +450,9 @@ echo 'Zeitpunkt: ' . $result->getTimestamp() . "\n";
 echo 'Etag: ' . $result->getEtag() . "\n";
 ]]></programlisting>
                 </example>
-            </sect4>
+            </sect5>
 
-            <sect4 id="zend.service.windowsazure.storage.table.entities.api.retrieve-by-id">
+            <sect5 id="zend.service.windowsazure.storage.table.entities.api.retrieve-by-id">
                 <title>Empfangen einer Entität durch Partitionsschlüssel und Zeilenschlüssel</title>
 
                 <para>
@@ -472,7 +461,8 @@ echo 'Etag: ' . $result->getEtag() . "\n";
                     Entität bereits vorher erstellt worden sein müssen.
                 </para>
 
-                <example id="zend.service.windowsazure.storage.table.entities.api.retrieve-by-id.example">
+                <example
+                    id="zend.service.windowsazure.storage.table.entities.api.retrieve-by-id.example">
                     <title>
                         Empfangen einer Entität durch dessen Partitions- und Zeilenschlüssel
                     </title>
@@ -486,9 +476,9 @@ $entity= $storageClient->retrieveEntityById(
 );
 ]]></programlisting>
                 </example>
-            </sect4>
+            </sect5>
 
-            <sect4 id="zend.service.windowsazure.storage.table.entities.api.updating">
+            <sect5 id="zend.service.windowsazure.storage.table.entities.api.updating">
                 <title>Eine Entität aktualisieren</title>
 
                 <para>
@@ -520,7 +510,8 @@ $result = $storageClient->updateEntity('testtable', $entity);
                     sicherzustellen das neuere Daten nicht überschrieben werden.
                 </para>
 
-                <example id="zend.service.windowsazure.storage.table.entities.api.updating.example-etag">
+                <example
+                    id="zend.service.windowsazure.storage.table.entities.api.updating.example-etag">
                     <title>Aktualisieren einer Entität (mit Etag Prüfung)</title>
 
                     <programlisting language="php"><![CDATA[
@@ -537,9 +528,9 @@ $entity->Name = 'Neuer Name';
 $result = $storageClient->updateEntity('testtable', $entity, true);
 ]]></programlisting>
                 </example>
-            </sect4>
+            </sect5>
 
-            <sect4 id="zend.service.windowsazure.storage.table.entities.api.delete">
+            <sect5 id="zend.service.windowsazure.storage.table.entities.api.delete">
                 <title>Löschen einer Entität</title>
 
                 <para>
@@ -561,10 +552,10 @@ $entity = $storageClient->retrieveEntityById(
 $result = $storageClient->deleteEntity('testtable', $entity);
 ]]></programlisting>
                 </example>
-            </sect4>
-        </sect3>
+            </sect5>
+        </sect4>
 
-        <sect3 id="zend.service.windowsazure.storage.table.entities.querying">
+        <sect4 id="zend.service.windowsazure.storage.table.entities.querying">
             <title>Durchführen von Abfragen</title>
 
             <para>
@@ -641,9 +632,9 @@ foreach ($entities as $entity) {
 }
 ]]></programlisting>
             </example>
-        </sect3>
+        </sect4>
 
-        <sect3 id="zend.service.windowsazure.storage.table.entities.batch">
+        <sect4 id="zend.service.windowsazure.storage.table.entities.batch">
             <title>Batch Operationen</title>
 
             <para>
@@ -681,25 +672,27 @@ foreach ($entities as $entity) {
 $batch->commit();
 ]]></programlisting>
             </example>
-        </sect3>
-    </sect2>
+        </sect4>
+    </sect3>
 
-    <sect2 id="zend.service.windowsazure.storage.table.sessionhandler">
+    <sect3 id="zend.service.windowsazure.storage.table.sessionhandler">
         <title>Session Handler für Tabellen Speicher</title>
 
         <para>
-            Wenn eine PHP Anwendung auf der Windows Azure Plattform in einem Load-Balanced Modus
-            läuft (wenn 2 oder mehr Web Rollen Instanzen laufen), ist es wichtig das PHP
-            Session Daten zwischen mehreren Web Rollen Instanzen verwendet werden können. Die
-            Windows Azure SDK von PHP bietet die Klasse
+            Wenn eine <acronym>PHP</acronym> Anwendung auf der Windows Azure Plattform in einem
+            Load-Balanced Modus läuft (wenn 2 oder mehr Web Rollen Instanzen laufen), ist es
+            wichtig dass <acronym>PHP</acronym> Session Daten zwischen mehreren Web Rollen Instanzen
+            verwendet werden können. Die Windows Azure <acronym>SDK</acronym> von
+            <acronym>PHP</acronym> bietet die Klasse
             <classname>Zend_Service_WindowsAzure_SessionHandler</classname> an welche den Windows
-            Azure Tabellen Speicher als Session Handler für PHP Anwendungen verwendet.
+            Azure Tabellen Speicher als Session Handler für <acronym>PHP</acronym> Anwendungen
+            verwendet.
         </para>
 
         <para>
             Um den <classname>Zend_Service_WindowsAzure_SessionHandler</classname> Session Handler
-            zu verwenden sollte er als Default Session Handler für die PHP Anwendung registriert
-            sein:
+            zu verwenden sollte er als Default Session Handler für die <acronym>PHP</acronym>
+            Anwendung registriert sein:
         </para>
 
         <example id="zend.service.windowsazure.storage.table.api.sessionhandler-register">
@@ -726,14 +719,14 @@ $sessionHandler->register();
         <para>
             Nach der Registrierung des
             <classname>Zend_Service_WindowsAzure_SessionHandler</classname> Session Handlers
-            können Session gestartet und auf dem gleichen Weg wie normale PHP Sessions verwendet
-            werden:
+            können Session gestartet und auf dem gleichen Weg wie normale <acronym>PHP</acronym>
+            Sessions verwendet werden:
         </para>
 
         <example id="zend.service.windowsazure.storage.table.api.sessionhandler-usage">
             <title>Verwendung des Tabellen Speicher Session Handlers</title>
 
-            <programlisting role="php"><![CDATA[
+            <programlisting language="php"><![CDATA[
 $storageClient = new Zend_Service_WindowsAzure_Storage_Table(
     'table.core.windows.net', 'myaccount', 'myauthkey'
 );
@@ -757,8 +750,8 @@ if (!isset($_SESSION['firstVisit'])) {
             <para>
                 Der <classname>Zend_Service_WindowsAzure_SessionHandler</classname> Session Handler
                 sollte registriert werden bevor ein Aufruf zu
-                <functionname>session_start()</functionname> durchgeführt wird!
+                <methodname>session_start()</methodname> durchgeführt wird!
             </para>
         </warning>
-    </sect2>
-</sect1>
+    </sect3>
+</sect2>

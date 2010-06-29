@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- EN-Revision: 20115 -->
+<!-- EN-Revision: 22109 -->
 <!-- Reviewed: no -->
 <sect1 id="zend.feed.reader">
     <title>Zend_Feed_Reader</title>
@@ -411,14 +411,14 @@ if(isset($links->atom)) {
             der ArrayObject Iterator verwendet wird.
         </para>
 
-                <programlisting language="php"><![CDATA[
+        <programlisting language="php"><![CDATA[
 $links = Zend_Feed_Reader::findFeedLinks('http://www.planet-php.net');
 
 foreach ($links as $link) {
     echo $link['uri'], "\n";
 }
 ]]></programlisting>
-  </sect2>
+    </sect2>
 
     <sect2 id="zend.feed.reader.attribute-collections">
         <title>Attribut Sammlungen</title>
@@ -455,9 +455,9 @@ foreach ($links as $link) {
             Objekt wird, für jede Kategorie, drei Felder an Daten enthalten: term, schema und label.
             "term" ist der grundsätzliche Name der Kategorie, oft Maschinen lesbar (normalerweise
             ein URI Identifikator) und in RSS 2.0 auch bekannt als "domain". "label" ist ein
-            menschlich lesbarer Kategorie Name welcher Html Entities unterstützt. In RSS 2.0 gibt es
-            kein Label Attribut deshalb wird es der Bequemlichkeit halber  immer auf den selben Wert
-            gesetzt wie der Ausdruck.
+            menschlich lesbarer Kategorie Name welcher <acronym>HTML</acronym> Entities unterstützt.
+            In RSS 2.0 gibt es kein Label Attribut deshalb wird es der Bequemlichkeit halber immer
+            auf den selben Wert gesetzt wie der Ausdruck.
         </para>
 
         <para>
@@ -502,7 +502,7 @@ $labels = $categories->getValues();
         </para>
     </sect2>
 
-  <sect2 id="zend.feed.reader.retrieve-info">
+    <sect2 id="zend.feed.reader.retrieve-info">
         <title>Empfangen von Feed Informationen</title>
 
         <para>
@@ -574,13 +574,11 @@ $labels = $categories->getValues();
 
                     <row>
                         <entry><methodname>getTitle()</methodname></entry>
-
                         <entry>Gibt den Titel des Feeds zurück</entry>
                     </row>
 
                     <row>
                         <entry><methodname>getDescription()</methodname></entry>
-
                         <entry>Gibt die textuelle Beschreibung des Feeds zurück</entry>
                     </row>
 
@@ -653,6 +651,16 @@ $labels = $categories->getValues();
                     </row>
 
                     <row>
+                        <entry><methodname>getLastBuildDate()</methodname></entry>
+
+                        <entry>
+                            Gibt das Datum zurück an dem der Feed das letzte Mal erstellt wurde. Das
+                            zurückgegebene Datum ist ein <classname>Zend_Date</classname> Objekt.
+                            Das wird nur von RSS unterstützt - Atom Feeds geben immer NULL zurück.
+                        </entry>
+                    </row>
+
+                    <row>
                         <entry><methodname>getLanguage()</methodname></entry>
 
                         <entry>
@@ -699,10 +707,22 @@ $labels = $categories->getValues();
                             kompletten Feed enthalten sind. Die unterstützten Felder enthalten
                             "term" (den Maschinen lesbaren Namen der Kategorie), "scheme"
                             (dem Schema der Kategorisierung für diese Kategorie), und "label" (ein
-                            Html dekodierter menschlich lesbarer Kategoriename). Wenn irgendeines
-                            der drei Felder abwesend ist, werden Sie entweder auf die näheste
-                            vorhandene Alternative gesetzt, oder im Fall von "scheme", auf
-                            <constant>NULL</constant> gesetzt.
+                            <acronym>HTML</acronym> dekodierter menschlich lesbarer Kategoriename).
+                            Wenn irgendeines der drei Felder abwesend ist, werden Sie entweder auf
+                            die näheste vorhandene Alternative gesetzt, oder im Fall von "scheme",
+                            auf <constant>NULL</constant> gesetzt.
+                        </entry>
+                    </row>
+
+                    <row>
+                        <entry><methodname>getImage()</methodname></entry>
+
+                        <entry>
+                            Gibt ein Array zurück welches Daten enthält die jedem Feed Bild oder
+                            Logo angehören oder NULL wenn kein Bild gefunden wurde. Das
+                            resultierende Array kann die folgenden Schlüssel enthalten: uri, link,
+                            title, description, height, und width. Nur Atom Logos enthalten eine
+                            URI so dass die anderen Metadaten nur von RSS Feeds angehören.
                         </entry>
                     </row>
                 </tbody>
@@ -716,15 +736,16 @@ $labels = $categories->getValues();
             <classname>Zend_Feed_Reader</classname> wärend der Suche auf alternative Elemente
             zurück greifen. Zum Beispiel ist das Durchsuchen eines <acronym>RSS</acronym> Feeds
             nach einem Modifikations Datum komplizierter als es aussieht. <acronym>RSS</acronym>
-            Feeds sollten ein <code>&lt;lastBuildDate&gt;</code> Tag und/oder ein
-            <code>&lt;pubDate&gt;</code> Element enthalten. Aber was wenn Sie es nicht tun, weil es
-            z.B. ein <acronym>RSS</acronym> 1.0 Feed ist? Vielleicht ist stattdessen ein
-            <code>&lt;atom:updated&gt;</code> Element mit identischen Informationen vorhanden (Atom
-            kann verwendet werden um die <acronym>RSS</acronym> Syntax anzubieten)? Bei einem
+            Feeds sollten ein <command>&lt;lastBuildDate&gt;</command> Tag und (oder) ein
+            <command>&lt;pubDate&gt;</command> Element enthalten. Aber was wenn Sie es nicht tun,
+            weil es z.B. ein <acronym>RSS</acronym> 1.0 Feed ist? Vielleicht ist stattdessen ein
+            <command>&lt;atom:updated&gt;</command> Element mit identischen Informationen vorhanden
+            (Atom kann verwendet werden um die <acronym>RSS</acronym> Syntax anzubieten)? Bei einem
             Fehlschlag können wir einfach auf die Einträge sehen, den aktuellsten herausholen, und
-            sein <code>&lt;pubDate&gt;</code> Element verwenden. In der Annahme das es existiert...
-            viele Feeds verwenden auch Dublin Core 1.0/1.1 <code>&lt;dc:date&gt;</code> Elemente für
-            Feeds und Einträge. Oder wir können wieder ein Atom finden das herumliegt.
+            sein <command>&lt;pubDate&gt;</command> Element verwenden. In der Annahme das es
+            existiert... viele Feeds verwenden auch Dublin Core 1.0/1.1
+            <command>&lt;dc:date&gt;</command> Elemente für Feeds und Einträge. Oder wir können
+            wieder ein Atom finden das herumliegt.
         </para>
 
         <para>
@@ -829,27 +850,24 @@ $labels = $categories->getValues();
 
                     <row>
                         <entry><methodname>key()</methodname></entry>
-
                         <entry>Gibt den aktuellen Index für Einträge zurück</entry>
                     </row>
 
                     <row>
                         <entry><methodname>next()</methodname></entry>
-
                         <entry>Addiert den Wert des Index für Einträge um Eins</entry>
                     </row>
 
                     <row>
                         <entry><methodname>rewind()</methodname></entry>
-
-                        <entry>Resetiert den Index für Einträge auf 0</entry>
+                        <entry>Setzt den Index für Einträge auf 0 zurück</entry>
                     </row>
 
                     <row>
                         <entry><methodname>valid()</methodname></entry>
 
                         <entry>
-                            Prüft pb der aktuelle Index für Einträge gültig ist, z.B. ob er nicht
+                            Prüft ob der aktuelle Index für Einträge gültig ist, z.B. ob er nicht
                             unter 0 fällt und die Anzahl der existierenden Einträge nicht
                             übersteigt.
                         </entry>
@@ -912,19 +930,16 @@ $labels = $categories->getValues();
                 <tbody>
                     <row>
                         <entry><methodname>getId()</methodname></entry>
-
                         <entry>Gibt eine eindeutige ID für den aktuellen Eintrag zurück.</entry>
                     </row>
 
                     <row>
                         <entry><methodname>getTitle()</methodname></entry>
-
                         <entry>Gibt den Titel des aktuellen Eintrags zurück.</entry>
                     </row>
 
                     <row>
                         <entry><methodname>getDescription()</methodname></entry>
-
                         <entry>Gibt eine Beschreibung des aktuellen Eintrags zurück.</entry>
                     </row>
 
@@ -1055,11 +1070,11 @@ $labels = $categories->getValues();
                             Objekt zurück welches die Details jeder Kategorie enthält welche mit dem
                             Eintrag assoziiert ist. Die unterstützten Felder sind "term" (der
                             Maschinen lesbare Name der Kategorie), "scheme" (der Name des Schemas
-                            der Kategorisierung für diese Kategorie), und "label" (ein Html
-                            dekodierter menschlich lesbarer Name der Kategorie). Wenn eines der drei
-                            Felder nicht vorhanden ist, werden Sie entweder auf den näheste
-                            vorhandene Alternative, oder im Fall von "scheme", auf
-                            <constant>NULL</constant> gesetzt.
+                            der Kategorisierung für diese Kategorie), und "label" (ein
+                            <acronym>HTML</acronym> dekodierter menschlich lesbarer Name der
+                            Kategorie). Wenn eines der drei Felder nicht vorhanden ist, werden Sie
+                            entweder auf den näheste vorhandene Alternative, oder im Fall von
+                            "scheme", auf <constant>NULL</constant> gesetzt.
                         </entry>
                     </row>
                 </tbody>
@@ -1098,9 +1113,9 @@ $labels = $categories->getValues();
                 <acronym>ISO</acronym> 86001 folgen und <acronym>RSS</acronym> Daten sollten
                 <acronym>RFC</acronym> 822 oder <acronym>RFC</acronym> 2822 folgen welche auch
                 üblicherweise verwendet werden. Datumsmethoden werfen eine Exception wenn
-                <classname>Zend_Date</classname>, oder die PHP basierenden Möglichkeiten für
-                <acronym>RSS</acronym> Daten, das Datum durch Verwendung der obigen Standards
-                nicht laden kann.
+                <classname>Zend_Date</classname>, oder die <acronym>PHP</acronym> basierenden
+                Möglichkeiten für <acronym>RSS</acronym> Daten, das Datum durch Verwendung der
+                obigen Standards nicht laden kann.
             </para>
         </caution>
 
@@ -1224,13 +1239,13 @@ $labels = $categories->getValues();
 
         <para>
             Es gibt zwei Typen von Erweiterungen, jene welche Informationen von Elementen empfangen
-            die unmittelbare Kunder des Root Elements sind (z.B. <code>&lt;channel&gt;</code> für
-            <acronym>RSS</acronym> oder <code>&lt;feed&gt;</code> für Atom), und jene die
+            die unmittelbare Kunder des Root Elements sind (z.B. <command>&lt;channel&gt;</command>
+            für <acronym>RSS</acronym> oder <command>&lt;feed&gt;</command> für Atom), und jene die
             Informationen von Kind-Elementen eines Eintrags empfangen (z.B.
-            <code>&lt;item&gt;</code> für <acronym>RSS</acronym> oder <code>&lt;entry&gt;</code>
-            für Atom). Auf dem Filesystem sind Sie als Klassen in einem Namespace gruppiert,
-            basierend auf dem Standardnamen der Erweiterung. Zum Beispiel haben wir intern
-            <classname>Zend_Feed_Reader_Extension_DublinCore_Feed</classname> und
+            <command>&lt;item&gt;</command> für <acronym>RSS</acronym> oder
+            <command>&lt;entry&gt;</command> für Atom). Auf dem Filesystem sind Sie als Klassen in
+            einem Namespace gruppiert, basierend auf dem Standardnamen der Erweiterung. Zum Beispiel
+            haben wir intern <classname>Zend_Feed_Reader_Extension_DublinCore_Feed</classname> und
             <classname>Zend_Feed_Reader_Extension_DublinCore_Entry</classname> Klassen welche zwei
             Klassen sind welche die Unterstützung für Dublin Core 1.0/1.1 implementieren.
         </para>
@@ -1262,13 +1277,11 @@ $labels = $categories->getValues();
 
                     <row>
                         <entry>Content (nur Eintrag)</entry>
-
                         <entry>Implementiert Unterstützung für Content 1.0</entry>
                     </row>
 
                     <row>
                         <entry>Atom (Feed und Eintrag)</entry>
-
                         <entry>Implementiert Unterstützung für Atom 0.3 und Atom 1.0</entry>
                     </row>
 
@@ -1326,6 +1339,7 @@ $labels = $categories->getValues();
                 <tbody>
                     <row>
                         <entry>Syndication</entry>
+
                         <entry>
                             Implementiert Unterstützung für Syndication 1.0 <acronym>RSS</acronym>
                             Feeds
@@ -1334,6 +1348,7 @@ $labels = $categories->getValues();
 
                     <row>
                         <entry>CreativeCommons</entry>
+
                         <entry>
                             Ein <acronym>RSS</acronym> Modul das ein Element auf &lt;channel&gt;
                             oder &lt;item&gt; Level hinzufügt welches spezifiziert welche
@@ -1413,8 +1428,8 @@ $updatePeriod = $syndication->getUpdatePeriod();
                 Streber Abteilung <acronym>RSS</acronym> 2.0 erweitern muß um ein neues Element
                 pro Eintrag hinzuzufügen das die <acronym>ISBN</acronym>-10 oder
                 <acronym>ISBN</acronym>-13 Zahl der Veröffentlichung die der Eintrag betrifft
-                unterstützt. Sie definieren das neue <code>&lt;isbn&gt;</code> Element recht einfach
-                mit dem standardmäßigen Namen und Namespace <acronym>URI</acronym>:
+                unterstützt. Sie definieren das neue <command>&lt;isbn&gt;</command> Element recht
+                einfach mit dem standardmäßigen Namen und Namespace <acronym>URI</acronym>:
             </para>
 
             <programlisting language="php"><![CDATA[
@@ -1492,7 +1507,7 @@ class My_FeedReader_Extension_JungleBooks_Entry
                 Diese Erweiterung ist einfach genug um Ihr zu folgen. Sie erstellt eine neue Methode
                 <methodname>getIsbn()</methodname>, welche eine XPath Abfrage auf dem aktuellen
                 Eintrag durchführt, um die <acronym>ISBN</acronym> Nummer welche vom
-                <code>&lt;jungle:isbn&gt;</code> Element umhüllt ist, zu extrahieren. Das kann
+                <command>&lt;jungle:isbn&gt;</command> Element umhüllt ist, zu extrahieren. Das kann
                 optional auch im internen nicht-persistenten Cache gespeichert werden (keine
                 Notwendigkeit den <acronym>DOM</acronym> abzufragen wenn es auf dem gleichen
                 Eintrag nochmals aufgerufen wird). Der Wert wird dem Anrufer zurückgegeben.
@@ -1529,10 +1544,10 @@ $firstIsbn = $feed->current()->getIsbn();
             <para>
                 Das Schreiben einer Feed Level Erweiterung unterscheidet sich nicht sehr. Der
                 Beispiel Feed von vorher enthält ein nicht erwähntes
-                <code>&lt;jungle:dayPopular&gt;</code> Element das Jungle Books bei Ihrem Standard
-                hinzugefügt haben um einen Link zum beliebtesten Buch des Tages hinzuzufügen
-                (im Sinne von Verkehr der Besucher). Hier ist eine Erweiterung welche eine
-                <methodname>getDaysPopularBookLink()</methodname> Methode bei der Feed Level
+                <command>&lt;jungle:dayPopular&gt;</command> Element das Jungle Books bei Ihrem
+                Standard hinzugefügt haben um einen Link zum beliebtesten Buch des Tages
+                hinzuzufügen (im Sinne von Verkehr der Besucher). Hier ist eine Erweiterung welche
+                eine <methodname>getDaysPopularBookLink()</methodname> Methode bei der Feed Level
                 <acronym>API</acronym> hinzufügt.
             </para>
 

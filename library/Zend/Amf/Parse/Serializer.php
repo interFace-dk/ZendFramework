@@ -31,7 +31,7 @@
 abstract class Zend_Amf_Parse_Serializer
 {
     /**
-     * Refrence to the current output stream being constructed
+     * Reference to the current output stream being constructed
      *
      * @var string
      */
@@ -53,7 +53,8 @@ abstract class Zend_Amf_Parse_Serializer
      *
      * @param  mixed $content
      * @param  int $markerType
+     * @param  mixed $contentByVal
      * @return void
      */
-    public abstract function writeTypeMarker($content, $markerType=null);
+    public abstract function writeTypeMarker(&$content, $markerType = null, $contentByVal = false);
 }

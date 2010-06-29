@@ -32,6 +32,7 @@ require_once 'PHPUnit/TextUI/TestRunner.php';
 
 require_once 'Zend/Form/SubForm.php';
 require_once 'Zend/View.php';
+require_once 'Zend/Version.php';
 
 /**
  * @category   Zend
@@ -130,7 +131,18 @@ class Zend_Form_SubFormTest extends PHPUnit_Framework_TestCase
         $form->addSubForm($subForm, 'foobar')
              ->setView(new Zend_View);
         $html = $form->render();
-        $this->assertContains('<dt>&nbsp;</dt>', $html);
+        $this->assertContains('>&#160;</dt>', $html  );
+    }
+
+    /**
+     * Prove the fluent interface on Zend_Form_Subform::loadDefaultDecorators
+     *
+     * @link http://framework.zend.com/issues/browse/ZF-9913
+     * @return void
+     */
+    public function testFluentInterfaceOnLoadDefaultDecorators()
+    {
+        $this->assertSame($this->form, $this->form->loadDefaultDecorators());
     }
 }
 

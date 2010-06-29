@@ -747,6 +747,26 @@ class Zend_JsonTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($target, Zend_Json::encode($source));
     }
     
+    /**
+     * @group ZF-8918
+     * @expectedException Zend_Json_Exception
+     */
+    public function testDecodingInvalidJsonShouldRaiseAnException()
+    {
+        Zend_Json::decode(' some string ');
+    }
+
+    /**
+     * @group ZF-9416
+     * Encoding an iterator using the internal encoder should handle undefined keys
+     */
+    public function testIteratorWithoutDefinedKey()
+    {
+        $inputValue = new ArrayIterator(array('foo'));
+        $encoded = Zend_Json_Encoder::encode($inputValue);
+        $expectedDecoding = '{"__className":"ArrayIterator","0":"foo"}';
+        $this->assertEquals($encoded, $expectedDecoding);
+    }
 }
 
 /**

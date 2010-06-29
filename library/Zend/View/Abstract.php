@@ -897,7 +897,11 @@ abstract class Zend_View_Abstract implements Zend_View_Interface
             return call_user_func($this->_escape, $var, ENT_COMPAT, $this->_encoding);
         }
 
-        return call_user_func($this->_escape, $var);
+        if (1 == func_num_args()) {
+            return call_user_func($this->_escape, $var);
+        }
+        $args = func_get_args();
+        return call_user_func_array($this->_escape, $args);
     }
 
     /**
@@ -1020,9 +1024,9 @@ abstract class Zend_View_Abstract implements Zend_View_Interface
         foreach ((array) $path as $dir) {
             // attempt to strip any possible separator and
             // append the system directory separator
-            $dir = str_replace(array('/', '\\'), DIRECTORY_SEPARATOR, $dir);
-            $dir = rtrim($dir, DIRECTORY_SEPARATOR . DIRECTORY_SEPARATOR)
-                 . DIRECTORY_SEPARATOR;
+            $dir  = rtrim($dir, '/');
+            $dir  = rtrim($dir, '\\');
+            $dir .= '/';
 
             switch ($type) {
                 case 'script':

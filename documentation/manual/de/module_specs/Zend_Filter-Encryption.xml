@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- EN-Revision: 20115 -->
+<!-- EN-Revision: 21994 -->
 <!-- Reviewed: no -->
 <sect2 id="zend.filter.set.encrypt">
     <title>Encrypt</title>
 
     <para>
         Dieser Filter verschlüsselt beliebige Strings mit den angegebenen Einstellungen. Hierfür
-        verwendet er Adapter. Aktuell gibt es Adapter für die <code>Mcrypt</code> und
-        <code>OpenSSL</code> Erweiterungen von php.
+        verwendet er Adapter. Aktuell gibt es Adapter für die <classname>Mcrypt</classname> und
+        <classname>OpenSSL</classname> Erweiterungen von <acronym>PHP</acronym>.
     </para>
 
     <para>
@@ -38,8 +38,8 @@ $filter->setAdapter('openssl');
 
     <note>
         <para>
-            Wenn man die <code>adapter</code> Option nicht angibt oder setAdapter nicht verwendet,
-            dann wird standardmäßig der <code>Mcrypt</code> Adapter verwendet.
+            Wenn man die <property>adapter</property> Option nicht angibt oder setAdapter nicht
+            verwendet, dann wird standardmäßig der <classname>Mcrypt</classname> Adapter verwendet.
         </para>
     </note>
 
@@ -47,8 +47,8 @@ $filter->setAdapter('openssl');
         <title>Verschlüsselung mit Mcrypt</title>
 
         <para>
-            Wenn man die <code>Mcrypt</code> Erweiterung installiert hat, kann man den
-            <code>Mcrypt</code> Adapter verwenden. Dieser Adapter unterstützt bei der
+            Wenn man die <classname>Mcrypt</classname> Erweiterung installiert hat, kann man den
+            <classname>Mcrypt</classname> Adapter verwenden. Dieser Adapter unterstützt bei der
             Initialisierung die folgenden Optionen:
         </para>
 
@@ -65,7 +65,7 @@ $filter->setAdapter('openssl');
                     <emphasis>algorithm</emphasis>: Der Algorithmus der verwendet werden soll. Das
                     sollte einer der Algorithmus Cipher sein die man unter <ulink
                         url="http://php.net/mcrypt">PHP's Mcrypt Cipers</ulink> finden kann. Wenn er
-                    nicht gesetzt wird, ist er standardmäßig <code>blowfish</code>.
+                    nicht gesetzt wird, ist er standardmäßig 'blowfish'.
                 </para>
             </listitem>
 
@@ -82,7 +82,7 @@ $filter->setAdapter('openssl');
                     <emphasis>mode</emphasis>: Der Verschlüsselungs Modus der verwendet werden soll.
                     Es sollte einer der Modi sein der unter <ulink url="http://php.net/mcrypt">PHP's
                     Mcrypt Modi</ulink> gefunden werden kann. Wenn er nicht gesetzt wird, ist er
-                    standardmäßig <code>cbc</code>.
+                    standardmäßig 'cbc'.
                 </para>
             </listitem>
 
@@ -90,7 +90,7 @@ $filter->setAdapter('openssl');
                 <para>
                     <emphasis>mode_directory</emphasis>: Der Verzeichnis in dem der Modus gefunden
                     werden kann. Wenn es nicht gesetzt wird, ist es standardmäßig der Pfad der in
-                    der <code>mcrypt</code> Erweiterung gesetzt wurde.
+                    der <classname>Mcrypt</classname> Erweiterung gesetzt wurde.
                 </para>
             </listitem>
 
@@ -106,6 +106,15 @@ $filter->setAdapter('openssl');
                     <emphasis>salt</emphasis>: Ob der Schlüssel als Salt Wert verwendet wird. Der
                     Schlüssel der für die Verschlüsselung verwendet wird, wird selbst auch
                     verschlüsselt. Der Standardwert ist <constant>FALSE</constant>.
+                </para>
+            </listitem>
+
+            <listitem>
+                <para>
+                    <emphasis>compression</emphasis>: Ob der verschlüsselte Wert komprimiert werden
+                    soll. Der Standard ist nicht komprimiert. Für Details sehen Sie unter <link
+                        linkend="zend.filter.set.encrypt.openssl.compressed">Komprimierung für
+                        Openssl</link> nach.
                 </para>
             </listitem>
         </itemizedlist>
@@ -131,15 +140,15 @@ $filter->setAdapter('openssl');
         <note>
             <para>
                 Man sollte auch beachten das alle Einstellungen geprüft werden wenn man eine Instanz
-                erstellt oder setEncryption() aufruft. Wenn mcrypt ein Problem mit diesen
-                Einstellungen erkennt wird eine Ausnahme geworfen.
+                erstellt oder <methodname>setEncryption()</methodname> aufruft. Wenn mcrypt ein
+                Problem mit diesen Einstellungen erkennt wird eine Ausnahme geworfen.
             </para>
         </note>
 
         <para>
             Man kann den Verschlüsselungs Vektor durch den Aufruf von
             <methodname>getVector()</methodname> und <methodname>setVector()</methodname>
-            erhalten/setzen. Ein engegebener String wird, je nach benötigter Vektorgröße des
+            erhalten und setzen. Ein engegebener String wird, je nach benötigter Vektorgröße des
             verwendeten Algorithmus, abgeschnitten oder aufgefüllt.
         </para>
 
@@ -169,9 +178,10 @@ print $encrypted;
 
     <sect3 id="zend.filter.set.encrypt.openssl">
         <title>Verschlüsselung mit OpenSSL</title>
+
         <para>
-            Wenn man die <code>OpenSSL</code> Erweiterung installiert hat, kann man den
-            <code>OpenSSL</code> Adapter verwenden. Dieser Adapter unterstützt bei der
+            Wenn man die <classname>OpenSSL</classname> Erweiterung installiert hat, kann man den
+            <classname>OpenSSL</classname> Adapter verwenden. Dieser Adapter unterstützt bei der
             Instanziierung die folgenden Optionen:
         </para>
 
@@ -192,6 +202,20 @@ print $encrypted;
                     Verschlüsselung des Inhalts verwendet wird. Auch der private Schlüssel kann
                     entweder ein Dateiname mit Pfad zur Schlüsseldatei sein, oder nur der Inhalt der
                     Schlüsseldatei selbst.
+                </para>
+            </listitem>
+
+            <listitem>
+                <para>
+                    <emphasis>compression</emphasis>: Ob der verschlüsselte Wert komprimiert werden
+                    soll. Standardmäßig wird nicht komprimiert.
+                </para>
+            </listitem>
+
+            <listitem>
+                <para>
+                    <emphasis>package</emphasis>: Ob der Umschlagschlüssel mit dem verschlüsselten
+                    Wert gepackt werden soll. Der Standardwert ist <constant>FALSE</constant>.
                 </para>
             </listitem>
         </itemizedlist>
@@ -221,8 +245,8 @@ $filter->setPublicKey(array(
 
         <note>
             <para>
-                Es ist zu beachten das der <code>OpenSSL</code> Adapter nicht funktionieren wird
-                wenn keine gültigen Schlüsseln angegeben werden.
+                Es ist zu beachten das der <classname>OpenSSL</classname> Adapter nicht
+                funktionieren wird wenn keine gültigen Schlüsseln angegeben werden.
             </para>
         </note>
 
@@ -262,8 +286,8 @@ $filter->setPassphrase('mypassphrase');
         </para>
 
         <para>
-            Unser komplettes Beispiel für die Verschlüsselung von Inhalten mit <code>OpenSSL</code>
-            schaut wie folgt aus.
+            Unser komplettes Beispiel für die Verschlüsselung von Inhalten mit
+            <classname>OpenSSL</classname> schaut wie folgt aus.
         </para>
 
         <programlisting language="php"><![CDATA[
@@ -287,5 +311,91 @@ print $encrypted;
 
 // Für die Entschlüsselung siehe beim Decrypt Filter
 ]]></programlisting>
+
+        <sect4 id="zend.filter.set.encrypt.openssl.simplified">
+            <title>Vereinfachte Verwendung mit Openssl</title>
+
+            <para>
+                Wie vorher zu sehen war, muss man den Umschlagschlüssel holen um in der Lage zu sein
+                den vorher verschlüsselten Wert wieder zu entschlüsseln. Das kann sehr frustrierend
+                sein wenn man mit mehreren Werten arbeitet.
+            </para>
+
+            <para>
+                Für eine vereinfachte Verwendung kann man die <property>package</property> Option
+                auf <constant>TRUE</constant> setzen. Der Standardwert ist
+                <constant>FALSE</constant>.
+            </para>
+
+            <programlisting language="php"><![CDATA[
+// Verwende openssl und gib einen privaten Schlüssel an
+$filter = new Zend_Filter_Encrypt(array(
+    'adapter' => 'openssl',
+    'private' => '/path/to/mykey/private.pem',
+    'public'  => '/public/key/path/public.pem',
+    'package' => true
+));
+
+$encrypted = $filter->filter('text_to_be_encoded');
+print $encrypted;
+
+// Für die Entschlüsselung siehe beim Decrypt Filter
+]]></programlisting>
+
+            <para>
+                Jetzt enthält der zurückgegebene Wert sowohl den verschlüsselten Wert als auch den
+                Umschlagschlüssel. Man muss diesen also nicht mehr nach der Verschlüsselung holen.
+                Aber, und das ist der negative Aspekt dieses Features, der verschlüsselte Wert kann
+                jetzt nur mehr entschlüsselt werden indem man
+                <classname>Zend_Filter_Encrypt</classname> verwendet.
+            </para>
+        </sect4>
+
+        <sect4 id="zend.filter.set.encrypt.openssl.compressed">
+            <title>Komprimieren des Inhalts</title>
+
+            <para>
+                Basierend auf dem originalen Wert, kann der verschlüsselte Wert ein sehr langer
+                String sein. Um den Wert zu reduzieren erlaubt
+                <classname>Zend_Filter_Encrypt</classname> die Verwendung von Kompression.
+            </para>
+
+            <para>
+                Die <property>compression</property> Option kann entweder auf den Namen eines
+                Komprimierungsadapters gesetzt werden, oder auf ein Array welches alle gewünschten
+                Optionen für den Komprimierungsadapter setzt.
+            </para>
+
+            <programlisting language="php"><![CDATA[
+// Verwende nur den grundsätzlichen Komprimierungsadapter
+$filter1 = new Zend_Filter_Encrypt(array(
+    'adapter'     => 'openssl',
+    'private'     => '/path/to/mykey/private.pem',
+    'public'      => '/public/key/path/public.pem',
+    'package'     => true,
+    'compression' => 'bz2'
+));
+
+// Verwende den Basis Komprimierungsadapter
+$filter2 = new Zend_Filter_Encrypt(array(
+    'adapter'     => 'openssl',
+    'private'     => '/path/to/mykey/private.pem',
+    'public'      => '/public/key/path/public.pem',
+    'package'     => true,
+    'compression' => array('adapter' => 'zip', 'target' => '\usr\tmp\tmp.zip')
+));
+]]></programlisting>
+
+            <note>
+                <title>Entschlüsselung mit den selben Werten</title>
+
+                <para>
+                    Wenn man einen Wert entschlüsseln will welcher zusätzlich komprimiert wurde,
+                    dann muss man die selben Komprimierungseinstellungen für die Entschlüsselung
+                    verwenden wie bei der Verschlüsselung. Andernfalls wird die Entschlüsselung
+                    fehlschlagen.
+                </para>
+            </note>
+        </sect4>
     </sect3>
 </sect2>

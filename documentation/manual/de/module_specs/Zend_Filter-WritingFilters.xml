@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- EN-Revision: 17618 -->
+<!-- EN-Revision: 21129 -->
 <!-- Reviewed: no -->
 <sect1 id="zend.filter.writing_filters">
-
     <title>Filter schreiben</title>
 
     <para>
@@ -21,8 +20,9 @@
 
     <para>
         Das folgende Beispiel demonstriert wie ein eigener Filter geschrieben wird:
+    </para>
 
-        <programlisting language="php"><![CDATA[
+    <programlisting language="php"><![CDATA[
 class MyFilter implements Zend_Filter_Interface
 {
     public function filter($value)
@@ -35,19 +35,12 @@ class MyFilter implements Zend_Filter_Interface
 }
 ]]></programlisting>
 
-    </para>
-
     <para>
         Um eine Instanz des Filters der oben definiert wurde in eine Filterkette hinzuzufügen:
+    </para>
 
-        <programlisting language="php"><![CDATA[
+    <programlisting language="php"><![CDATA[
 $filterChain = new Zend_Filter();
 $filterChain->addFilter(new MyFilter());
 ]]></programlisting>
-
-    </para>
-
 </sect1>
-<!--
-vim:se ts=4 sw=4 et:
--->

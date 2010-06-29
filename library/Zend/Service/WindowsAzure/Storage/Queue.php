@@ -17,7 +17,7 @@
  * @subpackage Storage
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://todo     name_todo
- * @version    $Id: Blob.php 24241 2009-07-22 09:43:13Z unknown $
+ * @version    $Id$
  */
 
 /**
@@ -505,7 +505,7 @@ class Zend_Service_WindowsAzure_Storage_Queue extends Zend_Service_WindowsAzure_
 	 */
     public static function isValidQueueName($queueName = '')
     {
-        if (!ereg("^[a-z0-9][a-z0-9-]*$", $queueName)) {
+        if (preg_match("/^[a-z0-9][a-z0-9-]*$/", $queueName) === 0) {
             return false;
         }
     

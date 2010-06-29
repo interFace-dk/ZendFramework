@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- EN-Revision: 18210 -->
+<!-- EN-Revision: 20876 -->
 <!-- Reviewed: no -->
 <sect1 id="performance.view">
     <title>Darstellen der View</title>
@@ -63,7 +63,7 @@
 
             <para>
                 Eine andere Lösung für jene welche die Geschwindigkeit sogar noch mehr steigern
-                wollen ist es <classname>Zend_View</classname>zu erweitern um manuell die
+                wollen ist es <classname>Zend_View</classname> zu erweitern um manuell die
                 Helfermethoden die man am meisten in seiner Anwendung verwendet hinzuzufügen. Solche
                 Helfermethoden können einfach manuell die betreffenden Helferklassen instanziiert
                 und auf Sie verwesen wird, oder indem die komplette Implementation des Helfers in
@@ -85,8 +85,8 @@ class My_View extends Zend_View
      *                     Route Objekts übergeben werden
      * @param  mixed $name Der Name der zu verwendenden Route. Wenn null wir
      *                     die aktuelle Route verwendet
-     * @param  bool $reset Ob die Routenstandard mit den angegebenen resetiert
-     *                     werden sollen oder nicht
+     * @param  bool $reset Ob die Routenstandard mit den angegebenen
+     *                     zurückgesetzt werden sollen oder nicht
      * @return string Url für das Link Href Attribut.
      */
     public function url(array $urlOptions = array(), $name = null,
@@ -141,21 +141,27 @@ class My_View extends Zend_View
             </para>
 
             <itemizedlist>
-                <listitem><para>
-                    <varname>$name</varname>: Den Namen des View Skripts das dargestellt werden
-                    soll
-                </para></listitem>
+                <listitem>
+                    <para>
+                        <varname>$name</varname>: Den Namen des View Skripts das dargestellt werden
+                        soll
+                    </para>
+                </listitem>
 
-                <listitem><para>
-                    <varname>$module</varname>: Der Name des Moduls in dem das View Skript sitzt;
-                    oder, wenn kein drittes Argument angegeben wurde und es ein Array oder Objekt
-                    ist, wird es als <varname>$model</varname> Argument verwendet.
-                </para></listitem>
+                <listitem>
+                    <para>
+                        <varname>$module</varname>: Der Name des Moduls in dem das View Skript
+                        sitzt; oder, wenn kein drittes Argument angegeben wurde und es ein Array
+                        oder Objekt ist, wird es als <varname>$model</varname> Argument verwendet.
+                    </para>
+                </listitem>
 
-                <listitem><para>
-                    <varname>$model</varname>: Ein Array oder Objekt das dem Partial übergeben
-                    wird, und die reinen Daten repräsentiert die der View übergeben werden.
-                </para></listitem>
+                <listitem>
+                    <para>
+                        <varname>$model</varname>: Ein Array oder Objekt das dem Partial übergeben
+                        wird, und die reinen Daten repräsentiert die der View übergeben werden.
+                    </para>
+                </listitem>
             </itemizedlist>
 
             <para>
@@ -260,8 +266,8 @@ class LoginPlugin extends Zend_Controller_Plugin_Abstract
             <para>
                 Wärend der ActionStack trotzdem noch einen Dispatch Zyklus benötigt, ist das
                 trotzdem immer noch billiger als der <methodname>action()</methodname> View Helfer
-                da er Objekte nicht klonen und den internen Status resetieren muß. Zustzlich stellt
-                es sicher das alle Pre und Post Dispatch Plugins aufgerufen werden, was von
+                da er Objekte nicht klonen und den internen Status zurücksetzen muß. Zustzlich
+                stellt es sicher das alle Pre und Post Dispatch Plugins aufgerufen werden, was von
                 spezieller Wichtigkeit ist wenn man Frontcontroller Plugins für die Behandlung von
                 <acronym>ACL</acronym>'s in speziellen Aktionen verwendet.
             </para>
@@ -350,6 +356,3 @@ class My_View_Helper_BugList extends Zend_View_Helper_Abstract
         </sect3>
     </sect2>
 </sect1>
-<!--
-vim:se ts=4 sw=4 et:
--->

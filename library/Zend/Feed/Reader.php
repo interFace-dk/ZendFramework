@@ -286,7 +286,9 @@ class Zend_Feed_Reader
                 require_once 'Zend/Feed/Exception.php';
                 throw new Zend_Feed_Exception('Feed failed to load, got response code ' . $response->getStatus());
             }
-            return self::importString($response->getBody());
+            $reader = self::importString($response->getBody());
+            $reader->setOriginalSourceUri($uri);
+            return $reader;
         }
     }
 
@@ -427,7 +429,7 @@ class Zend_Feed_Reader
         } elseif(is_string($feed) && !empty($feed)) {
             @ini_set('track_errors', 1);
             $dom = new DOMDocument;
-            $status = @$doc->loadXML($string);
+            $status = @$dom->loadXML($feed);
             @ini_restore('track_errors');
             if (!$status) {
                 if (!isset($php_errormsg)) {

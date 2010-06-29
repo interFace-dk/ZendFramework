@@ -301,6 +301,53 @@ class Zend_Application_Resource_FrontcontrollerTest extends PHPUnit_Framework_Te
         $front = $resource->getFrontController();
         $this->assertNull($front->getBaseUrl());
     }
+    
+    /**
+     * @group ZF-9044
+     */
+    public function testSettingOfRegisterPluginIndexActuallyWorks()
+    {
+        $plugins = array(
+            array('class' => 'Zend_Controller_Plugin_ErrorHandler',
+                  'stackindex' => 10),
+            'Zend_Controller_Plugin_ActionStack',
+            array('class' => 'Zend_Controller_Plugin_PutHandler',
+                  'stackIndex' => 5),
+        );
+
+        $expected = array(
+            1 => 'Zend_Controller_Plugin_ActionStack',
+            5 => 'Zend_Controller_Plugin_PutHandler',
+            10 => 'Zend_Controller_Plugin_ErrorHandler',
+        );
+        
+        $resource = new Zend_Application_Resource_Frontcontroller(array(
+            'plugins' => $plugins
+        ));
+
+        $resource->init();
+        $front = $resource->getFrontController();
+        $plugins = $front->getPlugins();
+        
+        $this->assertEquals(count($expected), count($plugins));
+        foreach($expected as $index => $class) {
+        	$this->assertEquals($class, get_class($plugins[$index]));
+        }
+    }
+
+    /**
+     * @group ZF-7367
+     */
+    public function testPassingReturnResponseFlagShouldAlterFrontControllerStatus()
+    {
+        require_once 'Zend/Application/Resource/Frontcontroller.php';
+        $resource = new Zend_Application_Resource_Frontcontroller(array(
+            'returnresponse' => true,
+        ));
+        $resource->init();
+        $front = $resource->getFrontController();
+        $this->assertTrue($front->returnResponse());
+    }
 }
 
 if (PHPUnit_MAIN_METHOD == 'Zend_Application_Resource_FrontcontrollerTest::main') {

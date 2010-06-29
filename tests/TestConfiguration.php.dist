@@ -543,6 +543,20 @@ define('TESTS_ZEND_QUEUE_PLATFORMJQ_HOST', false);
 define('TESTS_ZEND_QUEUE_PLATFORMJQ_PASS', false);
 
 /**
+ * Zend_Serializer adapter tests
+ * 
+ * TESTS_ZEND_SERIALIZER_ADAPTER_WDDX_ENABLED:
+ *   - enable wddx adapter tests
+ *   - needs wddx and SimpleXml php extension installed
+ *
+ * TESTS_ZEND_SERIALIZER_ADAPTER_IGBINARY_ENABLED:
+ *   - enable igbinary adapter tests
+ *   - needs igbinary php extension installed
+ */
+define('TESTS_ZEND_SERIALIZER_ADAPTER_WDDX_ENABLED', false);
+define('TESTS_ZEND_SERIALIZER_ADAPTER_IGBINARY_ENABLED', false);
+
+/**
  * Zend_Service_Amazon online tests
  */
 define('TESTS_ZEND_SERVICE_AMAZON_ONLINE_ENABLED', false);
@@ -555,6 +569,14 @@ define('TESTS_ZEND_SERVICE_AMAZON_S3_BUCKET', 'zftestamazons3bucket');
  */
 define('TESTS_ZEND_SERVICE_DELICIOUS_ENABLED', false);
 
+/**
+ * Zend_Service_DeveloperGarden tests
+ * Setup your Username and Password to test this Service
+ */
+define('TESTS_ZEND_SERVICE_DEVELOPERGARDEN_ONLINE_ENABLED', false);
+define('TESTS_ZEND_SERVICE_DEVELOPERGARDEN_ONLINE_LOGIN', 'ZF_Username');
+define('TESTS_ZEND_SERVICE_DEVELOPERGARDEN_ONLINE_PASSWORD', 'ZF_Password');
+ 
 /**
  * Zend_Service_Flickr online tests
  */

@@ -2025,6 +2025,142 @@ class Zend_Form_ElementTest extends PHPUnit_Framework_TestCase
             $this->markTestIncomplete('Error occurs for PHP 5.1.4 on Windows');
         }
     }
+
+    /**
+     * @ZF-8882
+     */
+    public function testErrorMessagesShouldNotBeTranslatedWhenTranslatorIsDisabled()
+    {
+        $translations = array(
+            'foo' => 'Foo message',
+        );
+        $translate = new Zend_Translate('array', $translations);
+        $this->element->setTranslator($translate)
+                      ->addErrorMessage('foo')
+                      ->addValidator('Alpha');
+        $this->assertFalse($this->element->isValid(123));
+        $messages = $this->element->getMessages();
+        $this->assertEquals(1, count($messages));
+        $this->assertEquals('Foo message', array_shift($messages));
+
+        $this->element->setDisableTranslator(true);
+        $this->assertFalse($this->element->isValid(123));
+        $messages = $this->element->getMessages();
+        $this->assertEquals(1, count($messages));
+        $this->assertEquals('foo', array_shift($messages));
+    }
+    
+    /**
+     * @group ZF-9275
+     */
+    public function testElementDoesntOverrideDefaultValidatorTranslatorWithDefaultRegistryTranslator()
+    {
+        $registryTranslations = array('alphaInvalid' => 'Registry message');
+        $registryTranslate = new Zend_Translate('array', $registryTranslations);
+        Zend_Registry::set('Zend_Translate', $registryTranslate);
+        
+        $validatorTranslations = array('alphaInvalid' => 'Validator message');
+        $validatorTranslate = new Zend_Translate('array', $validatorTranslations);
+        Zend_Validate_Abstract::setDefaultTranslator($validatorTranslate);
+        
+        $elementTranslations = array('alphaInvalid' => 'Element message');
+        $elementTranslate = new Zend_Translate('array', $elementTranslations);
+       
+        // the default validate translator should beat the registry one
+        $this->element->addValidator('Alpha');
+        $this->assertFalse($this->element->isValid(123));
+        $messages = $this->element->getMessages();
+        $this->assertEquals('Validator message', $messages['alphaInvalid']);
+    }
+    
+    /**
+     * @group ZF-9275
+     */
+    public function testDefaultTranslatorDoesntOverrideElementTranslatorOnValdiation()
+    {
+        $registryTranslations = array('alphaInvalid' => 'Registry message');
+        $registryTranslate = new Zend_Translate('array', $registryTranslations);
+        Zend_Registry::set('Zend_Translate', $registryTranslate);
+        
+        $validatorTranslations = array('alphaInvalid' => 'Validator message');
+        $validatorTranslate = new Zend_Translate('array', $validatorTranslations);
+        Zend_Validate_Abstract::setDefaultTranslator($validatorTranslate);
+        
+        $elementTranslations = array('alphaInvalid' => 'Element message');
+        $elementTranslate = new Zend_Translate('array', $elementTranslations);
+        
+        $this->element->addValidator('Alpha');
+        $this->element->setTranslator($elementTranslate);
+        $this->assertFalse($this->element->isValid(123));
+        $messages = $this->element->getMessages();
+        $this->assertEquals('Element message', $messages['alphaInvalid']);
+    }
+
+    /**
+     * @group ZF-9275
+     */
+    public function testValidatorsDefaultTranslatorDoesntOverrideFormsDefaultTranslator()
+    {
+        $formTranslations = array('alphaInvalid' => 'Form message');
+        $formTranslate = new Zend_Translate('array', $formTranslations);
+        Zend_Form::setDefaultTranslator($formTranslate);
+        
+        $validatorTranslations = array('alphaInvalid' => 'Validator message');
+        $validatorTranslate = new Zend_Translate('array', $validatorTranslations);
+        Zend_Validate_Abstract::setDefaultTranslator($validatorTranslate);
+        
+        // the default validate translator should beat the registry one
+        $this->element->addValidator('Alpha');
+        $this->assertFalse($this->element->isValid(123));
+        $messages = $this->element->getMessages();
+        $this->assertEquals('Form message', $messages['alphaInvalid']);
+    }
+    
+    /**
+     * @group ZF-9275
+     */
+    public function testElementsTranslatorDoesntOverrideValidatorsDirectlyAttachedTranslator()
+    {
+        $elementTranslations = array('alphaInvalid' => 'Element message');
+        $elementTranslate = new Zend_Translate('array', $elementTranslations);
+        
+        $validatorTranslations = array('alphaInvalid' => 'Direct validator message');
+        $validatorTranslate = new Zend_Translate('array', $validatorTranslations);
+        
+        $validator = new Zend_Validate_Alpha();
+        $validator->setTranslator($validatorTranslate);
+        $this->element->addValidator($validator);
+        $this->assertFalse($this->element->isValid(123));
+        $messages = $this->element->getMessages();
+        $this->assertEquals('Direct validator message', $messages['alphaInvalid']);
+    }
+
+    /**
+     * Prove the fluent interface on Zend_Form::loadDefaultDecorators
+     *
+     * @link http://framework.zend.com/issues/browse/ZF-9913
+     * @return void
+     */
+    public function testFluentInterfaceOnLoadDefaultDecorators()
+    {
+        $this->assertSame($this->element, $this->element->loadDefaultDecorators());
+    }
+
+    /**
+     * @group ZF-7552
+     */
+    public function testAddDecoratorsKeepsNonNumericKeyNames()
+    {
+        $this->element->addDecorators(array(array(array('td'  => 'HtmlTag'),
+                                               array('tag' => 'td')),
+                                         array(array('tr'  => 'HtmlTag'),
+                                               array('tag' => 'tr')),
+                                         array('HtmlTag', array('tag' => 'baz'))));
+        $t1 = $this->element->getDecorators();
+        $this->element->setDecorators($t1);
+        $t2 = $this->element->getDecorators();
+        $this->assertEquals($t1, $t2);
+    }
 }
 
 class Zend_Form_ElementTest_Decorator extends Zend_Form_Decorator_Abstract
@@ -2065,6 +2201,28 @@ class Zend_Form_ElementTest_ArrayFilter implements Zend_Filter_Interface
         $form = new Zend_Form(array('elements' => array($username)));
         $this->assertTrue($form->isValid(array('username' => 'abcde')));
     }
+
+    /**
+     * @see ZF-6822
+     */
+    public function testValidatorByUsingStringNotation()
+    {
+        $this->_checkZf2794();
+
+        $username = new Zend_Form_Element('username');
+        $username->addValidator('stringLength', true, array(5, 20))
+                 ->addValidator('regex', true, '/^[a-zA-Z0-9_]*$/')
+                 ->addFilter('StringToLower')
+                 ->setRequired(true);
+        $form = new Zend_Form(array('elements' => array($username)));
+        $form->isValid(array('username' => '#'));
+
+        $validator = $username->getValidator('stringLength');
+        $this->assertTrue($validator->zfBreakChainOnFailure);
+        $validator = $username->getValidator('regex');
+        $this->assertTrue($validator->zfBreakChainOnFailure);
+    }
+    
 }
 
 if (PHPUnit_MAIN_METHOD == 'Zend_Form_ElementTest::main') {

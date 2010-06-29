@@ -21,7 +21,7 @@
  */
 
 /**
- * EN-Revision: 20377
+ * EN-Revision: 22075
  */
 return array(
     // Zend_Validate_Alnum
@@ -72,7 +72,7 @@ return array(
 
     // Zend_Validate_Digits
     "Invalid type given, value should be string, integer or float" => "Invalid type given, value should be string, integer or float",
-    "'%value%' contains not only digit characters" => "'%value%' contains not only digit characters",
+    "'%value%' contains characters which are not digits; but only digits are allowed" => "'%value%' contains characters which are not digits; but only digits are allowed",
     "'%value%' is an empty string" => "'%value%' is an empty string",
 
     // Zend_Validate_EmailAddress
@@ -208,7 +208,7 @@ return array(
     "'%value%' has failed the IBAN check" => "'%value%' has failed the IBAN check",
 
     // Zend_Validate_Identical
-    "The token '%token%' does not match the given token '%value%'" => "The token '%token%' does not match the given token '%value%'",
+    "The two given tokens do not match" => "The two given tokens do not match",
     "No token was provided to match against" => "No token was provided to match against",
 
     // Zend_Validate_InArray
@@ -223,6 +223,7 @@ return array(
     "'%value%' does not appear to be a valid IP address" => "'%value%' does not appear to be a valid IP address",
 
     // Zend_Validate_Isbn
+    "Invalid type given, value should be string or integer" => "Invalid type given, value should be string or integer",
     "'%value%' is no valid ISBN number" => "'%value%' is no valid ISBN number",
 
     // Zend_Validate_LessThan
@@ -233,24 +234,29 @@ return array(
     "Value is required and can't be empty" => "Value is required and can't be empty",
 
     // Zend_Validate_PostCode
-    "Invalid type given, value should be string or integer" => "Invalid type given, value should be string or integer",
-    "'%value%' does not appear to be an postal code" => "'%value%' does not appear to be an postal code",
+    "Invalid type given. The value should be a string or a integer" => "Invalid type given. The value should be a string or a integer",
+    "'%value%' does not appear to be a postal code" => "'%value%' does not appear to be a postal code",
 
     // Zend_Validate_Regex
     "Invalid type given, value should be string, integer or float" => "Invalid type given, value should be string, integer or float",
     "'%value%' does not match against pattern '%pattern%'" => "'%value%' does not match against pattern '%pattern%'",
+    "There was an internal error while using the pattern '%pattern%'" => "There was an internal error while using the pattern '%pattern%'",
 
     // Zend_Validate_Sitemap_Changefreq
     "'%value%' is no valid sitemap changefreq" => "'%value%' is no valid sitemap changefreq",
+    "Invalid type given, the value should be a string" => "Invalid type given, the value should be a string",
 
     // Zend_Validate_Sitemap_Lastmod
     "'%value%' is no valid sitemap lastmod" => "'%value%' is no valid sitemap lastmod",
+    "Invalid type given, the value should be a string" => "Invalid type given, the value should be a string",
 
     // Zend_Validate_Sitemap_Loc
     "'%value%' is no valid sitemap location" => "'%value%' is no valid sitemap location",
+    "Invalid type given, the value should be a string" => "Invalid type given, the value should be a string",
 
     // Zend_Validate_Sitemap_Priority
     "'%value%' is no valid sitemap priority" => "'%value%' is no valid sitemap priority",
+    "Invalid type given, the value should be a integer, a float or a numeric string" => "Invalid type given, the value should be a integer, a float or a numeric string",
 
     // Zend_Validate_StringLength
     "Invalid type given, value should be a string" => "Invalid type given, value should be a string",

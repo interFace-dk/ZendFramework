@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Reviewed: no -->
 <sect1 id="zend.tag.cloud">
-
     <title>Zend_Tag_Cloud</title>
 
     <para>
         <classname>Zend_Tag_Cloud</classname> is the rendering part of
-        <classname>Zend_Tag</classname>. By default it comes with a set of HTML
+        <classname>Zend_Tag</classname>. By default it comes with a set of <acronym>HTML</acronym>
         decorators, which allow you to create tag clouds for a website, but
         also supplies you with two abstract classes to create your own
         decorators, to create tag clouds in <acronym>PDF</acronym> documents for example.
@@ -30,6 +29,7 @@
                 decorators constructor.
             </para>
         </listitem>
+
         <listitem>
             <para>
                 <code>tagDecorator</code>: defines the decorator for individual
@@ -41,6 +41,7 @@
                 decorators constructor.
             </para>
         </listitem>
+
         <listitem>
             <para>
                 <code>pluginLoader</code>: a different plugin loader to use.
@@ -48,6 +49,7 @@
                 <classname>Zend_Loader_PluginLoader_Interface</classname>.
             </para>
         </listitem>
+
         <listitem>
             <para>
                 <code>prefixPath</code>: prefix paths to add to the plugin
@@ -56,12 +58,14 @@
                 elements will be skipped.
             </para>
         </listitem>
+
         <listitem>
             <para>
                 <code>itemList</code>: a different item list to use. Must be an
                 instance of <classname>Zend_Tag_ItemList</classname>.
             </para>
         </listitem>
+
         <listitem>
             <para>
                 <code>tags</code>: a list of tags to assign to the cloud. Each
@@ -73,13 +77,13 @@
     </itemizedlist>
 
     <example id="zend.tag.cloud.example.using">
-
         <title>Using Zend_Tag_Cloud</title>
 
         <para>
             This example illustrates a basic example of how to create a tag
             cloud, add multiple tags to it and finally render it.
         </para>
+
         <programlisting language="php"><![CDATA[
 // Create the cloud and assign static tags to it
 $cloud = new Zend_Tag_Cloud(array(
@@ -96,6 +100,7 @@ $cloud = new Zend_Tag_Cloud(array(
 // Render the cloud
 echo $cloud;
 ]]></programlisting>
+
         <para>
             This will output the tag cloud with the three tags, spread with
             the default font-sizes.
@@ -103,7 +108,6 @@ echo $cloud;
     </example>
 
     <sect2 id="zend.tag.cloud.decorators">
-
         <title>Decorators</title>
 
         <para>
@@ -111,25 +115,25 @@ echo $cloud;
             able to render a tag cloud. This includes a decorator which renders
             the single tags as well as a decorator which renders the surounding
             cloud. <classname>Zend_Tag_Cloud</classname> ships a default decorator set for
-            formatting a tag cloud in HTML. This set will by default create a
+            formatting a tag cloud in <acronym>HTML</acronym>. This set will by default create a
             tag cloud as ul/li-list, spread with different font-sizes according
             to the weight values of the tags assigned to them.
         </para>
 
         <sect3 id="zend.tag.cloud.decorators.htmltag">
-
             <title>HTML Tag decorator</title>
 
             <para>
-                The HTML tag decorator will by default render every tag in an
+                The <acronym>HTML</acronym> tag decorator will by default render every tag in an
                 anchor element, surounded by a li element. The anchor itself is
                 fixed and cannot be changed, but the surounding element(s) can.
             </para>
 
             <note>
                 <title>URL parameter</title>
+
                 <para>
-                    As the HTML tag decorator always surounds the tag title with
+                    As the <acronym>HTML</acronym> tag decorator always surounds the tag title with
                     an anchor, you should define an <acronym>URL</acronym> parameter for every
                     tag used in it.
                 </para>
@@ -151,27 +155,31 @@ echo $cloud;
                         em, ex, px, in, cm, mm, pt, pc and &#37;.
                     </para>
                 </listitem>
+
                 <listitem>
                     <para>
                         <code>minFontSize</code>: the minimum font-size
                         distributed through the tags (must be an integer).
                     </para>
                 </listitem>
+
                 <listitem>
                     <para>
                         <code>maxFontSize</code>: the maximum font-size
                         distributed through the tags (must be an integer).
                     </para>
                 </listitem>
+
                 <listitem>
                     <para>
                         <code>classList</code>: an arry of classes distributed
                         through the tags.
                     </para>
                 </listitem>
+
                 <listitem>
                     <para>
-                        <code>htmlTags</code>: an array of HTML tags surounding
+                        <code>htmlTags</code>: an array of <acronym>HTML</acronym> tags surounding
                         the anchor. Each element can either be a string, which
                         is used as element type then, or an array containing
                         an attribute list for the element, defined as key/value
@@ -183,13 +191,12 @@ echo $cloud;
         </sect3>
 
         <sect3 id="zend.tag.cloud.decorators.htmlcloud">
-
             <title>HTML Cloud decorator</title>
 
             <para>
-                The HTML cloud decorator will suround the HTML tags with an
-                ul-element by default and add no separation. Like in the tag
-                decorator, you can define multiple surounding HTML tags and
+                The <acronym>HTML</acronym> cloud decorator will suround the <acronym>HTML</acronym>
+                tags with an ul-element by default and add no separation. Like in the tag
+                decorator, you can define multiple surounding <acronym>HTML</acronym> tags and
                 additionally define a separator. The available options are:
             </para>
 
@@ -200,19 +207,17 @@ echo $cloud;
                         is placed between all tags.
                     </para>
                 </listitem>
+
                 <listitem>
                     <para>
-                        <code>htmlTags</code>: an array of HTML tags surounding
+                        <code>htmlTags</code>: an array of <acronym>HTML</acronym> tags surounding
                         all tags. Each element can either be a string, which
                         is used as element type then, or an array containing
                         an attribute list for the element, defined as key/value
-                        pair. In this case, the array key is used as element
-                        type.
+                        pair. In this case, the array key is used as element type.
                     </para>
                 </listitem>
             </itemizedlist>
         </sect3>
-
     </sect2>
-
 </sect1>

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Reviewed: no -->
 <sect1 id="zend.filter.writing_filters">
-
     <title>Writing Filters</title>
 
     <para>
@@ -19,8 +18,9 @@
 
     <para>
         The following example demonstrates how to write a custom filter:
+    </para>
 
-        <programlisting language="php"><![CDATA[
+    <programlisting language="php"><![CDATA[
 class MyFilter implements Zend_Filter_Interface
 {
     public function filter($value)
@@ -32,18 +32,14 @@ class MyFilter implements Zend_Filter_Interface
 }
 ]]></programlisting>
 
-    </para>
-
     <para>
         To add an instance of the filter defined above to a filter chain:
+    </para>
 
-        <programlisting language="php"><![CDATA[
+    <programlisting language="php"><![CDATA[
 $filterChain = new Zend_Filter();
 $filterChain->addFilter(new MyFilter());
 ]]></programlisting>
-
-    </para>
-
 </sect1>
 <!--
 vim:se ts=4 sw=4 et:

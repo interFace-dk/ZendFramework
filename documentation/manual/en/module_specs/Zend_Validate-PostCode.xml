@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Reviewed: no -->
 <sect2 id="zend.validate.set.post_code">
-
     <title>PostCode</title>
 
     <para>
@@ -89,7 +88,7 @@ $validator->setFormat('AT-\d{5}');
             <classname>Zend_Validate_PostCode</classname>.
         </para>
 
-    <programlisting language="php"><![CDATA[
+        <programlisting language="php"><![CDATA[
 $validator = new Zend_Validate_PostCode('de_AT');
 $validator = new Zend_Validate_PostCode($locale);
 ]]></programlisting>
@@ -100,12 +99,36 @@ $validator = new Zend_Validate_PostCode($locale);
             "format"; these will be used to set the appropriate values in the validator object.
         </para>
 
-    <programlisting language="php"><![CDATA[
+        <programlisting language="php"><![CDATA[
 $validator = new Zend_Validate_PostCode(array(
     'locale' => 'de_AT',
     'format' => 'AT_\d+'
 ));
 ]]></programlisting>
+    </sect3>
+
+    <sect3 id="zend.validate.set.post_code.options">
+        <title>Supported options for Zend_Validate_PostCode</title>
+
+        <para>
+            The following options are supported for <classname>Zend_Validate_PostCode</classname>:
+        </para>
+
+        <itemizedlist>
+            <listitem>
+                <para>
+                    <emphasis><property>format</property></emphasis>: Sets a postcode format which
+                    will be used for validation of the input.
+                </para>
+            </listitem>
+
+            <listitem>
+                <para>
+                    <emphasis><property>locale</property></emphasis>: Sets a locale from which the
+                    postcode will be taken from.
+                </para>
+            </listitem>
+        </itemizedlist>
     </sect3>
 </sect2>
 <!--

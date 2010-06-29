@@ -506,7 +506,7 @@ abstract class Zend_Http_Client_CommonHttpTests extends PHPUnit_Framework_TestCa
 
         // Set the new expected URI
         $uri = clone $this->client->getUri();
-        $uri->setPath(dirname($uri->getPath()) . '/path/to/fake/file.ext');
+        $uri->setPath(rtrim(dirname($uri->getPath()), '/') . '/path/to/fake/file.ext');
         $uri = $uri->__toString();
 
         $res = $this->client->request('GET');
@@ -739,6 +739,10 @@ abstract class Zend_Http_Client_CommonHttpTests extends PHPUnit_Framework_TestCa
      */
     public function testUploadRawData()
     {
+        if (!ini_get('file_uploads')) {
+            $this->markTestSkipped('File uploads disabled.');
+        }
+        
         $this->client->setUri($this->baseuri. 'testUploads.php');
 
         $rawdata = file_get_contents(__FILE__);
@@ -755,6 +759,10 @@ abstract class Zend_Http_Client_CommonHttpTests extends PHPUnit_Framework_TestCa
      */
     public function testUploadLocalFile()
     {
+        if (!ini_get('file_uploads')) {
+            $this->markTestSkipped('File uploads disabled.');
+        }
+        
         $this->client->setUri($this->baseuri. 'testUploads.php');
         $this->client->setFileUpload(__FILE__, 'uploadfile', null, 'text/x-foo-bar');
         $res = $this->client->request('POST');
@@ -767,6 +775,10 @@ abstract class Zend_Http_Client_CommonHttpTests extends PHPUnit_Framework_TestCa
 
     public function testUploadLocalDetectMime()
     {
+        if (!ini_get('file_uploads')) {
+            $this->markTestSkipped('File uploads disabled.');
+        }
+        
         $detect = null;
         if (function_exists('finfo_file')) {
             $f = @finfo_open(FILEINFO_MIME);
@@ -795,6 +807,10 @@ abstract class Zend_Http_Client_CommonHttpTests extends PHPUnit_Framework_TestCa
 
     public function testUploadNameWithSpecialChars()
     {
+        if (!ini_get('file_uploads')) {
+            $this->markTestSkipped('File uploads disabled.');
+        }
+        
         $this->client->setUri($this->baseuri. 'testUploads.php');
 
         $rawdata = file_get_contents(__FILE__);
@@ -823,6 +839,10 @@ abstract class Zend_Http_Client_CommonHttpTests extends PHPUnit_Framework_TestCa
      */
     public function testMutipleFilesWithSameFormNameZF5744()
     {
+        if (!ini_get('file_uploads')) {
+            $this->markTestSkipped('File uploads disabled.');
+        }
+        
         $rawData = 'Some test raw data here...';
 
         $this->client->setUri($this->baseuri . 'testUploads.php');
@@ -844,7 +864,7 @@ abstract class Zend_Http_Client_CommonHttpTests extends PHPUnit_Framework_TestCa
      * Test that lines that might be evaluated as boolean false do not break
      * the reading prematurely.
      *
-     * @see http://framework.zend.com/issues/browse/ZF-4238
+     * @link http://framework.zend.com/issues/browse/ZF-4238
      */
     public function testZF4238FalseLinesInResponse()
     {
@@ -936,6 +956,29 @@ abstract class Zend_Http_Client_CommonHttpTests extends PHPUnit_Framework_TestCa
         $res = $this->client->setRawData($data, 'image/jpeg')->request('PUT');
         $expected = $this->_getTestFileContents('staticFile.jpg');
         $this->assertEquals($expected, $res->getBody(), 'Response body does not contain the expected data');
+    }
+    
+    /**
+     * Test that we can deal with double Content-Length headers
+     * 
+     * @link http://framework.zend.com/issues/browse/ZF-9404
+     */
+    public function testZF9404DoubleContentLengthHeader()
+    {
+        $this->client->setUri($this->baseuri . 'ZF9404-doubleContentLength.php');
+        $expect = filesize(dirname(realpath(__FILE__)) . DIRECTORY_SEPARATOR . '_files' . DIRECTORY_SEPARATOR . 'ZF9404-doubleContentLength.php');
+        
+        $response = $this->client->request();
+        if (! $response->isSuccessful()) {
+            throw new ErrorException("Error requesting test URL");
+        }
+        
+        $clen = $response->getHeader('content-length');
+        if (! (is_array($clen))) {
+            $this->markTestSkipped("Didn't get multiple Content-length headers");
+        }
+        
+        $this->assertEquals($expect, strlen($response->getBody()));
     }
     
     /**

@@ -170,8 +170,8 @@
 
             <para>
                 This barcode must have a length of 18 characters. It support only digits. The last
-                digit is always a checksum digit which is calculated with modulo 10. This code is often
-                used for the identification of shipping containers.
+                digit is always a checksum digit which is calculated with modulo 10. This code is
+                often used for the identification of shipping containers.
             </para>
         </listitem>
 
@@ -350,11 +350,44 @@
         </listitem>
     </itemizedlist>
 
+    <sect3 id="zend.validate.set.barcode.options">
+        <title>Supported options for Zend_Validate_Barcode</title>
+
+        <para>
+            The following options are supported for <classname>Zend_Validate_Barcode</classname>:
+        </para>
+
+        <itemizedlist>
+            <listitem>
+                <para>
+                    <emphasis><property>adapter</property></emphasis>: Sets the barcode adapter
+                    which will be used. Supported are all above noted adapters. When using a self
+                    defined adapter, then you have to set the complete classname.
+                </para>
+            </listitem>
+
+            <listitem>
+                <para>
+                    <emphasis><property>checksum</property></emphasis>: <constant>TRUE</constant>
+                    when the barcode should contain a checksum. The default value depends on the
+                    used adapter. Note that some adapters don't allow to set this option.
+                </para>
+            </listitem>
+
+            <listitem>
+                <para>
+                    <emphasis><property>options</property></emphasis>: Defines optional options for
+                    a self written adapters.
+                </para>
+            </listitem>
+        </itemizedlist>
+    </sect3>
+
     <sect3 id="zend.validate.set.barcode.basic">
         <title>Basic usage</title>
 
         <para>
-            To validate if a given string is a barcode you just need to know its type.  See the
+            To validate if a given string is a barcode you just need to know its type. See the
             following example for an EAN13 barcode:
         </para>
 
@@ -409,7 +442,7 @@ if ($valid->isValid($input)) {
         <para>
             You may write custom barcode validators for usage with
             <classname>Zend_Validate_Barcode</classname>; this is often necessary when dealing with
-            proprietary barcode types.  To write your own barcode validator, you need the following
+            proprietary barcode types. To write your own barcode validator, you need the following
             information.
         </para>
 

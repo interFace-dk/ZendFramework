@@ -1,4 +1,3 @@
-#!/usr/bin/php
 <?php
 
 require_once dirname(__FILE__) . '/../../common.php';
@@ -14,11 +13,11 @@ print(Demos_Zend_Service_LiveDocx_Helper::wrapLine(
     PHP_EOL)
 );
 
-$phpLiveDocx = new Zend_Service_LiveDocx_MailMerge();
+$mailMerge = new Zend_Service_LiveDocx_MailMerge();
 
-$phpLiveDocx->setUsername(Demos_Zend_Service_LiveDocx_Helper::USERNAME)
-            ->setPassword(Demos_Zend_Service_LiveDocx_Helper::PASSWORD);
+$mailMerge->setUsername(DEMOS_ZEND_SERVICE_LIVEDOCX_USERNAME)
+          ->setPassword(DEMOS_ZEND_SERVICE_LIVEDOCX_PASSWORD);
 
-print(Demos_Zend_Service_LiveDocx_Helper::listDecorator($phpLiveDocx->listTemplates()));
+print(Demos_Zend_Service_LiveDocx_Helper::listDecorator($mailMerge->listTemplates()));
 
-unset($phpLiveDocx);
+unset($mailMerge);

@@ -1,41 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- EN-Revision: 17175 -->
+<!-- EN-Revision: 21829 -->
 <!-- Reviewed: no -->
 <sect1 id="zend.memory.memory-objects">
-
     <title>Memory Objekte</title>
 
     <sect2 id="zend.memory.memory-objects.movable">
-
         <title>Verschiebbar</title>
 
         <para>
             Um verschiebbare Memory Objekte zu Erstellen kann die
             <methodname>create([$data])</methodname> Methode des Memory Managers verwendet werden:
-            <programlisting language="php"><![CDATA[
+        </para>
+
+        <programlisting language="php"><![CDATA[
 $memObject = $memoryManager->create($data);
 ]]></programlisting>
-        </para>
 
         <para>
             "Verschiebbar" bedeutet das solche Objekte verschoben und von Speicher
             entfernt werden können und wieder geladen werden wenn der Code der
             Anwendung auf das Objekt wieder zugreift.
         </para>
-
     </sect2>
 
     <sect2 id="zend.memory.memory-objects.locked">
-
         <title>Gesperrt</title>
 
         <para>
             Gesperrte Memory Objekte können erstellt werden mit Hilfe der
             <methodname>createLocked([$data])</methodname> Methode des Memory Managers:
-            <programlisting language="php"><![CDATA[
+        </para>
+
+        <programlisting language="php"><![CDATA[
 $memObject = $memoryManager->createLocked($data);
 ]]></programlisting>
-        </para>
 
         <para>
             "Gesperrt" bedeutet das solche Objekte niemals getauscht und vom Speicher
@@ -66,17 +64,17 @@ $memObject = $memoryManager->createLocked($data);
             Zeichenketten Variablen. Der Overhead ist ein einzelnes De-Referenzieren um
             die Eigenschaft der Klasse zu erhalten.
         </para>
-
     </sect2>
 
     <sect2 id="zend.memory.memory-objects.value">
-
         <title>Memory Container 'value' Eigenschaft</title>
 
         <para>
             Die '<code>value</code>' Eigenschaft des Memory Containers (gesperrt oder verschiebbar)
             kann verwendet werden um mit Memory Objekt Daten zu arbeiten:
-            <programlisting language="php"><![CDATA[
+        </para>
+
+        <programlisting language="php"><![CDATA[
 $memObject = $memoryManager->create($data);
 
 echo $memObject->value;
@@ -89,7 +87,6 @@ echo ord($memObject->value[$index1]);
 
 $memObject->value = substr($memObject->value, $start, $length);
 ]]></programlisting>
-        </para>
 
         <para>
             Ein alternaviter Weg um auf die Daten des Memory Objektes zuzugreifen
@@ -102,7 +99,6 @@ $memObject->value = substr($memObject->value, $start, $length);
     </sect2>
 
     <sect2 id="zend.memory.memory-objects.api">
-
         <title>Memory Container Interface</title>
 
         <para>
@@ -110,7 +106,6 @@ $memObject->value = substr($memObject->value, $start, $length);
         </para>
 
         <sect3 id="zend.memory.memory-objects.api.getRef">
-
             <title>getRef() Methode</title>
 
             <programlisting language="php"><![CDATA[
@@ -143,7 +138,9 @@ public function &getRef();
                 verändert wird. Deswegen ist es eine gute Idee die
                 <methodname>getRef()</methodname> Methode für den Zugriff auf die Werte der Daten
                 zu verwenden:
-                <programlisting language="php"><![CDATA[
+            </para>
+
+            <programlisting language="php"><![CDATA[
 $memObject = $memoryManager->create($data);
 
 $value = &$memObject->getRef();
@@ -153,22 +150,22 @@ for ($count = 0; $count < strlen($value); $count++) {
     ...
 }
 ]]></programlisting>
-            </para>
-
         </sect3>
 
         <sect3 id="zend.memory.memory-objects.api.touch">
-
             <title>touch() Methode</title>
 
             <programlisting language="php"><![CDATA[
 public function touch();
 ]]></programlisting>
+
             <para>
                 Die <methodname>touch()</methodname> Methode sollte in Verbindung mit
                 <methodname>getRef()</methodname> verwendet werden. Das signalisiert das der
                 Wert des Objektes sich verändert hat:
-                <programlisting language="php"><![CDATA[
+            </para>
+
+            <programlisting language="php"><![CDATA[
 $memObject = $memoryManager->create($data);
 ...
 
@@ -184,13 +181,9 @@ for ($count = 0; $count < strlen($value); $count++) {
 
 $memObject->touch();
 ]]></programlisting>
-
-            </para>
-
         </sect3>
 
         <sect3 id="zend.memory.memory-objects.api.lock">
-
             <title>lock() Methode</title>
 
             <programlisting language="php"><![CDATA[
@@ -211,7 +204,9 @@ public function lock();
                 Gesperrte Objekte im Speicher garantieren auch das die Referent die
                 durch die <methodname>getRef()</methodname> Methode zurückgegeben wird gültig ist
                 bis das Objekt entsperrt wird:
-                <programlisting language="php"><![CDATA[
+            </para>
+
+            <programlisting language="php"><![CDATA[
 $memObject1 = $memoryManager->create($data1);
 $memObject2 = $memoryManager->create($data2);
 ...
@@ -230,12 +225,9 @@ $memObject1->touch();
 $memObject1->unlock();
 $memObject2->unlock();
 ]]></programlisting>
-            </para>
-
         </sect3>
 
         <sect3 id="zend.memory.memory-objects.api.unlock">
-
             <title>unlock() Methode</title>
 
             <programlisting language="php"><![CDATA[
@@ -246,11 +238,9 @@ public function unlock();
                 Die <methodname>unlock()</methodname> Methode entsperrt Objekte wenn es nicht mehr
                 notwendig ist diese zu sperren. Siehe das obige Beispiel.
             </para>
-
         </sect3>
 
         <sect3 id="zend.memory.memory-objects.api.isLocked">
-
             <title>isLocked() Methode</title>
 
             <programlisting language="php"><![CDATA[
@@ -266,9 +256,6 @@ public function isLocked();
                 kann entweder <constant>TRUE</constant> oder <constant>FALSE</constant>
                 zurückgegeben werden.
             </para>
-
         </sect3>
-
     </sect2>
-
 </sect1>

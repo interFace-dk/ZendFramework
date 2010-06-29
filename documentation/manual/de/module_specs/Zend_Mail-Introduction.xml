@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- EN-Revision: 19418 -->
+<!-- EN-Revision: 21825 -->
 <!-- Reviewed: no -->
 <sect1 id="zend.mail.introduction">
-
     <title>Einführung</title>
 
     <sect2 id="zend.mail.introduction.getting-started">
-
         <title>Beginnen</title>
 
         <para>
@@ -18,7 +16,6 @@
         </para>
 
         <example id="zend.mail.introduction.example-1">
-
             <title>Einfache E-Mail mit Zend_Mail</title>
 
             <para>
@@ -41,10 +38,11 @@ $mail->send();
 
         <note>
             <title>Minimale Definitionen</title>
+
             <para>
                 Um eine E-Mail mit <classname>Zend_Mail</classname> zu versenden, muß mindestens ein
                 Empfänger, ein Versender (z.B., mit <methodname>setFrom()</methodname>) und ein
-                Nachrichtentext (Text und/oder HTML) angeben werden.
+                Nachrichtentext (Text und/oder <acronym>HTML</acronym>) angeben werden.
             </para>
         </note>
 
@@ -77,11 +75,9 @@ $mail->setBodyText('Das ist der Text der Nachricht.')
     ->setSubject('TestBetreff')
     ->send();
 ]]></programlisting>
-
     </sect2>
 
     <sect2 id="zend.mail.introduction.sendmail">
-
         <title>Den standardmäßigen Sendmail Transport konfigurieren</title>
 
         <para>
@@ -98,7 +94,6 @@ $mail->setBodyText('Das ist der Text der Nachricht.')
         </para>
 
         <example id="zend.mail.introduction.sendmail.example-1">
-
             <title>
                 Zusätzliche Parameter einem Zend_Mail_Transport_Sendmail Transport übergeben
             </title>
@@ -120,11 +115,11 @@ $mail->addTo('somebody_else@example.com', 'Einige Empfänger');
 $mail->setSubject('TestBetreff');
 $mail->send();
 ]]></programlisting>
-
         </example>
 
         <note>
             <title>Safe Mode Einschränkungen</title>
+
             <para>
                 Der zusätzliche optionale Parameter verursacht das die <ulink
                     url="http://php.net/mail"><methodname>mail()</methodname></ulink> Funktion
@@ -136,12 +131,12 @@ $mail->send();
             <title>Sendmail Transport und Windows</title>
 
             <para>
-                Das Handbuch von PHP sagt aus dass die <methodname>mail()</methodname> ein
-                unterschiedliches Verhalten auf Windows und auf *nix basierten Systemen zeigt. Die
-                Verwendung von Sendmail Transport wird auf Windows nicht in Verbindung mit
-                <methodname>addBcc()</methodname> funktionieren. Die <methodname>mail()</methodname>
-                Funktion sendet auf eine Art und Weise an den BCC Empfänger, das alle anderen
-                Empfänger diesen als Empfänger sehen!
+                Das Handbuch von <acronym>PHP</acronym> sagt aus dass die Methode
+                <methodname>mail()</methodname> ein unterschiedliches Verhalten auf Windows und auf
+                *nix basierten Systemen zeigt. Die Verwendung von Sendmail Transport wird auf
+                Windows nicht in Verbindung mit <methodname>addBcc()</methodname> funktionieren. Die
+                <methodname>mail()</methodname> Funktion sendet auf eine Art und Weise an den BCC
+                Empfänger, das alle anderen Empfänger diesen als Empfänger sehen!
             </para>
 
             <para>
@@ -151,6 +146,3 @@ $mail->send();
         </warning>
     </sect2>
 </sect1>
-<!--
-vim:se ts=4 sw=4 et:
--->

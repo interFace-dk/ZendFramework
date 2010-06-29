@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- EN-Revision: 17172 -->
+<!-- EN-Revision: 21994 -->
 <!-- Reviewed: no -->
 <sect1 id="zend.filter.inflector">
     <title>Zend_Filter_Inflector</title>
@@ -49,12 +49,12 @@ $filtered = $inflector->filter(array('page' => $string));
             Eine Beugung benötigt ein <emphasis>Ziel</emphasis> (target) und ein oder mehrere
             <emphasis>Regeln</emphasis> (rules). Ein Ziel ist grundsätzlich ein String der
             Platzhalter für Variablen definiert die ersetzt werden sollen. Sie werden durch das
-            Voranstellen eines ':' spezifiziert: <code>:script</code>.
+            Voranstellen eines ':' spezifiziert: <emphasis>:script</emphasis>.
         </para>
 
         <para>
             Wenn <methodname>filter()</methodname> aufgerufen wird, muß ein Array von
-            Schlüssel/Wert Paaren übergeben werden die den Variablen im Ziel entsprechen.
+            Schlüssel und Wert Paaren übergeben werden die den Variablen im Ziel entsprechen.
         </para>
 
         <para>
@@ -69,9 +69,11 @@ $filtered = $inflector->filter(array('page' => $string));
 
         <para>
             Als Beispiel kann jede konkrete <classname>Zend_Filter</classname> Implementierung
-            verwendet werden; trotzdem, statt auf diese als 'Zend_Filter_Alpha' oder
-            'Zend_Filter_StringToLower' zu verweisen kann einfach 'Alpha' oder 'StringToLower'
-            spezifiziert werden.
+            verwendet werden; trotzdem, statt auf diese als
+            '<classname>Zend_Filter_Alpha</classname>' oder
+            '<classname>Zend_Filter_StringToLower</classname>' zu verweisen kann einfach
+            '<classname>Alpha</classname>' oder '<classname>StringToLower</classname>' spezifiziert
+            werden.
         </para>
     </sect2>
 
@@ -146,8 +148,8 @@ $inflector->setTargetReplacementIdentifier('#');
         <para>
             Typischerweise wird das Ziel über den Konstruktor gesetzt. Trotzdem kann es Ziel später
             geändert werden (zum Beispiel, um die Standardbeugung in Kernkomponenten die dem
-            <code>ViewRenderer</code> oder <classname>Zend_Layout</classname> zu verändern).
-            <methodname>setTarget()</methodname> kann für diese Zwecke verwendet werden:
+            <classname>ViewRenderer</classname> oder <classname>Zend_Layout</classname> zu
+            verändern). <methodname>setTarget()</methodname> kann für diese Zwecke verwendet werden:
         </para>
 
         <programlisting language="php"><![CDATA[
@@ -305,8 +307,8 @@ class Foo
                     <para>
                         <emphasis>String</emphasis>. Der String kann ein Klassenname eines Filters,
                         oder ein Segment des Klassennamens ohne jeglichem Präfix sein der im
-                        Beugungs Plugin Lader gesetzt ist (standardmäßig, ohne den 'Zend_Filter'
-                        Präfix).
+                        Beugungs Plugin Lader gesetzt ist (standardmäßig, ohne den
+                        '<classname>Zend_Filter</classname>' Präfix).
                     </para>
                 </listitem>
 
@@ -354,24 +356,15 @@ $inflector->setFilterRule('script', array(
             </para>
 
             <para>
-                Jede Methode nimmt ein Array von Variable/Regel Paaren, wobei die Regel alles sein
-                kann was der Typ der Regel akzeptiert (String, Filterobjekt, oder Array).
+                Jede Methode nimmt ein Array von Variable und Regel Paaren, wobei die Regel alles
+                sein kann was der Typ der Regel akzeptiert (String, Filterobjekt, oder Array).
                 Variablennamen akzeptieren eine spezielle Schreibweise um das Setzen von statischen
                 Regeln und Filterregeln zu erlauben, entsprechend der folgenden Schreibweise:
             </para>
 
             <itemizedlist>
-                <listitem>
-                    <para>
-                        <emphasis>':' prefix</emphasis>: Filterregeln.
-                    </para>
-                </listitem>
-
-                <listitem>
-                    <para>
-                        <emphasis>kein Präfix</emphasis>: statische Regel.
-                    </para>
-                </listitem>
+                <listitem><para><emphasis>':' prefix</emphasis>: Filterregeln.</para></listitem>
+                <listitem><para><emphasis>kein Präfix</emphasis>: statische Regel.</para></listitem>
             </itemizedlist>
 
             <example id="zend.filter.inflector.rules.multiple.example">
@@ -454,28 +447,26 @@ $inflector->addRules(array(
             <classname>Zend_Config</classname> kann verwendet werden um Regeln, Filter Präfix Pfade,
             oder andere Objektstati im Beugungsmachanismus zu setzen, entweder durch die Übergabe
             eines <classname>Zend_Config</classname> Objekts zum Konstruktor, oder durch
-            <methodname>setConfig()</methodname>. Die folgenden Einstellungen können spezifiziert
+            <methodname>setOptions()</methodname>. Die folgenden Einstellungen können spezifiziert
             werden:
         </para>
 
         <itemizedlist>
             <listitem>
+                <para><property>target</property> spezifiziert das Beugungsziel.</para>
+            </listitem>
+
+            <listitem>
                 <para>
-                    <code>target</code> spezifiziert das Beugungsziel.
+                    <property>filterPrefixPath</property> spezifiziert ein oder mehrere Filter
+                    Präfix und Pfad Paare für die Verwendung mit dem Beugungsmechanismus.
                 </para>
             </listitem>
 
             <listitem>
                 <para>
-                    <code>filterPrefixPath</code> spezifiziert ein oder mehrere Filter Präfix/Pfad
-                    Paare für die Verwendung mit dem Beugungsmechanismus.
-                </para>
-            </listitem>
-
-            <listitem>
-                <para>
-                    <code>throwTargetExceptionsOn</code> sollte ein Boolscher Wert sein der anzeigt
-                    ob eine Ausnahme geworfen wird, oder nicht geworfen wird, wenn ein
+                    <property>throwTargetExceptionsOn</property> sollte ein Boolscher Wert sein der
+                    anzeigt ob eine Ausnahme geworfen wird, oder nicht geworfen wird, wenn ein
                     Idenzifizierer der ersetzt werden soll nach der Beugung noch immer vorhanden
                     ist.
                 </para>
@@ -483,16 +474,16 @@ $inflector->addRules(array(
 
             <listitem>
                 <para>
-                    <code>targetReplacementIdentifier</code> spezifiziert das Zeichen das verwendet
-                    wird wenn Ersetzungsvariablen im Zielstring identifiziert werden.
+                    <property>targetReplacementIdentifier</property> spezifiziert das Zeichen das
+                    verwendet wird wenn Ersetzungsvariablen im Zielstring identifiziert werden.
                 </para>
             </listitem>
 
             <listitem>
                 <para>
-                    <code>rules</code> spezifiziert ein Array von Beugungsregeln; es sollte aus
-                    Schlüsseln bestehen die entweder Werte oder Arrays von Werten spezifizieren, die
-                    mit <methodname>addRules()</methodname> übereinstimmen.
+                    <property>rules</property> spezifiziert ein Array von Beugungsregeln; es sollte
+                    aus Schlüsseln bestehen die entweder Werte oder Arrays von Werten spezifizieren,
+                    die mit <methodname>addRules()</methodname> übereinstimmen.
                 </para>
             </listitem>
         </itemizedlist>
@@ -505,13 +496,10 @@ $inflector->addRules(array(
 $config    = new Zend_Config($options);
 $inflector = new Zend_Filter_Inflector($config);
 
-// Oder mit setConfig():
+// Oder mit setOptions():
 $inflector = new Zend_Filter_Inflector();
-$inflector->setConfig($config);
+$inflector->setOptions($config);
 ]]></programlisting>
         </example>
     </sect2>
 </sect1>
-<!--
-vim:se ts=4 sw=4 et:
--->

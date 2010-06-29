@@ -53,10 +53,22 @@ class Zend_Dom_Query
     protected $_document;
 
     /**
+     * DOMDocument errors, if any
+     * @var false|array
+     */
+    protected $_documentErrors = false;
+
+    /**
      * Document type
      * @var string
      */
     protected $_docType;
+
+    /**
+     * XPath namespaces
+     * @var array
+     */
+    protected $_xpathNamespaces = array();
 
     /**
      * Constructor
@@ -80,7 +92,8 @@ class Zend_Dom_Query
         if (0 === strlen($document)) {
             return $this;
         }
-        if ('<?xml' == substr(trim($document), 0, 5)) {
+        // breaking XML declaration to make syntax highlighting work
+        if ('<' . '?xml' == substr(trim($document), 0, 5)) {
             return $this->setDocumentXml($document);
         }
         if (strstr($document, 'DTD XHTML')) {
@@ -149,6 +162,16 @@ class Zend_Dom_Query
     }
 
     /**
+     * Get any DOMDocument errors found
+     * 
+     * @return false|array
+     */
+    public function getDocumentErrors()
+    {
+        return $this->_documentErrors;
+    }
+
+    /**
      * Perform a CSS selector query
      *
      * @param  string $query
@@ -174,18 +197,25 @@ class Zend_Dom_Query
             throw new Zend_Dom_Exception('Cannot query; no document registered');
         }
 
+        libxml_use_internal_errors(true);
         $domDoc = new DOMDocument;
         $type   = $this->getDocumentType();
         switch ($type) {
             case self::DOC_XML:
-                $success = @$domDoc->loadXML($document);
+                $success = $domDoc->loadXML($document);
                 break;
             case self::DOC_HTML:
             case self::DOC_XHTML:
             default:
-                $success = @$domDoc->loadHTML($document);
+                $success = $domDoc->loadHTML($document);
                 break;
         }
+        $errors = libxml_get_errors();
+        if (!empty($errors)) {
+            $this->_documentErrors = $errors;
+            libxml_clear_errors();
+        }
+        libxml_use_internal_errors(false);
 
         if (!$success) {
             require_once 'Zend/Dom/Exception.php';
@@ -194,6 +224,17 @@ class Zend_Dom_Query
 
         $nodeList   = $this->_getNodeList($domDoc, $xpathQuery);
         return new Zend_Dom_Query_Result($query, $xpathQuery, $domDoc, $nodeList);
+    }
+
+    /**
+     * Register XPath namespaces
+     *
+     * @param   array $xpathNamespaces
+     * @return  void
+     */
+    public function registerXpathNamespaces($xpathNamespaces)
+    {
+        $this->_xpathNamespaces = $xpathNamespaces;
     }
 
     /**
@@ -206,6 +247,9 @@ class Zend_Dom_Query
     protected function _getNodeList($document, $xpathQuery)
     {
         $xpath      = new DOMXPath($document);
+        foreach ($this->_xpathNamespaces as $prefix => $namespaceUri) {
+            $xpath->registerNamespace($prefix, $namespaceUri);
+        }
         $xpathQuery = (string) $xpathQuery;
         if (preg_match_all('|\[contains\((@[a-z0-9_-]+),\s?\' |i', $xpathQuery, $matches)) {
             foreach ($matches[1] as $attribute) {

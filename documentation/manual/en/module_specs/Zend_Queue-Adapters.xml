@@ -358,16 +358,19 @@ $queue = new Zend_Queue('Db', $options);
                         <filename>/queue/</filename>
                     </para>
                 </listitem>
+
                 <listitem>
                     <para>
                         <filename>/topic/</filename>
                     </para>
                 </listitem>
+
                 <listitem>
                     <para>
                         <filename>/temp-queue/</filename>
                     </para>
                 </listitem>
+
                 <listitem>
                     <para>
                         <filename>/temp-topic/</filename>
@@ -412,7 +415,7 @@ $queue = new Zend_Queue('Db', $options);
 
             <para>
                 The database <emphasis>CREATE TABLE ( ... )</emphasis> <acronym>SQL</acronym>
-                statement can be found in <filename>Zend/Queue/Adapter/Db/queue.sql</filename>.
+                statement can be found in <filename>Zend/Queue/Adapter/Db/mysql.sql</filename>.
             </para>
         </sect3>
 
@@ -495,8 +498,8 @@ $queue = new Zend_Queue('Db', $options);
                 <listitem>
                     <para>
                         <methodname>getQueues()</methodname> - Zend Platform does not allow
-                        introspection into the attached job handling scripts via the API. This
-                        method throws an exception.
+                        introspection into the attached job handling scripts via the
+                        <acronym>API</acronym>. This method throws an exception.
                     </para>
                 </listitem>
 

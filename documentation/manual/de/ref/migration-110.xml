@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- EN-Revision: 20249 -->
+<!-- EN-Revision: 21825 -->
 <!-- Reviewed: no -->
 <sect1 id="migration.110">
     <title>Zend Framework 1.10</title>
@@ -19,8 +19,9 @@
             nur den Standardcontroller und die Standardaktion angezeigt. Seit Zend Framework 1.10
             wirft der Router korrekterweise, wie im Router Interface beschrieben, eine Exception
             wenn keine passende Route vorhanden ist. Das Error Plugin fängt die Exception und leitet
-            Sie an den Errorcontroller weiter. Man kann mit der Konstante <constant></constant> auf
-            einen spezifischen Fehler testen:
+            Sie an den Errorcontroller weiter. Man kann mit der Konstante
+            <constant>Zend_Controller_Plugin_ErrorHandler::EXCEPTION_NO_ROUTE</constant> auf einen
+            spezifischen Fehler testen:
         </para>
 
         <programlisting language="php"><![CDATA[
@@ -136,13 +137,14 @@ $authors = $feed->getAuthors()->getValues();
 
         <para>
             <classname>Zend_Filter_StripTags</classname> enthielt in voehergehenden Versionen ein
-            <varname>commentsAllowed</varname> Flag, welches es erlaubt hat HTML Kommentare in von
-            dieser Klasse gefiltertem HTML Text als erlaubt zu markieren. Aber das öffnet den Weg
-            für <acronym>XSS</acronym> Attacken, speziell im Internet Explorer (der es erlaubt
-            konditionelle Funktionalität über HMTL Kommentare zu spezifizieren). Beginnend mit
-            Version 1.9.7 (und retour mit den Versionen 1.8.5 und 1.7.9), hat das
-            <varname>commentsAllowed</varname> Flag keine Bedeutung meht, und alle HTML Kommentare,
-            inklusive denen die andere HTML Tags oder untergeordnete Kommentare enthalten, werden
+            <varname>commentsAllowed</varname> Flag, welches es erlaubt hat <acronym>HTML</acronym>
+            Kommentare in von dieser Klasse gefiltertem <acronym>HTML</acronym> Text als erlaubt zu
+            markieren. Aber das öffnet den Weg für <acronym>XSS</acronym> Attacken, speziell im
+            Internet Explorer (der es erlaubt konditionelle Funktionalität über
+            <acronym>HTML</acronym> Kommentare zu spezifizieren). Beginnend mit Version 1.9.7 (und
+            retour mit den Versionen 1.8.5 und 1.7.9), hat das <varname>commentsAllowed</varname>
+            Flag keine Bedeutung meht, und alle <acronym>HTML</acronym> Kommentare, inklusive denen
+            die andere <acronym>HTML</acronym> Tags oder untergeordnete Kommentare enthalten, werden
             von der endgültigen Aufgabe des Filters entfernt.
         </para>
     </sect2>
@@ -186,6 +188,7 @@ $authors = $feed->getAuthors()->getValues();
 
             <table id="migration.110.zend.file.transfer.count.table">
                 <title>Geänderte Prüfmeldungen</title>
+
                 <tgroup cols="4">
                     <thead>
                         <row>
@@ -199,6 +202,7 @@ $authors = $feed->getAuthors()->getValues();
                         <row>
                             <entry><constant>TOO_MUCH</constant></entry>
                             <entry><constant>TOO_MANY</constant></entry>
+
                             <entry>
                                 Too many files, maximum '%max%' are allowed but '%count%' are given
                             </entry>
@@ -207,6 +211,7 @@ $authors = $feed->getAuthors()->getValues();
                         <row>
                             <entry><constant>TOO_LESS</constant></entry>
                             <entry><constant>TOO_FEW</constant></entry>
+
                             <entry>
                                 Too few files, minimum '%min%' are expected but '%count%' are given
                             </entry>
@@ -242,7 +247,9 @@ $authors = $feed->getAuthors()->getValues();
             </para>
 
             <programlisting language="php"><![CDATA[
-$trans = new Zend_Translate('xliff', '/path/to/source', $locale, array('useId' => false));
+$trans = new Zend_Translate(
+    'xliff', '/path/to/source', $locale, array('useId' => false)
+);
 ]]></programlisting>
         </sect3>
     </sect2>
@@ -329,6 +336,7 @@ My_Validator extends Zend_Validate_Abstract
 
             <table id="migration.110.zend.validate.barcodevalidator.table">
                 <title>Vorhandenen Meldungen der Prüfer</title>
+
                 <tgroup cols="3">
                     <thead>
                         <row>

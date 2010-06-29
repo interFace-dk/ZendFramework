@@ -4,10 +4,11 @@
     <title>Consuming a Single Atom Entry</title>
 
     <para>
-        Single Atom <code>&lt;entry&gt;</code> elements are also valid by themselves. Usually the
-        <acronym>URL</acronym> for an entry is the feed's <acronym>URL</acronym> followed by
-        <code>/&lt;entryId&gt;</code>, such as <code>http://atom.example.com/feed/1</code>, using
-        the example <acronym>URL</acronym> we used above.
+        Single Atom <command>&lt;entry&gt;</command> elements are also valid by themselves. Usually
+        the <acronym>URL</acronym> for an entry is the feed's <acronym>URL</acronym> followed by
+        <command>/&lt;entryId&gt;</command>, such as
+        <filename>http://atom.example.com/feed/1</filename>, using the example
+        <acronym>URL</acronym> we used above.
     </para>
 
     <para>
@@ -17,6 +18,7 @@
 
     <example id="zend.feed.consuming-atom-single-entry.example.atom">
         <title>Reading a Single-Entry Atom Feed</title>
+
         <programlisting language="php"><![CDATA[
 $feed = new Zend_Feed_Atom('http://atom.example.com/feed/1');
 echo 'The feed has: ' . $feed->count() . ' entry.';
@@ -27,11 +29,12 @@ $entry = $feed->current();
 
     <para>
         Alternatively, you could instantiate the entry object directly if you know you are accessing
-        an <code>&lt;entry&gt;</code>-only document:
+        an <command>&lt;entry&gt;</command>-only document:
     </para>
 
     <example id="zend.feed.consuming-atom-single-entry.example.entryatom">
         <title>Using the Entry Object Directly for a Single-Entry Atom Feed</title>
+
         <programlisting language="php"><![CDATA[
 $entry = new Zend_Feed_Entry_Atom('http://atom.example.com/feed/1');
 echo $entry->title();

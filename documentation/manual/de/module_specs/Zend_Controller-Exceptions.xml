@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- EN-Revision: 17593 -->
+<!-- EN-Revision: 21684 -->
 <!-- Reviewed: no -->
 <sect1 id="zend.controller.exceptions">
     <title>MVC Ausnahmen</title>
@@ -41,16 +41,8 @@
                 </para>
 
                 <itemizedlist>
-                    <listitem>
-                        <para>
-                            Fehler durch fehlende Controller oder Aktionen
-                        </para>
-                    </listitem>
-                    <listitem>
-                        <para>
-                            Fehler die in Actioncontrollern auftreten
-                        </para>
-                    </listitem>
+                    <listitem><para>Fehler durch fehlende Controller oder Aktionen</para></listitem>
+                    <listitem><para>Fehler die in Actioncontrollern auftreten</para></listitem>
                 </itemizedlist>
 
                 <para>
@@ -281,7 +273,8 @@ class My_Controller_Dispatcher extends Zend_Controller_Dispatcher
 
                         <para>
                             Der obige Code prüft ob die angefragte Aktion in der Controllerklasse
-                            existiert ; wenn nicht wird die Aktion auf die Standardaktion resetiert.
+                            existiert ; wenn nicht wird die Aktion auf die Standardaktion
+                            zurückgesetzt.
                         </para>
 
                         <para>
@@ -330,7 +323,7 @@ class My_Controller_PreDispatchPlugin extends Zend_Controller_Plugin_Abstract
         $front      = Zend_Controller_Front::getInstance();
         $dispatcher = $front->getDispatcher();
         $class      = $dispatcher->getControllerClass($request);
-        if (!$controller) {
+        if (!$class) {
             $class = $dispatcher->getDefaultControllerClass($request);
         }
 
@@ -361,6 +354,3 @@ class My_Controller_PreDispatchPlugin extends Zend_Controller_Plugin_Abstract
         </itemizedlist>
     </sect2>
 </sect1>
-<!--
-vim:se ts=4 sw=4 et:
--->

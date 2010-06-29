@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- EN-Revision: 20249 -->
+<!-- EN-Revision: 21997 -->
 <!-- Reviewed: no -->
 <sect1 id="learning.quickstart.create-project">
     <title>Das Projekt erstellen</title>
@@ -13,8 +13,8 @@
         <title>Zend Framework installieren</title>
 
         <para>
-            Der einfachste Weg um Zend Framework zusammen mit einem kompletten PHP Stack zu
-            erhalten ist durch die Installation von <ulink
+            Der einfachste Weg um Zend Framework zusammen mit einem kompletten
+            <acronym>PHP</acronym> Stack zu erhalten ist durch die Installation von <ulink
                 url="http://www.zend.com/en/products/server-ce/downloads">Zend Server</ulink>.
             Zend Server hat native Installationsroutinen für Mac OSX, Windows, Fedora Core und
             Ubuntu, sowie ein universelles Installationspaket das mit den meisten Linux
@@ -60,15 +60,15 @@
             </para>
 
             <para>
-                Woimmer man einer Referenz zu <filename>zf.sh</filename> oder
-                <filename>zf.bat</filename> sieht, sollte der absolute Pfad zum Skript substituiert
-                werden. Auf Unix-basierenden Systemen, könnte man die Alias Funktionalität der Shell
-                verwenden: <command>alias zf.sh=path/to/ZendFramework/bin/zf.sh</command>.
+                Wo immer man einer Referenz auf den Befehl <filename>zf</filename> sieht, sollte der
+                absolute Pfad zum Skript substituiert werden. Auf Unix-basierenden Systemen, könnte
+                man die Alias Funktionalität der Shell verwenden:
+                <command>alias zf.sh=path/to/ZendFramework/bin/zf.sh</command>.
             </para>
 
             <para>
                 Wenn man Probleme hat das <command>zf</command> Kommandozeilen Tool zu konfigurieren
-                sollte man in <link linkend="zend.tool.framework.clitool.setup-general">das
+                sollte man in <link linkend="zend.tool.framework.clitool">das
                     Handbuch</link> sehen.
             </para>
         </note>
@@ -81,11 +81,7 @@
         </para>
 
         <programlisting language="shell"><![CDATA[
-# Unix:
-% zf.sh create project quickstart
-
-# DOS/Windows:
-C:> zf.bat create project quickstart
+% zf create project quickstart
 ]]></programlisting>
 
         <para>
@@ -112,6 +108,7 @@ quickstart
 |               `-- index.phtml
 |-- library
 |-- public
+|   |-- .htaccess
 |   `-- index.php
 `-- tests
     |-- application
@@ -155,7 +152,7 @@ quickstart
         <para>
             Die <classname>Bootstrap</classname> Klasse definiert welche Ressourcen und Komponenten
             zu initialisieren sind. Standardmäßig wird Zend Framework's <link
-                linkend="zend.controller.front">Front Controller</link>initialisiert und er
+                linkend="zend.controller.front">Front Controller</link> initialisiert und er
             verwendet <filename>application/controllers/</filename> als Standardverzeichnis in dem
             nach Action Controllern nachgesehen wird (mehr davon später). Die Klasse sieht wie
             folgt aus:
@@ -181,10 +178,10 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
             Wärend Zend Framework selbst konfigurationslos ist, ist es oft notwendig die eigene
             Anwendung zu konfigurieren. Die Standardkonfiguration wird in
             <filename>application/configs/application.ini</filename> platziert und enthält einige
-            grundsätzliche Direktiven für die Einstellung der PHP Umgebung (zum Beispiel ein- und
-            ausschalten der Fehlermeldungen), zeigt den Pfad zur eigenen Bootstrap Klasse (wie auch
-            dessen Klassenname), und den Pfad zu den eigenen Action Controllern. Das sieht wie folgt
-            aus:
+            grundsätzliche Direktiven für die Einstellung der <acronym>PHP</acronym> Umgebung (zum
+            Beispiel ein- und ausschalten der Fehlermeldungen), zeigt den Pfad zur eigenen Bootstrap
+            Klasse (wie auch dessen Klassenname), und den Pfad zu den eigenen Action Controllern.
+            Das sieht wie folgt aus:
         </para>
 
         <programlisting language="ini"><![CDATA[
@@ -196,7 +193,9 @@ phpSettings.display_errors = 0
 includePaths.library = APPLICATION_PATH "/../library"
 bootstrap.path = APPLICATION_PATH "/Bootstrap.php"
 bootstrap.class = "Bootstrap"
+appnamespace = "Application"
 resources.frontController.controllerDirectory = APPLICATION_PATH "/controllers"
+resources.frontController.params.displayExceptions = 0
 
 [staging : production]
 
@@ -211,13 +210,13 @@ phpSettings.display_errors = 1
 
         <para>
             Verschiedene Dinge sollten über diese Datei gesagt werden. Erstens kann man, wenn
-            INI-artige Konfigurationen verwendet werden, direkt auf Konstanten referenzieren und Sie
-            erweitern; <constant>APPLICATION_PATH</constant> selbst ist eine Konstante. Zusätzlich
-            ist zu beachten das es verschiedene definierte Sektionen gibt: production, staging,
-            testing, und development. Die letzten drei verweisen auf Einstellungen der
-            "production" Umgebung. Das ist ein nützlicher Weg die Konfiguration zu organisieren und
-            stellt sicher das die richtigen Einstellungen in jeder Stufe der Anwendungsentwicklung
-            vorhanden sind.
+            <acronym>INI</acronym>-artige Konfigurationen verwendet werden, direkt auf Konstanten
+            referenzieren und Sie erweitern; <constant>APPLICATION_PATH</constant> selbst ist eine
+            Konstante. Zusätzlich ist zu beachten das es verschiedene definierte Sektionen gibt:
+            production, staging, testing, und development. Die letzten drei verweisen auf
+            Einstellungen der "production" Umgebung. Das ist ein nützlicher Weg die Konfiguration zu
+            organisieren und stellt sicher das die richtigen Einstellungen in jeder Stufe der
+            Anwendungsentwicklung vorhanden sind.
         </para>
     </sect2>
 
@@ -240,9 +239,9 @@ phpSettings.display_errors = 1
         <para>
             Typischerweise benötigt man immer einen <classname>IndexController</classname>, der ein
             Fallback Controller ist und auch als Homepage der Site arbeitet, und einen
-            <classname>ErrorController</classname> der verwendet wird um Dinge wie HTTP 404 Fehler
-            zu zeigen (wenn der Controller oder die Action nicht gefunden wird) und HTTP 500 Fehler
-            (Anwendungsfehler).
+            <classname>ErrorController</classname> der verwendet wird um Dinge wie
+            <acronym>HTTP</acronym> 404 Fehler zu zeigen (wenn der Controller oder die Action nicht
+            gefunden wird) und <acronym>HTTP</acronym> 500 Fehler (Anwendungsfehler).
         </para>
 
         <para>
@@ -314,10 +313,10 @@ class ErrorController extends Zend_Controller_Action
         <title>Views</title>
 
         <para>
-            Views werden im Zend Framework in reinem alten PHP geschrieben. View Skripte werden
-            unter <filename>application/views/scripts/</filename> platziert, wo Sie weiters
-            kategorisiert werden indem der Name des Controllers verwendet wird. In unserem Fall
-            haben wir einen <classname>IndexController</classname> und einen
+            Views werden im Zend Framework in reinem alten <acronym>PHP</acronym> geschrieben. View
+            Skripte werden unter <filename>application/views/scripts/</filename> platziert, wo Sie
+            weiters kategorisiert werden indem der Name des Controllers verwendet wird. In unserem
+            Fall haben wir einen <classname>IndexController</classname> und einen
             <classname>ErrorController</classname>, und deshalb haben wir entsprechende
             <filename>index/</filename> und <filename>error/</filename> Unterverzeichnisse in
             unserem View Skript Verzeichnis. In diesem Unterverzeichnissen finden und erstellen wir
@@ -328,8 +327,8 @@ class ErrorController extends Zend_Controller_Action
 
         <para>
             View Skripte können jedes Markup enthalten das man haben will, und verwenden das
-            öffnende <code>&lt;?php</code> Tag und das schließende <code>?&gt;</code> Tag um PHP
-            Direktiven einzufügen.
+            öffnende <emphasis>&lt;?php</emphasis> Tag und das schließende
+            <emphasis>?&gt;</emphasis> Tag um <acronym>PHP</acronym> Direktiven einzufügen.
         </para>
 
         <para>
@@ -390,7 +389,7 @@ class ErrorController extends Zend_Controller_Action
 
         <para>
             Das <filename>error/error.phtml</filename> View Skript ist etwas interessanter da es
-            einige PHP Konditionen verwendet:
+            einige <acronym>PHP</acronym> Konditionen verwendet:
         </para>
 
         <programlisting language="php"><![CDATA[
@@ -427,16 +426,123 @@ class ErrorController extends Zend_Controller_Action
 ]]></programlisting>
     </sect2>
 
+    <sect2 id="learning.quickstart.create-project.vhost">
+        <title>Einen virtuellen Host erstellen</title>
+
+        <para>
+            Für die Zwecke dieses Quickstarts nehmen wir an das der <ulink
+                url="http://httpd.apache.org/">Apache Web Server</ulink> verwendet wird. Zend
+            Framework arbeitet auch perfekt mit anderen Web Server -- inklusive Microsoft
+            Internet Information Server, Lighttpd, Nginx und andere -- aber die meisten
+            Entwickler sollten zumindest mit Apache umgehen können, und es bietet eine einfache
+            Einführung in Zend Framework's Verzeichnisstruktur und die Möglichkeiten des
+            Rewritings.
+        </para>
+
+        <para>
+            Um den eigenen VHost zu erstellen muss man den Ort der eigenen
+            <filename>httpd.conf</filename> Datei kennen und potentiell auch wo andere
+            Konfigurationsdateien platziert sind. Einige übliche Orte sind:
+        </para>
+
+        <itemizedlist>
+            <listitem>
+                <para>
+                    <filename>/etc/httpd/httpd.conf</filename> (Fedora, RHEL, und andere)
+                </para>
+            </listitem>
+
+            <listitem>
+                <para>
+                    <filename>/etc/apache2/httpd.conf</filename> (Debian, Ubuntu, und andere)
+                </para>
+            </listitem>
+
+            <listitem>
+                <para>
+                    <filename>/usr/local/zend/etc/httpd.conf</filename> (Zend Server auf *nix
+                    Maschinen)
+                </para>
+            </listitem>
+
+            <listitem>
+                <para>
+                    <filename>C:\Program Files\Zend\Apache2\conf</filename> (Zend Server auf Windows
+                    Maschinen)
+                </para>
+            </listitem>
+        </itemizedlist>
+
+        <para>
+            In der eigenen <filename>httpd.conf</filename> (oder
+            <filename>httpd-vhosts.conf</filename> auf anderen Systemen) muss man zwei Dinge tun.
+            Erstens sicherstellen das der <varname>NameVirtualHost</varname> definiert ist;
+            typischerweise wird man Ihn auf einen Wert von "*:80" setzen. Zweitens einen
+            virtuellen Host definieren:
+        </para>
+
+        <programlisting language="apache"><![CDATA[
+<VirtualHost *:80>
+    ServerName quickstart.local
+    DocumentRoot /path/to/quickstart/public
+
+    SetEnv APPLICATION_ENV "development"
+
+    <Directory /path/to/quickstart/public>
+        DirectoryIndex index.php
+        AllowOverride All
+        Order allow,deny
+        Allow from all
+    </Directory>
+</VirtualHost>
+]]></programlisting>
+
+        <para>
+            Es gilt verschiedene Dinge zu beachten. Erstens ist zu beachten dass die
+            <varname>DocumentRoot</varname> Einstellung das Unterverzeichnis
+            <filename>public</filename> des eigenen Projekts spezifiziert; dies bedeutet das nur
+            Dateien in diesem Verzeichnis jemals direkt vom Server serviert werden. Zweitens sind
+            die Direktiven <varname>AllowOverride</varname>, <varname>Order</varname>, und
+            <varname>Allow</varname> zu beachten; diese erlauben uns <filename>htacess</filename>
+            Dateien in unserem Projekt zu verwenden. Wärend der Entwicklung ist das eine gute
+            Praxis, da es verhindert den Web Server konstant zurücksetzen zu müssen wenn man
+            Änderungen in den Site Direktiven macht; trotzdem sollte man in der Produktion den
+            Inhalt der <filename>htacess</filename> Datei in die Server Konfiguration verschieben
+            und diese deaktivieren. Drittens ist die <varname>SetEnv</varname> Direktive zu
+            beachten. Was wir hier erledigen ist das Setzen einer Umgebungsvariable für den
+            eigenen virtuellen Host; diese Variable wird in der <filename>index.php</filename>
+            geholt und verwendet um die Konstante <constant>APPLICATION_ENV</constant> für unsere
+            Zend Framework Anwendung zu setzen. In der Produktion kann diese Direktive unterdrückt
+            werden (in diesem Fall wird es auf den Standardwert "production" verweisen) oder Sie
+            explizit auf "production" setzen.
+        </para>
+
+        <para>
+            Letztendlich muss man einen Eintrag in der eigenen <filename>hosts</filename> Datei
+            hinzufügen welche mit dem Wert korrespondiert der in der <varname>ServerName</varname>
+            Direktive plaziert wurde. Auf *nix-artigen Systemen ist das normalerweise
+            <filename>/etc/hosts</filename>; auf Windows findet man typischerweise
+            <filename>C:\WINDOWS\system32\drivers\etc</filename> in Ihm. Unabhängig vom System
+            sieht der Eintrag wie folgt aus:
+        </para>
+
+        <programlisting language="text"><![CDATA[
+127.0.0.1 quickstart.local
+]]></programlisting>
+
+        <para>
+            Den Webserver starten (oder ihn Restarten), und man sollte bereit sein weiterzumachen.
+        </para>
+    </sect2>
+
     <sect2 id="learning.quickstart.create-project.checkpoint">
         <title>Checkpoint</title>
 
         <para>
             An diesem Punkt sollte man in der Lage sein die initiale Zend Framework Anwendung
-            auszuführen. Es sollte ein virtueller Host im eigenen Web Server erstellt werden und
-            dessen Document Rook sollte auf das Unterverzeichnis <filename>public/</filename> der
-            eigenen Anwendung zeigen. Man sollte sicherstellen das der eigene Hostname im eigenen
-            DNS oder in der hosts Datei ist, und anschließend den Browser darauf zeigen lassen.
-            An diesem Punkt sollte man in der Lage sein die Startseite zu sehen.
+            auszuführen. Der Browser sollte auf den Servernamen zeigen welcher im vorherigen
+            Abschnitt konfiguriert wurde; ab diesem Zeitpunkt sollte man in der Lage sein die
+            Startseite zu sehen.
         </para>
     </sect2>
 </sect1>

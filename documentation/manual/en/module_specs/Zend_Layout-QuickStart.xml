@@ -12,10 +12,10 @@
         <title>Layout scripts</title>
 
         <para>
-            In both cases, however, you'll need to create a layout script.
-            Layout scripts simply utilize <classname>Zend_View</classname> (or whatever view
-            implementation you are using). Layout variables are registered with
-            a <classname>Zend_Layout</classname> <link linkend="zend.view.helpers.initial.placeholder">placeholder</link>,
+            In both cases, however, you'll need to create a layout script. Layout scripts simply
+            utilize <classname>Zend_View</classname> (or whatever view implementation you are
+            using). Layout variables are registered with a <classname>Zend_Layout</classname> <link
+                linkend="zend.view.helpers.initial.placeholder">placeholder</link>,
             and may be accessed via the placeholder helper or by fetching them
             as object properties of the layout object via the layout helper.
         </para>
@@ -107,12 +107,12 @@
             and registers an action helper to allow access to the layout object
             from your action controllers. Additionally, you may at any time grab
             the layout instance from within a view script using the
-            <code>layout</code> view helper.
+            <classname>Layout</classname> view helper.
         </para>
 
         <para>
-            First, let's look at how to initialize <classname>Zend_Layout</classname> for use with the
-            <acronym>MVC</acronym>:
+            First, let's look at how to initialize <classname>Zend_Layout</classname> for use with
+            the <acronym>MVC</acronym>:
         </para>
 
         <programlisting language="php"><![CDATA[
@@ -150,7 +150,7 @@ class FooController extends Zend_Controller_Action
 
         <para>
             In your view scripts, you can then access the layout object via the
-            <code>layout</code> view helper. This view helper is slightly
+            <classname>Layout</classname> view helper. This view helper is slightly
             different than others in that it takes no arguments, and returns an
             object instead of a string value. This allows you to immediately
             call methods on the layout object:
@@ -162,8 +162,8 @@ class FooController extends Zend_Controller_Action
 
         <para>
             At any time, you can fetch the <classname>Zend_Layout</classname> instance
-            registered with the <acronym>MVC</acronym> via the <methodname>getMvcInstance()</methodname> static
-            method:
+            registered with the <acronym>MVC</acronym> via the
+            <methodname>getMvcInstance()</methodname> static method:
         </para>
 
         <programlisting language="php"><![CDATA[
@@ -216,19 +216,17 @@ $layout = Zend_Layout::getMvcInstance();
         <title>Using Zend_Layout as a Standalone Component</title>
 
         <para>
-            As a standalone component, <classname>Zend_Layout</classname> does not offer nearly as many
-            features or as much convenience as when used with the <acronym>MVC</acronym>. However,
-            it still has two chief benefits:
+            As a standalone component, <classname>Zend_Layout</classname> does not offer nearly as
+            many features or as much convenience as when used with the <acronym>MVC</acronym>.
+            However, it still has two chief benefits:
         </para>
 
         <itemizedlist>
-            <listitem><para>
-                    Scoping of layout variables.
-            </para></listitem>
+            <listitem><para>Scoping of layout variables.</para></listitem>
 
-            <listitem><para>
-                    Isolation of layout view script from other view scripts.
-            </para></listitem>
+            <listitem>
+               <para>Isolation of layout view script from other view scripts.</para>
+            </listitem>
         </itemizedlist>
 
         <para>

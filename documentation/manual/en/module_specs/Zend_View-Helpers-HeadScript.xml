@@ -4,8 +4,8 @@
     <title>HeadScript Helper</title>
 
     <para>
-        The HTML <emphasis>&lt;script&gt;</emphasis> element is used to either provide
-        inline client-side scripting elements or link to a remote resource
+        The <acronym>HTML</acronym> <emphasis>&lt;script&gt;</emphasis> element is used to either
+        provide inline client-side scripting elements or link to a remote resource
         containing client-side scripting code. The <classname>HeadScript</classname>
         helper allows you to manage both.
     </para>
@@ -89,6 +89,7 @@
 
         <example id="zend.view.helpers.initial.headscript.conditional">
             <title>Headscript With Conditional Comments</title>
+
             <programlisting language="php"><![CDATA[
 // adding scripts
 $this->headScript()->appendFile(
@@ -129,8 +130,7 @@ $this->headScript()->appendFile(
 
     <para>
         The <classname>HeadScript</classname> helper is a concrete implementation of the
-        <link linkend="zend.view.helpers.initial.placeholder">Placeholder
-            helper</link>.
+        <link linkend="zend.view.helpers.initial.placeholder">Placeholder helper</link>.
     </para>
 
     <note>
@@ -139,7 +139,7 @@ $this->headScript()->appendFile(
         <para>
             <classname>HeadScript</classname>'s sibling helper, <link
                 linkend="zend.view.helpers.initial.inlinescript">InlineScript</link>,
-            should be used when you wish to include scripts inline in the HTML
+            should be used when you wish to include scripts inline in the <acronym>HTML</acronym>
             <emphasis>body</emphasis>. Placing scripts at the end of your document is a
             good practice for speeding up delivery of your page, particularly
             when using 3rd party analytics scripts.
@@ -232,24 +232,30 @@ $('foo_form').action = action;
         </para>
 
         <itemizedlist>
-            <listitem><para>
+            <listitem>
+                <para>
                     The script will be appended to the stack. If you wish for it
                     to replace the stack or be added to the top, you will need
                     to pass 'SET' or 'PREPEND', respectively, as the first
                     argument to <methodname>captureStart()</methodname>.
-            </para></listitem>
+                </para>
+            </listitem>
 
-            <listitem><para>
+            <listitem>
+                <para>
                     The script <acronym>MIME</acronym> type is assumed to be 'text/javascript'; if
                     you wish to specify a different type, you will need to pass it
                     as the second argument to <methodname>captureStart()</methodname>.
-            </para></listitem>
+                </para>
+            </listitem>
 
-            <listitem><para>
+            <listitem>
+                <para>
                     If you wish to specify any additional attributes for the
                     <emphasis>&lt;script&gt;</emphasis> tag, pass them in an array as
                     the third argument to <methodname>captureStart()</methodname>.
-            </para></listitem>
+                </para>
+            </listitem>
         </itemizedlist>
     </example>
 </sect3>

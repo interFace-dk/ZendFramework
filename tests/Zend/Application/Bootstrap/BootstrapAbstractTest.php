@@ -719,6 +719,33 @@ class Zend_Application_Bootstrap_BootstrapAbstractTest extends PHPUnit_Framework
         $actual   = $bootstrap->getOptionKeys();
         $this->assertEquals($expected, $actual);
     }
+
+    /**
+     * @group ZF-9110
+     * @expectedException Zend_Application_Bootstrap_Exception
+     */
+    public function testPassingSameBootstrapAsApplicationShouldNotCauseRecursion()
+    {
+        $bootstrap = new Zend_Application_Bootstrap_Bootstrap($this->application);
+        $bootstrap->setApplication($bootstrap);
+    }
+    
+    /**
+     * @group ZF-7696
+     */
+    public function testUsingFallbackAutoloaderWithModulesShouldNotResultInFrontcontrollerNotFoundWarning()
+    {
+        require_once dirname(__FILE__) . '/../_files/Zf7696Bootstrap.php';
+        $this->autoloader->setFallbackAutoloader(true);
+        $options = array(
+            'Resources' => array(
+                'modules' => array(),
+            ),
+        );
+        $this->application->setOptions($options);
+        $bootstrap = new Zf7696Bootstrap($this->application);
+        $bootstrap->bootstrap(array('modules'));
+    }
 }
 
 class Zend_Application_Bootstrap_BootstrapAbstractTest_View

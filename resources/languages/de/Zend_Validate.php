@@ -21,7 +21,7 @@
  */
 
 /**
- * EN-Revision: 20350
+ * EN-Revision: 22075
  */
 return array(
     // Zend_Validate_Alnum
@@ -64,7 +64,7 @@ return array(
     // Zend_Validate_Date
     "Invalid type given, value should be string, integer, array or Zend_Date" => "Ungültiger Typ angegeben. Der Wert sollte ein String, Integer, Array oder Zend_Date sein",
     "'%value%' does not appear to be a valid date" => "'%value%' scheint kein gültiges Datum zu sein",
-    "'%value%' does not fit the date format '%format'" => "'%value%' passt nicht in das angegebene Datumsformat '%format'",
+    "'%value%' does not fit the date format '%format%'" => "'%value%' passt nicht in das angegebene Datumsformat '%format%'",
 
     // Zend_Validate_Db_Abstract
     "No record matching %value% was found" => "Es wurde kein Eintrag gefunden der %value% entspricht",
@@ -72,7 +72,7 @@ return array(
 
     // Zend_Validate_Digits
     "Invalid type given, value should be string, integer or float" => "Ungültiger Typ angegeben. Der Wert sollte ein Strung, Integer oder Float sein",
-    "'%value%' contains not only digit characters" => "'%value%' enthält nicht nur Ziffern",
+    "'%value%' contains characters which are not digits; but only digits are allowed" => "'%value%' enthält Zeichen welche keine Ziffern sind; aber es sind nur Ziffern erlaubt",
     "'%value%' is an empty string" => "'%value%' ist ein leerer String",
 
     // Zend_Validate_EmailAddress
@@ -208,7 +208,7 @@ return array(
     "'%value%' has failed the IBAN check" => "Die IBAN Prüfung ist für '%value%' fehlgeschlagen",
 
     // Zend_Validate_Identical
-    "The token '%token%' does not match the given token '%value%'" => "Der Token '%token%' stimmt nicht mit dem angegebenen Token '%value%' überein",
+    "The two given tokens do not match" => "Die zwei angegebenen Token stimmen nicht überein",
     "No token was provided to match against" => "Es wurde kein Token angegeben gegen den geprüft werden kann",
 
     // Zend_Validate_InArray
@@ -223,6 +223,7 @@ return array(
     "'%value%' does not appear to be a valid IP address" => "'%value%' scheint keine gültige IP Adresse zu sein",
 
     // Zend_Validate_Isbn
+    "Invalid type given, value should be string or integer" => "Ungültiger Typ angegeben. Der Wert sollte ein String sein",
     "'%value%' is no valid ISBN number" => "'%value%' ist keine gültige ISBN Nummer",
 
     // Zend_Validate_LessThan
@@ -233,24 +234,29 @@ return array(
     "Value is required and can't be empty" => "Es wird ein Wert benötigt. Dieser darf nicht leer sein",
 
     // Zend_Validate_PostCode
-    "Invalid type given, value should be string or integer" => "Ungültiger Typ angegeben. Der Wert sollte ein String oder Integer sein",
-    "'%value%' does not appear to be an postal code" => "'%value%' scheint keine gültige Postleitzahl zu sein",
+    "Invalid type given. The value should be a string or a integer" => "Ungültiger Typ angegeben. Der Wert sollte ein String oder ein Integer sein",
+    "'%value%' does not appear to be a postal code" => "'%value%' scheint keine gültige Postleitzahl zu sein",
 
     // Zend_Validate_Regex
     "Invalid type given, value should be string, integer or float" => "Ungültiger Typ angegeben. Der Wert sollte ein String, Integer oder Float sein",
     "'%value%' does not match against pattern '%pattern%'" => "'%value%' scheint nicht auf das Pattern '%pattern%' zu passen",
+    "There was an internal error while using the pattern '%pattern%'" => "Es gab einen internen Fehler bei der Verwendung des Patterns '%pattern%'",
 
     // Zend_Validate_Sitemap_Changefreq
     "'%value%' is no valid sitemap changefreq" => "'%value%' ist keine gültige Changefreq für Sitemap",
+    "Invalid type given, the value should be a string" => "Ungültiger Typ angegeben. Der Wert sollte ein String sein",
 
     // Zend_Validate_Sitemap_Lastmod
     "'%value%' is no valid sitemap lastmod" => "'%value%' ist keine gültige Lastmod für Sitemap",
+    "Invalid type given, the value should be a string" => "Ungültiger Typ angegeben. Der Wert sollte ein String sein",
 
     // Zend_Validate_Sitemap_Loc
     "'%value%' is no valid sitemap location" => "'%value%' ist keine gültige Location für Sitemap",
+    "Invalid type given, the value should be a string" => "Ungültiger Typ angegeben. Der Wert sollte ein String sein",
 
     // Zend_Validate_Sitemap_Priority
     "'%value%' is no valid sitemap priority" => "'%value%' ist keine gültige Priority für Sitemap",
+    "Invalid type given, the value should be a integer, a float or a numeric string" => "Ungültiger Typ angegeben. Der Wert sollte ein Integer, ein Float oder ein nummerischer String sein",
 
     // Zend_Validate_StringLength
     "Invalid type given, value should be a string" => "Ungültiger Typ angegeben. Der Wert sollte ein String sein",

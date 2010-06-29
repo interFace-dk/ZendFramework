@@ -106,13 +106,12 @@ class Zend_Markup_BbcodeAndHtmlTest extends PHPUnit_Framework_TestCase
             $this->_markup->render('[url]http://framework.zend.com/[/url]'));
         $this->assertEquals('<a href="http://framework.zend.com/">foo</a>',
             $this->_markup->render('[url=http://framework.zend.com/]foo[/url]'));
-        $this->assertEquals('bar', $this->_markup->render('[url="invalid"]bar[/url]'));
+        $this->assertEquals('bar', $this->_markup->render('[url="javascript:alert(1)"]bar[/url]'));
 
         $this->assertEquals('<img src="http://framework.zend.com/images/logo.png" alt="logo" />',
             $this->_markup->render('[img]http://framework.zend.com/images/logo.png[/img]'));
         $this->assertEquals('<img src="http://framework.zend.com/images/logo.png" alt="Zend Framework" />',
             $this->_markup->render('[img alt="Zend Framework"]http://framework.zend.com/images/logo.png[/img]'));
-        $this->assertEquals('invalid', $this->_markup->render('[img]invalid[/img]'));
 
     }
 
@@ -252,6 +251,29 @@ class Zend_Markup_BbcodeAndHtmlTest extends PHPUnit_Framework_TestCase
     {
         $input = "[list][*]Foo*bar (item 1)\n[*]Item 2\n[*]Trimmed (Item 3)\n[/list]";
         $expected = "<ul><li>Foo*bar (item 1)</li><li>Item 2</li><li>Trimmed (Item 3)</li></ul>";
+        $this->assertEquals($expected, $this->_markup->render($input));
+
+        $this->assertEquals('<ul><li>blaat</li></ul>', $this->_markup->render('[list][*]blaat[/*][/list]'));
+    }
+
+    public function testListDisallowingPlaintext()
+    {
+        $input = "[list]\ntest[*]Foo[/*]\n[/list]";
+        $expected = "<ul><li>Foo</li></ul>";
+        $this->assertEquals($expected, $this->_markup->render($input));
+    }
+
+    public function testFailureAfterCodeTag()
+    {
+        $input = "[code][b][/code][list][*]Foo[/*][/list]";
+        $expected = "<code><span style=\"color: #000000\">\n[b]</span>\n</code><ul><li>Foo</li></ul>";
+        $this->assertEquals($expected, $this->_markup->render($input));
+    }
+
+    public function testInvalidationAfterInvalidTag()
+    {
+        $input = "[b][list][*]Foo[/*][/list][/b]";
+        $expected = "<strong>[list][*]Foo[/*][/list]</strong>";
         $this->assertEquals($expected, $this->_markup->render($input));
     }
 
@@ -443,6 +465,81 @@ BBCODE;
         $this->assertEquals('<em>FOO&amp;BAR</em>baz', $m->render('[i]foo&bar[/i]baz'));
     }
 
+    public function testValidUri()
+    {
+        $this->assertTrue(Zend_Markup_Renderer_Html::isValidUri("http://www.example.com"));
+        $this->assertTrue(!Zend_Markup_Renderer_Html::isValidUri("www.example.com"));
+        $this->assertTrue(!Zend_Markup_Renderer_Html::isValidUri("http:///test"));
+        $this->assertTrue(Zend_Markup_Renderer_Html::isValidUri("https://www.example.com"));
+        $this->assertTrue(Zend_Markup_Renderer_Html::isValidUri("magnet:?xt=urn:bitprint:XZBS763P4HBFYVEMU5OXQ44XK32OMLIN.HGX3CO3BVF5AG2G34MVO3OHQLRSUF4VJXQNLQ7A &xt=urn:ed2khash:aa52fb210465bddd679d6853b491ccce&"));
+        $this->assertTrue(!Zend_Markup_Renderer_Html::isValidUri("javascript:alert(1)"));
+    }
+
+    public function testXssInImgAndUrl()
+    {
+        $this->assertEquals('<a href="http://google.com/&quot;&lt;script&gt;alert(1)&lt;/script&gt;">...</a>',
+            $this->_markup->render('[url=\'http://google.com/"<script>alert(1)</script>\']...[/url]'));
+        $this->assertEquals('<img src="http://google.com/&amp;quot;&amp;lt;script&amp;gt;alert(1)&amp;lt;/script&amp;gt;" alt="/script&amp;gt;" />',
+            $this->_markup->render('[img]http://google.com/"<script>alert(1)</script>[/img]'));
+    }
+
+    public function testAddGroup()
+    {
+        $m = $this->_markup;
+
+        $m->addGroup('table', array('block'));
+        $m->addGroup('table-row', array('table'));
+        $m->addGroup('table-cell', array('table-row'), array('inline', 'inline-empty'));
+
+        $m->addMarkup(
+            'table',
+            Zend_Markup_Renderer_RendererAbstract::TYPE_REPLACE,
+            array(
+                'tag'   => 'table',
+                'group' => 'table'
+            )
+        );
+        $m->addMarkup(
+            'tr',
+            Zend_Markup_Renderer_RendererAbstract::TYPE_REPLACE,
+            array(
+                'tag'   => 'tr',
+                'group' => 'table-row'
+            )
+        );
+        $m->addMarkup(
+            'td',
+            Zend_Markup_Renderer_RendererAbstract::TYPE_REPLACE,
+            array(
+                'tag'   => 'td',
+                'group' => 'table-cell'
+            )
+        );
+
+        $this->assertEquals('<table><tr><td>test</td></tr></table>',
+            $m->render('[table][tr][td]test[/td][/tr][/table]'));
+    }
+
+    /**
+     * Test for ZF-9220
+     */
+    public function testUrlMatchCorrectly()
+    {
+        $m = $this->_markup;
+
+        $this->assertEquals('<a href="http://framework.zend.com/">test</a><a href="http://framework.zend.com/">test</a>',
+            $m->render('[url="http://framework.zend.com/"]test[/url][url="http://framework.zend.com/"]test[/url]'));
+    }
+
+    /**
+     * Test for ZF-9463
+     */
+    public function testNoXssInH()
+    {
+        $m = $this->_markup;
+        $this->assertEquals('<h1>&lt;script&gt;alert(&quot;hi&quot;);&lt;/script&gt;</h1>',
+            $m->render('[h1]<script>alert("hi");</script>[/h1]'));
+    }
 }
 
 // Call Zend_Markup_BbcodeAndHtmlTest::main()

@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- EN-Revision: 16315 -->
+<!-- EN-Revision: 20765 -->
 <!-- Reviewed: no -->
 <sect1 id="zend.console.getopt.introduction">
     <title>Einführung</title>
+
     <para>
         Die <classname>Zend_Console_Getopt</classname> Klasse hilft Kommandozeilen Anwendungen
         Ihre Optionen und Argumente zu Analysieren.
     </para>
+
     <para>
         Benutzer können Kommandozeilen Argumente definieren wenn die Anwendung
         ausgeführt wird. Diese Argumente haben für die Anwendung die Bedeutung,
@@ -18,11 +20,13 @@
         erlaubt <command>-c</command> unterschiedliche Features in <command>grep</command>,
         <command>ls</command>, und <command>tar</command>.
      </para>
+
     <para>
         Anbei sind einige Definitionen von Ausdrücken. Die übliche Verwendung der
         Ausdrücke variiert, aber diese Dokumentation wird die anbei beschriebenen
         Definitionen verwenden.
     </para>
+
     <itemizedlist>
         <listitem>
             <para>
@@ -32,12 +36,14 @@
                 Kommando verwendet.
             </para>
         </listitem>
+
         <listitem>
             <para>
                 "Option": ist ein Argument das andeutet dass das Kommando sein
                 Verhalten in einem bestimmten Weg verändern soll.
             </para>
         </listitem>
+
         <listitem>
             <para>
                 "Flag": Der erste Teil einer Option, identifiziert den Zweck
@@ -48,6 +54,7 @@
                 Mehr-Zeichen Flag vorangestellt. Lange Flags können nicht gebündelt werden.
             </para>
         </listitem>
+
         <listitem>
             <para>
                 "Parameter": Der zweite Teil einer Option; Ein Datenwert der ein Flag
@@ -56,6 +63,7 @@
                 hat diese Option keine Parameter. Trotzdem wird eine Option wie
                 <command>--user</command> immer einen nachfolgenden Parameter benötigen.
             </para>
+
             <para>
                 Ein Parameter kann als separates Argument angegeben werden der einem
                 Flag Argument folgt, oder als Teil der gleichen Zeichenkette des
@@ -67,6 +75,7 @@
                 unterstützt werden.
             </para>
         </listitem>
+
         <listitem>
             <para>
                 "Verbund": Mehrere Einzel-Zeichen Flags kombiniert in einem
@@ -79,6 +88,7 @@
             </para>
         </listitem>
     </itemizedlist>
+
     <para>
         Zum Beispiel <command>mysql --user=root mydatabase</command>.
         <command>mysql</command> ist ein <emphasis>Kommando</emphasis>,
@@ -88,16 +98,19 @@
         und <command>mydatabase</command> ist ein Argument aber nicht eine Option laut
         unserer Definition.
     </para>
+
     <para>
         <classname>Zend_Console_Getopt</classname> bietet ein Interface um zu definieren welche
         Flags für die Anwendung gültig sind, das einen Fehler und Benutzungshinweise ausgibt
         wenn ein ungültiges Flag verwendet wird, und dem Code der Anwendung bekanntgibt
         welche Flags der Benutzer definiert hat.
     </para>
+
     <note>
         <title>Getopt ist kein Framework für eine Anwendung</title>
+
         <para>
-            <classname>Zend_Console_Getopt</classname> kann <emphasis>NICHT</emphasis>
+            <classname>Zend_Console_Getopt</classname> kann <emphasis>nicht</emphasis>
             die Bedeutung der Flags und Parameter interpretieren, noch implementiert
             diese Klasse einen Anwendungsworkflow oder ruft Anwendungscode auf.
             Diese Aktionen müssen im eigenen Anwendungscode integriert werden.
@@ -108,6 +121,7 @@
             Anwendung aufzurufen sollten in einer anderen <acronym>PHP</acronym> Klasse sein.
         </para>
     </note>
+
     <para>
         Die folgende Sektion beschreibt die Verwendung von
         <classname>Zend_Console_Getopt</classname>.

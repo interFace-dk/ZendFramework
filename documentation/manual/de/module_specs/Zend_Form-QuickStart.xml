@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- EN-Revision: 20115 -->
+<!-- EN-Revision: 21829 -->
 <!-- Reviewed: no -->
 <sect1 id="zend.form.quickstart">
     <title>Schnellstart mit Zend_Form</title>
@@ -40,14 +40,17 @@ $form->setAction('/resource/process')
 
         <para>
             Der obige Code setzt die Formular Aktion zu der partiellen <acronym>URL</acronym>
-            "/resource/process" und die Formular Methode zu <acronym>HTTP</acronym> POST. Das wird
+            "<filename>/resource/process</filename>" und die Formular Methode zu
+            <acronym>HTTP</acronym> <acronym>POST</acronym>. Das wird
             während der endgültigen Darstellung berücksichtigt.
         </para>
 
         <para>
-            Man kann zusätzliche HTML Attribute für das <code>&lt;form&gt;</code> Tag setzen, indem
-            die <code>setAttrib()</code> oder <code>setAttribs()</code> Methoden verwendet werden.
-            Zum Beispiel wenn man die ID setzen will, setzt man das "id" Attribut:
+            Man kann zusätzliche <acronym>HTML</acronym> Attribute für das
+            <emphasis>&lt;form&gt;</emphasis> Tag setzen, indem die
+            <methodname>setAttrib()</methodname> oder <methodname>setAttribs()</methodname> Methoden
+            verwendet werden. Zum Beispiel wenn man die ID setzen will, setzt man das
+            "<property>id</property>" Attribut:
         </para>
 
         <programlisting language="php"><![CDATA[
@@ -65,49 +68,21 @@ $form->setAttrib('id', 'login');
         </para>
 
         <itemizedlist>
-            <listitem><para>
-                button
-            </para></listitem>
+            <listitem><para>button</para></listitem>
 
-            <listitem><para>
-                checkbox (oder viele Checkboxen auf einmal mit multiCheckbox)
-            </para></listitem>
+            <listitem>
+                <para>checkbox (oder viele Checkboxen auf einmal mit multiCheckbox)</para>
+            </listitem>
 
-            <listitem><para>
-                hidden
-            </para></listitem>
-
-            <listitem><para>
-                image
-            </para></listitem>
-
-            <listitem><para>
-                password
-            </para></listitem>
-
-            <listitem><para>
-                radio
-            </para></listitem>
-
-            <listitem><para>
-                reset
-            </para></listitem>
-
-            <listitem><para>
-                select (beide, normale und Mehrfachauswahl Typen)
-            </para></listitem>
-
-            <listitem><para>
-                submit
-            </para></listitem>
-
-            <listitem><para>
-                text
-            </para></listitem>
-
-            <listitem><para>
-                textarea
-            </para></listitem>
+            <listitem><para>hidden</para></listitem>
+            <listitem><para>image</para></listitem>
+            <listitem><para>password</para></listitem>
+            <listitem><para>radio</para></listitem>
+            <listitem><para>reset</para></listitem>
+            <listitem><para>select (beide, normale und Mehrfachauswahl Typen)</para></listitem>
+            <listitem><para>submit</para></listitem>
+            <listitem><para>text</para></listitem>
+            <listitem><para>textarea</para></listitem>
         </itemizedlist>
 
         <para>
@@ -234,12 +209,14 @@ $form->addElement('text', 'username', array(
 ));
 ]]></programlisting>
 
-        <note><para>
-            Wenn man sieht, dass man Elemente welche die gleichen Optionen in vielen Plätzen
-            verwenden, konfiguriert, kann es gewünscht sein, eine eigene
-            <classname>Zend_Form_Element</classname> Unterklasse zu erstellen und diese stattdessen
-            anzupassen; das spart viel Tipparbeit im weiteren Verlauf.
-        </para></note>
+        <note>
+            <para>
+                Wenn man sieht, dass man Elemente welche die gleichen Optionen in vielen Plätzen
+                verwenden, konfiguriert, kann es gewünscht sein, eine eigene
+                <classname>Zend_Form_Element</classname> Unterklasse zu erstellen und diese
+                stattdessen anzupassen; das spart viel Tipparbeit im weiteren Verlauf.
+            </para>
+        </note>
     </sect2>
 
     <sect2 id="zend.form.quickstart.render">
@@ -263,7 +240,7 @@ echo $form;
 
         <para>
             Standardmäßig versuchen <classname>Zend_Form</classname> und
-            <classname>Zend_Form_Element</classname> ein im <code>ViewRenderer</code>
+            <classname>Zend_Form_Element</classname> ein im <classname>ViewRenderer</classname>
             initialisiertes View Objekt zu verwenden, was bedeutet, dass die View nicht manuell
             gesetzt werden muss, wenn das <acronym>MVC</acronym> des Zend Frameworks verwendet wird.
             Die Darstellung eines Formulars in einem View Skript ist sehr einfach:
@@ -324,11 +301,11 @@ $element->addDecorators(array(
         </para>
 
         <para>
-            Das Formular selbst, geht alle Elemente durch, und fügt diese in eine HTML
-            <code>&lt;form&gt;</code> ein. Die Aktion und Methode, die bei der Erstellung des
-            Formulars angegeben wurden, werden dem <code>&lt;form&gt;</code> Tag angegeben, wie
-            wenn sie Attribute wären, die über <methodname>setAttribs()</methodname> und ähnliche
-            gesetzt werden.
+            Das Formular selbst, geht alle Elemente durch, und fügt diese in eine
+            <acronym>HTML</acronym> <emphasis>&lt;form&gt;</emphasis> ein. Die Aktion und Methode,
+            die bei der Erstellung des Formulars angegeben wurden, werden dem
+            <emphasis>&lt;form&gt;</emphasis> Tag angegeben, wie wenn sie Attribute wären, die über
+            <methodname>setAttribs()</methodname> und ähnliche gesetzt werden.
         </para>
 
         <para>
@@ -549,7 +526,7 @@ class UserController extends Zend_Controller_Action
             Und ein View Skript für die Darstellung des Formulars:
         </para>
 
-<programlisting language="php"><![CDATA[
+        <programlisting language="php"><![CDATA[
 <h2>Bitte anmelden:</h2>
 <?php echo $this->form ?>
 ]]></programlisting>
@@ -627,6 +604,3 @@ $form   = new Zend_Form($config->user->login);
         </para>
     </sect2>
 </sect1>
-<!--
-vim:se ts=4 sw=4 et:
--->

@@ -1422,7 +1422,7 @@ class Zend_DateTest extends PHPUnit_Framework_TestCase
         $this->assertSame('2002-02-14T04:31:30+05:00', $date->get(Zend_Date::W3C));
         $date->setTimeZone('UTC');
         $date->set(-20, Zend_Date::YEAR_8601, 'en_US');
-        $this->assertSame('-20-02-14T23:31:30+00:00', $date->get(Zend_Date::W3C));
+        $this->assertSame('-20-02-13T23:31:30+00:00', $date->get(Zend_Date::W3C));
         $date->set($d2, Zend_Date::YEAR_8601, 'en_US');
         $this->assertSame('2002-02-14T04:31:30+05:00', $date->get(Zend_Date::W3C));
         $date->setTimezone('Indian/Maldives');
@@ -1454,7 +1454,7 @@ class Zend_DateTest extends PHPUnit_Framework_TestCase
         $this->assertSame('2002-02-14T04:31:30+05:00', $date->get(Zend_Date::W3C));
         $date->setTimeZone('UTC');
         $date->set(-20, Zend_Date::YEAR, 'en_US');
-        $this->assertSame('-20-02-14T23:31:30+00:00', $date->get(Zend_Date::W3C));
+        $this->assertSame('-20-02-13T23:31:30+00:00', $date->get(Zend_Date::W3C));
         $date->set($d2, Zend_Date::YEAR, 'en_US');
         $this->assertSame('2002-02-14T04:31:30+05:00', $date->get(Zend_Date::W3C));
         $date->setTimezone('Indian/Maldives');
@@ -1486,7 +1486,7 @@ class Zend_DateTest extends PHPUnit_Framework_TestCase
         $this->assertSame('2002-02-14T04:31:30+05:00', $date->get(Zend_Date::W3C));
         $date->setTimeZone('UTC');
         $date->set(-20, Zend_Date::YEAR_SHORT, 'en_US');
-        $this->assertSame('-20-02-14T23:31:30+00:00', $date->get(Zend_Date::W3C));
+        $this->assertSame('-20-02-13T23:31:30+00:00', $date->get(Zend_Date::W3C));
         $date->set($d2, Zend_Date::YEAR_SHORT, 'en_US');
         $this->assertSame('2002-02-14T04:31:30+05:00', $date->get(Zend_Date::W3C));
         $date->setTimezone('Indian/Maldives');
@@ -1518,7 +1518,7 @@ class Zend_DateTest extends PHPUnit_Framework_TestCase
         $this->assertSame('2002-02-14T04:31:30+05:00', $date->get(Zend_Date::W3C));
         $date->setTimeZone('UTC');
         $date->set(-20, Zend_Date::YEAR_SHORT_8601, 'en_US');
-        $this->assertSame('-20-02-14T23:31:30+00:00', $date->get(Zend_Date::W3C));
+        $this->assertSame('-20-02-13T23:31:30+00:00', $date->get(Zend_Date::W3C));
         $date->set($d2, Zend_Date::YEAR_SHORT_8601, 'en_US');
         $this->assertSame('2002-02-14T04:31:30+05:00', $date->get(Zend_Date::W3C));
         $date->setTimezone('Indian/Maldives');
@@ -4969,10 +4969,10 @@ class Zend_DateTest extends PHPUnit_Framework_TestCase
 
             $info = $server->getInfo();
 
-            if ($info['offset'] != 0) {
+            if (($info['offset'] >= 1) || ($info['offset'] <= -1)) {
                 $this->assertFalse($date1->getTimestamp() == $date2->getTimestamp());
             } else {
-                $this->assertSame($date1->getTimestamp(), $date2->getTimestamp());
+                $this->assertEquals($date1->getTimestamp(), $date2->getTimestamp());
             }
         } catch (Zend_TimeSync_Exception $e) {
             $this->markTestIncomplete('NTP timeserver not available.');
@@ -5640,6 +5640,30 @@ class Zend_DateTest extends PHPUnit_Framework_TestCase
         $date->add(200, Zend_Date::MILLISECOND);
         $this->assertEquals(6, $date->getFractionalPrecision());
         $this->assertEquals('345200', $date->toString('S'));
+    }
+
+    /**
+     * @ZF-9085
+     */
+    public function testGettingMonthWhenUsingGNU()
+    {
+        Zend_Date::setOptions(array('format_type' => 'php'));
+        $date = new Zend_Date(array('day' => 1, 'month' => 4, 'year' => 2008));
+        $date2  = $date->getMonth();
+        $result = $date2->toArray();
+        $this->assertEquals(1970, $result['year']);
+    }
+
+    /**
+     * @ZF-9891
+     */
+    public function testComparingDatesWithoutOption()
+    {
+        $date  = new Zend_Date(strtotime('Sat, 07 Mar 2009 08:03:50 +0000'));
+        $date2 = new Zend_Date();
+        $date2->set('Sat, 07 Mar 2009 08:03:50 +0000', Zend_Date::RFC_2822);
+
+        $this->assertTrue($date2->equals($date));
     }
 }
 

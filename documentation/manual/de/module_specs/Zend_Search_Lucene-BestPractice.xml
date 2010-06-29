@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- EN-Revision: 18715 -->
+<!-- EN-Revision: 21829 -->
 <!-- Reviewed: no -->
 <sect1 id="zend.search.lucene.best-practice">
     <title>Die besten Anwendungen</title>
@@ -23,8 +23,9 @@
             Treffer- <link linkend="zend.search.lucene.searching.results-scoring">Anzahl</link>.
             Wenn ein indiziertes Dokument die gleichen Felder gespeichert hat, muß die
             <methodname>getDocument()</methodname> Methode verwendet werden um auf Sie zuzugreifen:
+        </para>
 
-            <programlisting language="php"><![CDATA[
+        <programlisting language="php"><![CDATA[
 $hits = $index->find($query);
 
 foreach ($hits as $hit) {
@@ -50,7 +51,6 @@ foreach ($hits as $hit) {
     $title = $hit->getDocument()->title;
 }
 ]]></programlisting>
-        </para>
     </sect2>
 
     <sect2 id="zend.search.lucene.best-practice.indexing-performance">
@@ -78,12 +78,13 @@ foreach ($hits as $hit) {
         <para>
             Komplette Indexoptimierung kann mit der <methodname>optimize()</methodname> Methode
             durchgeführt werden:
-            <programlisting language="php"><![CDATA[
+        </para>
+
+        <programlisting language="php"><![CDATA[
 $index = Zend_Search_Lucene::open($indexPath);
 
 $index->optimize();
 ]]></programlisting>
-        </para>
 
         <para>
             Index Optimierung arbeitet mit Daten Streams und benötigt nicht viel Speicher dafür aber
@@ -106,6 +107,7 @@ $index->optimize();
             Es gibt drei Optionen um das Verhalten der automatischen Optimierung zu beeinflussen
             (siehe das Kapitel <link linkend="zend.search.lucene.index-creation.optimization">Index
                 Optimierung</link>):
+
             <itemizedlist>
                 <listitem>
                     <para>
@@ -114,6 +116,7 @@ $index->optimize();
                         Festplatte geschrieben wird.
                     </para>
                 </listitem>
+
                 <listitem>
                     <para>
                         <emphasis>MaxMergeDocs</emphasis> ist die maximale Anzahl an Dokumenten die
@@ -121,6 +124,7 @@ $index->optimize();
                         zusamengeführt werden.
                     </para>
                 </listitem>
+
                 <listitem>
                     <para>
                         <emphasis>MergeFactor</emphasis> ermittelt wie oft die automatische
@@ -128,6 +132,7 @@ $index->optimize();
                     </para>
                 </listitem>
             </itemizedlist>
+
             <note>
                 <para>
                     Alle diese Optionen sind Objekteigenschaften von
@@ -213,18 +218,21 @@ $index->optimize();
 
         <para>
             <emphasis>MergeFactor</emphasis> gruppiert Indexsegmente anhand Ihrer Größe:
+
             <orderedlist>
                 <listitem>
                     <para>
                         Nicht größer als <emphasis>MaxBufferedDocs</emphasis>.
                     </para>
                 </listitem>
+
                 <listitem>
                     <para>
                         Größer als <emphasis>MaxBufferedDocs</emphasis>, aber nicht größer als
                         <emphasis>MaxBufferedDocs</emphasis>*<emphasis>MergeFactor</emphasis>.
                     </para>
                 </listitem>
+
                 <listitem>
                     <para>
                         Größer als
@@ -233,6 +241,7 @@ $index->optimize();
                         <emphasis>MaxBufferedDocs</emphasis>*<emphasis>MergeFactor</emphasis>*<emphasis>MergeFactor</emphasis>.
                     </para>
                 </listitem>
+
                 <listitem>
                     <para>...</para>
                 </listitem>
@@ -257,6 +266,7 @@ $index->optimize();
         <para>
             Das gibt eine gute Annäherung für die Anzahl an Segmenten im Index:
         </para>
+
         <para>
             <emphasis>NumberOfSegments</emphasis> &lt;= <emphasis>MaxBufferedDocs</emphasis> +
             <emphasis>MergeFactor</emphasis>*log
@@ -328,23 +338,28 @@ $index->optimize();
 
         <para>
             Der erste ist, dass das Herausgehen aus dem Sichtbereich erzwungen wird:
-            <programlisting language="php"><![CDATA[
+        </para>
+
+        <programlisting language="php"><![CDATA[
 $index = Zend_Search_Lucene::open($indexPath);
 
 ...
 
 unset($index);
 ]]></programlisting>
-        </para>
 
         <para>
             Und der zweite ist, das eine commit Operation vor dem Ausführungsende des Skripts
             durchgeführt wird:
-            <programlisting language="php"><![CDATA[
+        </para>
+
+        <programlisting language="php"><![CDATA[
 $index = Zend_Search_Lucene::open($indexPath);
 
 $index->commit();
 ]]></programlisting>
+
+        <para>
             Diese Möglichkeit wird auch im Kapitel "<link
                 linkend="zend.search.lucene.advanced.static">Fortgeschrittene Verwendung von Indezes
                 als statische Eigenschaften</link>" beschrieben.
@@ -367,7 +382,9 @@ $index->commit();
 
         <para>
             Das ist effizienter als die Verwendung der <methodname>find()</methodname> Methode:
-            <programlisting language="php"><![CDATA[
+        </para>
+
+        <programlisting language="php"><![CDATA[
 // Dokumente mit find() empfangen durch verwenden eines Abfragestrings
 $query = $idFieldName . ':' . $docId;
 $hits  = $index->find($query);
@@ -400,7 +417,6 @@ foreach ($docIds as $id) {
     ...
 }
 ]]></programlisting>
-        </para>
     </sect2>
 
     <sect2 id="zend.search.lucene.best-practice.memory-usage">
@@ -490,7 +506,9 @@ foreach ($docIds as $id) {
         <para>
             Verschlüsselung kann explizit als optionaler Parameter bei den Felderstellung Methoden
             spezifiziert werden:
-            <programlisting language="php"><![CDATA[
+        </para>
+
+        <programlisting language="php"><![CDATA[
 $doc = new Zend_Search_Lucene_Document();
 $doc->addField(Zend_Search_Lucene_Field::Text('title',
                                               $title,
@@ -499,6 +517,8 @@ $doc->addField(Zend_Search_Lucene_Field::UnStored('contents',
                                                   $contents,
                                                   'utf-8'));
 ]]></programlisting>
+
+        <para>
             Das ist der beste Weg um Problemen bei der verwendeten Verschlüsselung vorzubeugen.
         </para>
 
@@ -506,7 +526,9 @@ $doc->addField(Zend_Search_Lucene_Field::UnStored('contents',
             Wenn der optionale Parameter der Verschlüsselung unterdrückt wird, wird das aktuelle
             Gebietsschema verwendet. Das aktuelle Gebietsschema kann Daten zur
             Zeichenverschlüsselung, zusätzlich zur Spezifikation der Sprache, enthalten.
-            <programlisting language="php"><![CDATA[
+        </para>
+
+        <programlisting language="php"><![CDATA[
 setlocale(LC_ALL, 'fr_FR');
 ...
 
@@ -516,7 +538,6 @@ setlocale(LC_ALL, 'de_DE.iso-8859-1');
 setlocale(LC_ALL, 'ru_RU.UTF-8');
 ...
 ]]></programlisting>
-        </para>
 
         <para>
             Der selbe Weg wird verwendet um die Verschlüsselung beim Abfragestring zu setzen.
@@ -530,22 +551,27 @@ setlocale(LC_ALL, 'ru_RU.UTF-8');
         <para>
             Verschlüsselung kann als optionaler Parameter übergeben werden, wenn die Abfrage
             explizit vor der Suche geparsed wird:
-            <programlisting language="php"><![CDATA[
+        </para>
+
+        <programlisting language="php"><![CDATA[
 $query =
     Zend_Search_Lucene_Search_QueryParser::parse($queryStr, 'iso-8859-5');
 $hits = $index->find($query);
 ...
 ]]></programlisting>
-        </para>
 
         <para>
             Die Standardverschlüsselung kann auch mit der
             <methodname>setDefaultEncoding()</methodname> Methode spezifiziert werden:
-            <programlisting language="php"><![CDATA[
+        </para>
+
+        <programlisting language="php"><![CDATA[
 Zend_Search_Lucene_Search_QueryParser::setDefaultEncoding('iso-8859-1');
 $hits = $index->find($queryStr);
 ...
 ]]></programlisting>
+
+        <para>
             Ein leerer String impliziert das 'aktuelle Gebietsschema'.
         </para>
 
@@ -592,7 +618,5 @@ $hits = $index->find($queryStr);
             es notwendig ist. Diese Praxis reduziert die Wiederherstellungszeit des Index
             dramatisch.
         </para>
-
     </sect2>
-
 </sect1>

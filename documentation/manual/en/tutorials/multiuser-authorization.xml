@@ -40,7 +40,6 @@
             building a tree of roles, resources and privileges to manage and query authorization
             requests against.
         </para>
-
     </sect2>
 
     <sect2 id="learning.multiuser.authorization.basic-usage">
@@ -51,7 +50,7 @@
         <para>
             When using <classname>Zend_Acl</classname>, any models can serve as roles or resources
             by simply implementing the proper interface. To be used in a role capacity, the class
-            must implement the <classname>Zend_Acl</classname>, which requires only
+            must implement the <classname>Zend_Acl_Role_Interface</classname>, which requires only
             <methodname>getRoleId()</methodname>. To be used in a resource capacity, a class must
             implement the <classname>Zend_Acl_Resource_Interface</classname> which similarly
             requires the class implement the <methodname>getResourceId()</methodname> method.

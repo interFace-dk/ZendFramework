@@ -29,11 +29,9 @@
             meet one or both of the requirements, it would be useful to know
             which of the requirements the username fails to meet.
         </para>
-
     </sect2>
 
     <sect2 id="zend.validate.introduction.using">
-
         <title>Basic usage of validators</title>
 
         <para>
@@ -72,8 +70,9 @@
 
         <para>
             The following example illustrates validation of an e-mail address:
+        </para>
 
-            <programlisting language="php"><![CDATA[
+        <programlisting language="php"><![CDATA[
 $validator = new Zend_Validate_EmailAddress();
 
 if ($validator->isValid($email)) {
@@ -85,13 +84,9 @@ if ($validator->isValid($email)) {
     }
 }
 ]]></programlisting>
-
-        </para>
-
     </sect2>
 
     <sect2 id="zend.validate.introduction.messages">
-
         <title>Customizing messages</title>
 
         <para>
@@ -121,8 +116,7 @@ if ($validator->isValid($email)) {
             which message template you are changing.
         </para>
 
-        <para>
-            <programlisting language="php"><![CDATA[
+        <programlisting language="php"><![CDATA[
 $validator = new Zend_Validate_StringLength(8);
 
 $validator->setMessage(
@@ -137,13 +131,13 @@ if (!$validator->isValid('word')) {
     // "The string 'word' is too short; it must be at least 8 characters"
 }
 ]]></programlisting>
-        </para>
 
         <para>
             You can set multiple messages using the <methodname>setMessages()</methodname>
             method. Its argument is an array containing key/message pairs.
+        </para>
 
-            <programlisting language="php"><![CDATA[
+        <programlisting language="php"><![CDATA[
 $validator = new Zend_Validate_StringLength(array('min' => 8, 'max' => 12));
 
 $validator->setMessages( array(
@@ -154,8 +148,6 @@ $validator->setMessages( array(
 ));
 ]]></programlisting>
 
-        </para>
-
         <para>
             If your application requires even greater flexibility with which it
             reports validation failures, you can access properties by the same
@@ -164,8 +156,9 @@ $validator->setMessages( array(
             it is the value you specified as the argument of
             <methodname>isValid()</methodname>. Other properties may be supported on a
             case-by-case basis in each validation class.
+        </para>
 
-            <programlisting language="php"><![CDATA[
+        <programlisting language="php"><![CDATA[
 $validator = new Zend_Validate_StringLength(array('min' => 8, 'max' => 12));
 
 if (!validator->isValid('word')) {
@@ -178,12 +171,9 @@ if (!validator->isValid('word')) {
         . "\n";
 }
 ]]></programlisting>
-        </para>
-
     </sect2>
 
     <sect2 id="zend.validate.introduction.static">
-
         <title>Using the static is() method</title>
 
         <para>
@@ -197,26 +187,24 @@ if (!validator->isValid('word')) {
             namespace. The <methodname>is()</methodname> method automatically loads the
             class, creates an instance, and applies the <methodname>isValid()</methodname>
             method to the data input.
+        </para>
 
-            <programlisting language="php"><![CDATA[
+        <programlisting language="php"><![CDATA[
 if (Zend_Validate::is($email, 'EmailAddress')) {
     // Yes, email appears to be valid
 }
 ]]></programlisting>
 
-        </para>
-
         <para>
             You can also pass an array of constructor arguments, if they
             are needed for the validator.
+        </para>
 
-            <programlisting language="php"><![CDATA[
+        <programlisting language="php"><![CDATA[
 if (Zend_Validate::is($value, 'Between', array('min' => 1, 'max' => 12))) {
     // Yes, $value is between 1 and 12
 }
 ]]></programlisting>
-
-        </para>
 
         <para>
             The <methodname>is()</methodname> method returns a boolean value, the same as
@@ -241,11 +229,10 @@ if (Zend_Validate::is($value, 'Between', array('min' => 1, 'max' => 12))) {
         </para>
 
         <sect3 id="zend.validate.introduction.static.namespaces">
-
             <title>Namespaces</title>
 
             <para>
-                When working with self defined validators you can give a forth parameter
+                When working with self defined validators you can give a fourth parameter
                 to <methodname>Zend_Validate::is()</methodname> which is the namespace
                 where your validator can be found.
             </para>
@@ -270,13 +257,15 @@ if (Zend_Validate::is($value, 'MyValidator', array('min' => 1, 'max' => 12)) {
     // Yes, $value is ok
 }
 
-if (Zend_Validate::is($value, 'OtherValidator', array('min' => 1, 'max' => 12)) {
+if (Zend_Validate::is($value,
+                      'OtherValidator',
+                      array('min' => 1, 'max' => 12)) {
     // Yes, $value is ok
 }
 ]]></programlisting>
 
             <para>
-                For your convinience there are following methods which allow the handling of
+                For your convenience there are following methods which allow the handling of
                 namespaces:
             </para>
 
@@ -316,7 +305,6 @@ if (Zend_Validate::is($value, 'OtherValidator', array('min' => 1, 'max' => 12)) 
     </sect2>
 
     <sect2 id="zend.validate.introduction.translation">
-
         <title>Translating messages</title>
 
         <para>
@@ -329,9 +317,13 @@ if (Zend_Validate::is($value, 'OtherValidator', array('min' => 1, 'max' => 12)) 
         <programlisting language="php"><![CDATA[
 $validator = new Zend_Validate_StringLength(array('min' => 8, 'max' => 12));
 $translate = new Zend_Translate(
-    'array',
-    array(Zend_Validate_StringLength::TOO_SHORT => 'Translated \'%value%\''),
-    'en'
+    array(
+        'adapter' => 'array',
+        'content' => array(
+            Zend_Validate_StringLength::TOO_SHORT => 'Translated \'%value%\''
+        ),
+        'locale' => 'en'
+    )
 );
 
 $validator->setTranslator($translate);
@@ -347,9 +339,13 @@ $validator->setTranslator($translate);
 
         <programlisting language="php"><![CDATA[
 $translate = new Zend_Translate(
-    'array',
-    array(Zend_Validate_StringLength::TOO_SHORT => 'Translated \'%value%\''),
-    'en'
+    array(
+        'adapter' => 'array',
+        'content' => array(
+            Zend_Validate_StringLength::TOO_SHORT => 'Translated \'%value%\''
+        ),
+        'locale' => 'en'
+    )
 );
 Zend_Validate::setDefaultTranslator($translate);
 ]]></programlisting>
@@ -380,7 +376,6 @@ if (!$validator->isTranslatorDisabled()) {
             <methodname>setMessage()</methodname>. But doing so, you should keep in mind, that the
             translator works also on messages you set your own.
         </para>
-
     </sect2>
 </sect1>
 <!--
