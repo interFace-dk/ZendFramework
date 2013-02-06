@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Queue
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: Queue1Test.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /*
@@ -28,12 +28,6 @@
  * an exception.
  */
 
-/** PHPUnit Test Case */
-require_once 'PHPUnit/Framework/TestCase.php';
-
-/** TestHelp.php */
-require_once dirname(__FILE__) . '/../../TestHelper.php';
-
 /** Zend_Queue_Queue2Test */
 require_once 'Zend/Queue/QueueBaseTest.php';
 
@@ -41,7 +35,7 @@ require_once 'Zend/Queue/QueueBaseTest.php';
  * @category   Zend
  * @package    Zend_Queue
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Queue
  */

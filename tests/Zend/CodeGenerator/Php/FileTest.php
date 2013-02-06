@@ -15,15 +15,10 @@
  * @category   Zend
  * @package    Zend_CodeGenerator
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id $
  */
-
-/**
- * @see TestHelper
- */
-require_once dirname(__FILE__) . '/../../../TestHelper.php';
 
 /** requires here */
 require_once 'Zend/CodeGenerator/Php/File.php';
@@ -33,7 +28,7 @@ require_once 'Zend/Reflection/File.php';
  * @category   Zend
  * @package    Zend_CodeGenerator
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  *
  * @group Zend_CodeGenerator
@@ -119,21 +114,19 @@ EOS;
 
     public function testFromReflectionFile()
     {
-        ///$this->markTestSkipped('skipme');
         $file = dirname(__FILE__) . '/_files/TestSampleSingleClass.php';
 
         require_once $file;
         $codeGenFileFromDisk = Zend_CodeGenerator_Php_File::fromReflection(new Zend_Reflection_File($file));
-
         $codeGenFileFromDisk->getClass()->setMethod(array('name' => 'foobar'));
 
         $expectedOutput = <<<EOS
 <?php
 /**
  * File header here
- * 
+ *
  * @author Ralph Schindler <ralph.schindler@zend.com>
- * 
+ *
  */
 
 
@@ -141,18 +134,18 @@ EOS;
 
 /**
  * class docblock
- * 
+ *
  * @package Zend_Reflection_TestSampleSingleClass
- * 
+ *
  */
 class Zend_Reflection_TestSampleSingleClass
 {
 
     /**
      * Enter description here...
-     * 
+     *
      * @return bool
-     * 
+     *
      */
     public function someMethod()
     {
@@ -175,6 +168,114 @@ EOS;
 
     }
 
+    /**
+     * @group ZF-7369
+     * @group ZF-6982
+     */
+    public function testFromReflectionFileKeepsIndents()
+    {
+        $file = dirname(__FILE__) . '/_files/TestClassWithCodeInMethod.php';
+
+        require_once $file;
+        $codeGenFileFromDisk = Zend_CodeGenerator_Php_File::fromReflection(new Zend_Reflection_File($file));
+
+        $expectedOutput = <<<EOS
+<?php
+/**
+ * File header here
+ *
+ * @author Ralph Schindler <ralph.schindler@zend.com>
+ */
+
+
+
+/**
+ * class docblock
+ *
+ * @package Zend_Reflection_TestClassWithCodeInMethod
+ */
+class Zend_Reflection_TestClassWithCodeInMethod
+{
+
+    /**
+     * Enter description here...
+     *
+     * @return bool
+     */
+    public function someMethod()
+    {
+        /* test test */
+        \$foo = 'bar';
+    }
+
+}
+
+
+EOS;
+
+        $this->assertEquals($expectedOutput, $codeGenFileFromDisk->generate());
+    }
+
+    /**
+     * @group ZF-7369
+     * @group ZF-6982
+     */
+    public function testFromReflectionFilePreservesIndentsWhenAdditionalMethodAdded()
+    {
+        $file = dirname(__FILE__) . '/_files/TestClassWithCodeInMethod.php';
+
+        require_once $file;
+        $codeGenFileFromDisk = Zend_CodeGenerator_Php_File::fromReflection(new Zend_Reflection_File($file));
+        $codeGenFileFromDisk->getClass()->setMethod(array('name' => 'foobar'));
+        
+        $expectedOutput = <<<EOS
+<?php
+/**
+ * File header here
+ *
+ * @author Ralph Schindler <ralph.schindler@zend.com>
+ *
+ */
+
+
+
+
+/**
+ * class docblock
+ *
+ * @package Zend_Reflection_TestClassWithCodeInMethod
+ *
+ */
+class Zend_Reflection_TestClassWithCodeInMethod
+{
+
+    /**
+     * Enter description here...
+     *
+     * @return bool
+     *
+     */
+    public function someMethod()
+    {
+        /* test test */
+        \$foo = 'bar';
+    }
+
+    public function foobar()
+    {
+    }
+
+
+}
+
+
+
+
+EOS;
+
+        $this->assertEquals($expectedOutput, $codeGenFileFromDisk->generate());
+    }
+
     public function testFileLineEndingsAreAlwaysLineFeed()
     {
         $codeGenFile = new Zend_CodeGenerator_Php_File(array(
@@ -195,4 +296,86 @@ EOS;
         $this->assertEquals(';', $lines[2]{$targetLength-1});
     }
 
+    /**
+    * @group ZF-11703
+    */
+    public function testNewMethodKeepDocBlock(){
+        $codeGenFile = Zend_CodeGenerator_Php_File::fromReflectedFileName(dirname(__FILE__).'/_files/zf-11703.php', true, true);
+        $target = <<<EOS
+<?php
+/**
+ * For manipulating files.
+ *
+ */
+
+class Foo
+{
+
+    public function bar()
+    {
+        // action body
+    }
+
+    public function bar2()
+    {
+        // action body
+    }
+
+
+}
+
+
+EOS;
+
+        $codeGenFile->getClass()->setMethod(array(
+            'name' => 'bar2',
+            'body' => '// action body'
+            ));
+
+        $this->assertEquals($target, $codeGenFile->generate());
+    }
+    
+    /**
+    * @group ZF-11703
+    */
+    public function testNewMethodKeepTwoDocBlock(){
+        $codeGenFile = Zend_CodeGenerator_Php_File::fromReflectedFileName(dirname(__FILE__).'/_files/zf-11703_1.php', true, true);
+        $target = <<<EOS
+<?php
+/**
+ * For manipulating files.
+ *
+ */
+
+
+/**
+ * Class Foo1
+ *
+ */
+class Foo1
+{
+
+    public function bar()
+    {
+        // action body
+    }
+
+    public function bar2()
+    {
+        // action body
+    }
+
+
+}
+
+
+EOS;
+
+        $codeGenFile->getClass()->setMethod(array(
+            'name' => 'bar2',
+            'body' => '// action body'
+            ));
+
+        $this->assertEquals($target, $codeGenFile->generate());
+    }
 }

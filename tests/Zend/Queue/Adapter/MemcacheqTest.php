@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Queue
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: MemcacheqTest.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /*
@@ -27,12 +27,6 @@
  * All methods marked not supported are explictly checked for for throwing
  * an exception.
  */
-
-/** PHPUnit Test Case */
-require_once 'PHPUnit/Framework/TestCase.php';
-
-/** TestHelp.php */
-require_once dirname(__FILE__) . '/../../../TestHelper.php';
 
 /** Zend_Queue */
 require_once 'Zend/Queue.php';
@@ -50,12 +44,27 @@ require_once dirname(__FILE__) . '/AdapterTest.php';
  * @category   Zend
  * @package    Zend_Queue
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Queue
  */
 class Zend_Queue_Adapter_MemcacheqTest extends Zend_Queue_Adapter_AdapterTest
 {
+    /**
+     * Test setup
+     */
+    public function setUp()
+    {
+        if (!TESTS_ZEND_QUEUE_MEMCACHEQ_ENABLED) {
+            $this->markTestSkipped('TESTS_ZEND_QUEUE_MEMCACHEQ_ENABLED is not enabled in TestConfiguration.php');
+        }
+        if (!extension_loaded('memcache')) {
+            $this->markTestSkipped('memcache extension not loaded');
+        }
+        date_default_timezone_set('GMT');
+        parent::setUp();
+    }
+    
     /**
      * getAdapterName() is an method to help make AdapterTest work with any
      * new adapters
@@ -105,5 +114,22 @@ class Zend_Queue_Adapter_MemcacheqTest extends Zend_Queue_Adapter_AdapterTest
         $this->assertTrue(is_string(Zend_Queue_Adapter_Memcacheq::DEFAULT_HOST));
         $this->assertTrue(is_integer(Zend_Queue_Adapter_Memcacheq::DEFAULT_PORT));
         $this->assertTrue(is_string(Zend_Queue_Adapter_Memcacheq::EOL));
+    }
+    
+    /**
+     * @group ZF-7650
+     */
+    public function testReceiveWillRetrieveZeroItems()
+    {
+        $options = array('name' => 'ZF7650', 'driverOptions' => $this->getTestConfig());
+
+        $queue = new Zend_Queue('Memcacheq', $options);
+        $queue2 = $queue->createQueue('queue');
+
+        $queue->send('My Test Message 1');
+        $queue->send('My Test Message 2');
+
+        $messages = $queue->receive(0);
+        $this->assertEquals(0, count($messages));
     }
 }

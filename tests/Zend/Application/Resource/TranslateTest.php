@@ -15,19 +15,14 @@
  * @category   Zend
  * @package    Zend_Application
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: TranslateTest.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 if (!defined('PHPUnit_MAIN_METHOD')) {
     define('PHPUnit_MAIN_METHOD', 'Zend_Application_Resource_TranslateTest::main');
 }
-
-/**
- * Test helper
- */
-require_once dirname(__FILE__) . '/../../../TestHelper.php';
 
 /**
  * Zend_Loader_Autoloader
@@ -38,7 +33,7 @@ require_once 'Zend/Loader/Autoloader.php';
  * @category   Zend
  * @package    Zend_Application
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Application
  */
@@ -177,7 +172,51 @@ class Zend_Application_Resource_TranslateTest extends PHPUnit_Framework_TestCase
         $resource->init();
 
         $this->assertType('Zend_Cache_Core', Zend_Translate::getCache());
-        Zend_Translate::clearCache();
+        Zend_Translate::removeCache();
+    }
+
+    /**
+     * @group ZF-10352
+     */
+    public function testToUseTheSameKeyAsTheOptionsZendTranslate()
+    {
+        $options = array(
+            'adapter' => 'array',
+            'content' => array(
+                'm1' => 'message1',
+                'm2' => 'message2'
+            ),
+            'locale' => 'auto'
+        );
+
+        $resource = new Zend_Application_Resource_Translate($options);
+        $translator = $resource->init();
+
+        $this->assertEquals(new Zend_Translate($options), $translator);
+        $this->assertEquals('message2', $translator->_('m2'));
+    }
+
+    /**
+     * @group ZF-10352
+     * @expectedException Zend_Application_Resource_Exception
+     */
+    public function testToUseTheTwoKeysContentAndDataShouldThrowsException()
+    {
+        $options = array(
+            'adapter' => 'array',
+            'content' => array(
+                'm1' => 'message1',
+                'm2' => 'message2'
+            ),
+            'data' => array(
+                'm3' => 'message3',
+                'm4' => 'message4'
+            ),
+            'locale' => 'auto'
+        );
+
+        $resource = new Zend_Application_Resource_Translate($options);
+        $translator = $resource->init();
     }
 }
 

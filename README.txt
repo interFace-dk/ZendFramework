@@ -1,26 +1,139 @@
-Welcome to the Zend Framework 1.10 Release! 
+Welcome to the Zend Framework 1.12 Release! 
 
 RELEASE INFORMATION
 ---------------
-Zend Framework 1.10dev Release ([INSERT REV NUM HERE]).
-Released on <Month> <Day>, <Year>.
+Zend Framework 1.12.1 Release (r25165).
+Released on December 18, 2012.
+
+SECURITY FIXES FOR 1.12.1
+-------------------------
+
+This release incorporates fixes for:
+
+ - http://framework.zend.com/security/advisory/ZF2012-05
+
+Zend_Feed_Rss and Zend_Feed_Atom were found to contain XML eXternal
+Entity (XXE) Injection vectors due to insecure usage of the DOM
+extension.  External entities could be specified by adding a specific
+DOCTYPE element to XML-RPC requests; exploiting this vulnerability could
+coerce opening arbitrary files and/or TCP connections.
+
+A similar issue was fixed for 1.12.0, in the Zend_Feed::import() method;
+however, the reporter of the issue discovered that the individual
+classes contained similar functionality in their constructors which
+remained vulnerable.
+
+The patch applied removes the XXE vector by calling
+libxml_disable_entity_loader() before attempting to parse the feed via
+DOMDocument::loadXML().
+
+The above patches are also available in the 1.11 series of releases.
+
+Thanks goes to Yury Dyachenko at Positive Research Center for for
+reporting the XXE vulnerability and reviewing the patches created to fix
+the issue.
+
 
 NEW FEATURES
-------------
+============
 
-* Zend_Filter_Null, contributed by Thomas Weidner
-* Zend_Filter_Compress/Decompress, contributed by Thomas Weidner
-* Zend_Validate_Callback, contributed by Thomas Weidner
-* Zend_Validate_PostCode, contributed by Thomas Weidner
+Zend_Loader changes
+----
 
-A detailed list of all features and bug fixes in this release may be found at:
+A number of autoloaders and autoloader facilities were back ported from
+ZF2 to provide performant alternatives to those already available in the
+1.X releases.  These include: Zend_Loader_StandardAutoloader, which
+improves on Zend_Loader_Autoloader by allowing the ability to specify a
+specific path to associate with a vendor prefix or namespace;
+Zend_Loader_ClassMapAutoloader, which provides the ability to use lookup
+tables for autoloading (which are typically the fastest possible way to
+autoload); and Zend_Loader_AutoloaderFactory, which can both create and
+update autoloaders for you, as well as register them with
+spl_autoload_register().
 
-http://framework.zend.com/changelog/
+The Zend_Loader changes were back ported from ZF2 by Matthew Weier
+O’Phinney
+
+Zend_EventManager
+----
+
+Zend_EventManager is a component that allows you to attach and detach
+listeners to named events, both on a per-instance basis as well as via
+shared collections; trigger events; and interrupt execution of
+listeners.
+
+Zend_EventManager was back ported from ZF2 by Matthew Weier O’Phinney
+
+Zend_Http_UserAgent_Features_Adapter_Browscap
+----
+
+This class provides a features adapter that calls get_browser() in order
+to discover mobile device capabilities to inject into UserAgent device
+instances.
+
+Browscap (http://browsers.garykeith.com/) is an open project dedicated
+to collecting an disseminating a “database” of browser capabilities. PHP
+has built-in support for using these files via the get_browser()
+function. This function requires that your php.ini provides a browscap
+entry pointing to the PHP-specific php_browscap.ini file which is
+available at http://browsers.garykeith.com/stream.asp?PHP_BrowsCapINI.
+
+Zend_Http_UserAgent_Features_Adapter_Browscap was created by Matthew
+Weier O’Phinney
+
+Zend_Mobile_Push
+----
+
+Zend_Mobile_Push is a component for implementing push notifications for
+the 3 major push notification platforms (Apple (Apns), Google (C2dm) and
+Microsoft (Mpns).
+
+Zend_Mobile_Push was contributed by Mike Willbanks.
+
+Zend_Gdata_Analytics
+----
+
+Zend_Gdata_Analytics is an extension to Zend_Gdata to allow interaction
+with Google’s Analytics Data Export API. This extension does not
+encompass any major changes in the overall operation of Zend_Gdata
+components.
+
+Zend_Gdata_Analytics was contributed by Daniel Hartmann.
+
+Removed features
+================
+
+Zend_Http_UserAgent_Features_Adapter_WurflApi
+----
+
+Due to the changes in licensing of WURFL, we have removed the WurflApi
+adapter. We will be providing the WurflApi adapter to ScientiaMobile so
+that users of WURFL will still have that option.
+
+Bug Fixes
+=========
+
+In addition,  over 200 reported issues in the tracker have been fixed.
+We’d like to particularly thank Adam Lundrigan, Frank Brückner and
+Martin Hujer for their efforts in making this happen. Thanks also to the
+many people who ran the ZF1 unit tests and reported their results!
+
+For a complete list, visit:
+
+ * http://framework.zend.com/issues/secure/IssueNavigator.jspa?requestId=12877
+ * http://framework.zend.com/changelog/
+
+MIGRATION NOTES
+---------------
+
+A detailed list of migration notes may be found at:
+
+http://framework.zend.com/manual/en/migration.html
 
 SYSTEM REQUIREMENTS
 -------------------
 
-Zend Framework requires PHP 5.2.4 or later. Please see our reference
+Zend Framework requires PHP 5.2.11 or later. Please see our reference
 guide for more detailed system requirements:
 
 http://framework.zend.com/manual/en/requirements.html

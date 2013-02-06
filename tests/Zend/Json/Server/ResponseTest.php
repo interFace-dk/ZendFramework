@@ -15,17 +15,15 @@
  * @category   Zend
  * @package    Zend_Json_Server
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: ResponseTest.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 // Call Zend_Json_Server_ResponseTest::main() if this source file is executed directly.
 if (!defined("PHPUnit_MAIN_METHOD")) {
     define("PHPUnit_MAIN_METHOD", "Zend_Json_Server_ResponseTest::main");
 }
-
-require_once dirname(__FILE__) . '/../../../TestHelper.php';
 
 require_once 'Zend/Json/Server/Response.php';
 require_once 'Zend/Json/Server/Error.php';
@@ -37,7 +35,7 @@ require_once 'Zend/Json.php';
  * @category   Zend
  * @package    Zend_Json_Server
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Json
  * @group      Zend_Json_Server
@@ -51,7 +49,6 @@ class Zend_Json_Server_ResponseTest extends PHPUnit_Framework_TestCase
      */
     public static function main()
     {
-        require_once "PHPUnit/TextUI/TestRunner.php";
 
         $suite  = new PHPUnit_Framework_TestSuite("Zend_Json_Server_ResponseTest");
         $result = PHPUnit_TextUI_TestRunner::run($suite);
@@ -146,7 +143,8 @@ class Zend_Json_Server_ResponseTest extends PHPUnit_Framework_TestCase
 
         $this->assertTrue(is_array($test));
         $this->assertTrue(array_key_exists('result', $test));
-        $this->assertTrue(array_key_exists('error', $test));
+        // assertion changed to false, because 'error' may not coexist with 'result'
+        $this->assertFalse(array_key_exists('error', $test), "'error' may not coexist with 'result'");
         $this->assertTrue(array_key_exists('id', $test));
         $this->assertTrue(array_key_exists('jsonrpc', $test));
 
@@ -167,7 +165,7 @@ class Zend_Json_Server_ResponseTest extends PHPUnit_Framework_TestCase
         $test = Zend_Json::decode($json);
 
         $this->assertTrue(is_array($test));
-        $this->assertTrue(array_key_exists('result', $test));
+        $this->assertFalse(array_key_exists('result', $test), "'result' may not coexist with 'error'");
         $this->assertTrue(array_key_exists('id', $test));
         $this->assertFalse(array_key_exists('jsonrpc', $test));
 
@@ -185,7 +183,7 @@ class Zend_Json_Server_ResponseTest extends PHPUnit_Framework_TestCase
 
         $this->assertTrue(is_array($test));
         $this->assertTrue(array_key_exists('result', $test));
-        $this->assertTrue(array_key_exists('error', $test));
+        $this->assertFalse(array_key_exists('error', $test), "'error' may not coexist with 'result'");
         $this->assertTrue(array_key_exists('id', $test));
         $this->assertFalse(array_key_exists('jsonrpc', $test));
 

@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Cache
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: CoreTest.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
@@ -28,18 +28,13 @@ require_once 'Zend/Cache/Core.php';
 require_once 'Zend/Cache/Backend/File.php'; // TODO : use only Test backend ?
 require_once 'Zend/Cache/Backend/Test.php';
 
-/**
- * PHPUnit test case
- */
-require_once 'PHPUnit/Framework/TestCase.php';
-
 require_once 'Zend/Config.php';
 
 /**
  * @category   Zend
  * @package    Zend_Cache
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Cache
  */
@@ -67,7 +62,7 @@ class Zend_Cache_CoreTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @issue ZF-7568
+     * @group ZF-7568
      */
     public function testConstructorCorrectCallWithZendConfig()
     {
@@ -77,7 +72,7 @@ class Zend_Cache_CoreTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @issue ZF-7568
+     * @group ZF-7568
      */
     public function testSettingOptionsWithZendConfig()
     {
@@ -289,13 +284,15 @@ class Zend_Cache_CoreTest extends PHPUnit_Framework_TestCase
 
     public function testSaveCorrectCallButFileCorruption()
     {
+        $cacheIdPrefix = 'cacheIdPrefix';
+        $this->_instance->setOption('cache_id_prefix', $cacheIdPrefix);
         $res = $this->_instance->save('data', 'false', array('tag1', 'tag2'));
         $logs = $this->_backend->getAllLogs();
         $expected1 = array(
             'methodName' => 'save',
             'args' => array(
                 0 => 'data',
-                1 => 'false',
+                1 => $cacheIdPrefix . 'false',
                 2 => array(
                     0 => 'tag1',
                     1 => 'tag2'
@@ -305,7 +302,7 @@ class Zend_Cache_CoreTest extends PHPUnit_Framework_TestCase
         $expected2 = array(
             'methodName' => 'remove',
             'args' => array(
-                0 => 'false'
+                0 => $cacheIdPrefix.'false'
             )
         );
         $this->assertFalse($res);
@@ -520,6 +517,17 @@ class Zend_Cache_CoreTest extends PHPUnit_Framework_TestCase
         $ids = $this->_instance->getIdsMatchingAnyTags(array('tag5', 'tag6'));
         $this->assertContains('id5', $ids);
         $this->assertContains('id6', $ids);
+    }
+
+    public function testLoggerSanity()
+    {
+        $this->_instance = new Zend_Cache_Core(array(
+            'logging' => true
+        ));
+        $this->_instance->setBackend($this->_backend);
+
+        $logger = $this->_instance->getOption('logger');
+        $this->assertType('Zend_Log', $logger);
     }
 
     /**

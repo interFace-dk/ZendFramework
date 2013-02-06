@@ -15,14 +15,15 @@
  * @category   Zend
  * @package    Zend_XmlRpc
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version $Id$
+ * @version $Id: RequestTest.php 25033 2012-08-17 19:50:08Z matthew $
  */
 
 require_once 'Zend/XmlRpc/Request.php';
-require_once 'PHPUnit/Framework/TestCase.php';
-require_once 'PHPUnit/Framework/IncompleteTestError.php';
+require_once 'Zend/XmlRpc/Value/Nil.php';
+require_once 'Zend/XmlRpc/Value/String.php';
+
 
 /**
  * Test case for Zend_XmlRpc_Request
@@ -30,7 +31,7 @@ require_once 'PHPUnit/Framework/IncompleteTestError.php';
  * @category   Zend
  * @package    Zend_XmlRpc
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_XmlRpc
  */
@@ -348,4 +349,29 @@ class Zend_XmlRpc_RequestTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('ISO-8859-1', $this->_request->getEncoding());
         $this->assertEquals('ISO-8859-1', Zend_XmlRpc_Value::getGenerator()->getEncoding());
     }
+
+    /**
+     * @group ZF-12293
++     *
++     * Test should remain, but is defunct since DOCTYPE presence should return FALSE
++     * from loadXml()
+     */
+    public function testDoesNotAllowExternalEntities()
+    {
+        $payload = file_get_contents(dirname(__FILE__) . '/_files/ZF12293-request.xml');
+        $payload = sprintf($payload, 'file://' . realpath(dirname(__FILE__) . '/_files/ZF12293-payload.txt'));
+        $this->_request->loadXml($payload);
+        $method = $this->_request->getMethod();
+        $this->assertTrue(empty($method));
+        if (is_string($method)) {
+            $this->assertNotContains('Local file inclusion', $method);
+        }
+    }
+
+     public function testShouldDisallowsDoctypeInRequestXmlAndReturnFalseOnLoading()
+     {
+         $payload = file_get_contents(dirname(__FILE__) . '/_files/ZF12293-request.xml');
+         $payload = sprintf($payload, 'file://' . realpath(dirname(__FILE__) . '/_files/ZF12293-payload.txt'));
+         $this->assertFalse($this->_request->loadXml($payload));
+     }
 }

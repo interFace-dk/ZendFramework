@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Paginator
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: DbSelectTest.php 24754 2012-05-05 02:30:56Z adamlundrigan $
  */
 
 /**
@@ -34,7 +34,6 @@ require_once 'Zend/Debug.php';
 /**
  * @see PHPUnit_Framework_TestCase
  */
-require_once 'PHPUnit/Framework/TestCase.php';
 
 require_once dirname(__FILE__) . '/../_files/TestTable.php';
 
@@ -42,7 +41,7 @@ require_once dirname(__FILE__) . '/../_files/TestTable.php';
  * @category   Zend
  * @package    Zend_Paginator
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Paginator
  */
@@ -100,6 +99,21 @@ class Zend_Paginator_Adapter_DbSelectTest extends PHPUnit_Framework_TestCase
         parent::tearDown();
     }
 
+    /**
+     * @group ZF-6989
+     */
+    public function testCacheIdentifierIsHashOfAssembledSelect()
+    {
+        $dbAdapter = $this->getMockForAbstractClass('Zend_Db_Adapter_Abstract', array(''), '', false);
+        $select    = new Zend_Db_Select($dbAdapter);
+        $select->from('ZF_6989');
+
+        $paginatorAdapter = new Zend_Paginator_Adapter_DbSelect($select);
+
+        $this->assertSame(md5($select->assemble()), $paginatorAdapter->getCacheIdentifier(),
+                          'Cache identifier incorrect!');
+    }
+    
     public function testGetsItemsAtOffsetZero()
     {
         $actual = $this->_adapter->getItems(0, 10);
@@ -473,5 +487,69 @@ class Zend_Paginator_Adapter_DbSelectTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals($expected, $adapter->getCountSelect()->__toString());
         $this->assertEquals(250, $adapter->count());
+    }
+
+    /**
+     * @group ZF-10884
+     */
+    public function testSetRowCountWithAlias()
+    {
+        $select = $this->_db->select();
+        $select->from('test', array(
+            Zend_Paginator_Adapter_DbSelect::ROW_COUNT_COLUMN => new Zend_Db_Expr('COUNT(DISTINCT number)')
+        ));
+
+        $this->_db->setProfiler(true);
+        $adapter = new Zend_Paginator_Adapter_DbSelect($this->_db->select());
+        $adapter->setRowCount($select);
+        $adapter->count();
+
+        $expected = 'SELECT COUNT(DISTINCT number) AS "zend_paginator_row_count" FROM "test"';
+        $lastQuery = $this->_db->getProfiler()
+                         ->getLastQueryProfile()
+                         ->getQuery();
+        $this->assertEquals($expected, $lastQuery);
+    }
+
+    /**
+     * @group ZF-7434
+     */
+    public function testGroupByOneColumnWithZendExpr()
+    {
+        $select = $this->_db->select();
+        $select->from('test', 'testgroup')
+               ->group(new Zend_Db_Expr('testgroup'));
+
+        $adapter = new Zend_Paginator_Adapter_DbSelect($select);
+
+        $this->assertEquals(2, $adapter->count());
+    }
+
+    /**
+     * @group ZF-10704
+     */
+    public function testObjectSelectWithBind()
+    {
+        $select = $this->_db->select();
+        $select->from('test', array('number'))
+               ->where('number = ?')
+               ->distinct(true)
+               ->bind(array(250));
+
+        $adapter = new Zend_Paginator_Adapter_DbSelect($select);
+        $this->assertEquals(1, $adapter->count());
+
+        $select->reset(Zend_Db_Select::DISTINCT);
+        $select2 = clone $select;
+        $select2->reset(Zend_Db_Select::WHERE)
+                ->where('number = 500');
+
+        $selectUnion = $this->_db
+                           ->select()
+                           ->bind(array(250));
+
+        $selectUnion->union(array($select, $select2));
+        $adapter = new Zend_Paginator_Adapter_DbSelect($selectUnion);
+        $this->assertEquals(2, $adapter->count());
     }
 }

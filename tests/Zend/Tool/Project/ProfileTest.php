@@ -15,12 +15,10 @@
  * @category   Zend
  * @package    Zend_Tool
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: ProfileTest.php 24593 2012-01-05 20:35:02Z matthew $
  */
-
-require_once dirname(__FILE__) . '/../../../TestHelper.php';
 
 require_once 'Zend/Tool/Project/Profile.php';
 
@@ -28,7 +26,7 @@ require_once 'Zend/Tool/Project/Profile.php';
  * @category   Zend
  * @package    Zend_Tool
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  *
  * @group Zend_Tool
@@ -68,7 +66,6 @@ class Zend_Tool_Project_ProfileTest extends PHPUnit_Framework_TestCase
         $this->_removeProjectFiles();
     }
 
-
     public function testAttibuteGettersAndSettersWork()
     {
 
@@ -97,7 +94,6 @@ class Zend_Tool_Project_ProfileTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('Zend_Tool_Project_Profile_Resource', get_class($projectDirectoryResource));
         $this->assertEquals('Zend_Tool_Project_Context_System_ProjectDirectory', get_class($projectDirectoryResource->getContext()));
     }
-
 
     public function testProfileLoadsFromExistingFileGivenProfileFile()
     {
@@ -141,8 +137,6 @@ class Zend_Tool_Project_ProfileTest extends PHPUnit_Framework_TestCase
         copy($this->_projectProfileFile, $this->_projectDirectory . '/.zfproject.xml');
         $profile->setAttribute('projectDirectory', $this->_projectDirectory);
         $this->assertTrue($profile->isLoadableFromFile());
-
-
     }
 
     public function testLoadFromDataIsSameAsLoadFromFile()
@@ -163,7 +157,7 @@ class Zend_Tool_Project_ProfileTest extends PHPUnit_Framework_TestCase
     public function testProfileCanReturnStorageData()
     {
         $this->_standardProfileFromData->loadFromData();
-        $expectedValue = '<?xml version="1.0"?><projectProfile>  <projectDirectory>    <projectProfileFile filesystemName=".zfproject.xml"/>    <applicationDirectory classNamePrefix="Application_">      <apisDirectory enabled="false"/>      <configsDirectory>        <applicationConfigFile type="ini"/>      </configsDirectory>      <controllersDirectory>        <controllerFile controllerName="index"/>        <controllerFile controllerName="error"/>      </controllersDirectory>      <layoutsDirectory enabled="false"/>      <modelsDirectory/>      <modulesDirectory enabled="false"/>      <viewsDirectory>        <viewScriptsDirectory>          <viewControllerScriptsDirectory forControllerName="index">            <viewScriptFile scriptName="index"/>          </viewControllerScriptsDirectory>        </viewScriptsDirectory>        <viewHelpersDirectory/>        <viewFiltersDirectory enabled="false"/>      </viewsDirectory>      <bootstrapFile filesystemName="Bootstrap.php"/>    </applicationDirectory>    <dataDirectory enabled="false">      <cacheDirectory enabled="false"/>      <searchIndexesDirectory enabled="false"/>      <localesDirectory enabled="false"/>      <logsDirectory enabled="false"/>      <sessionsDirectory enabled="false"/>      <uploadsDirectory enabled="false"/>    </dataDirectory>    <libraryDirectory>      <zfStandardLibraryDirectory/>    </libraryDirectory>    <publicDirectory>      <publicStylesheetsDirectory enabled="false"/>      <publicScriptsDirectory enabled="false"/>      <publicImagesDirectory enabled="false"/>      <publicIndexFile filesystemName="index.php"/>      <htaccessFile filesystemName=".htaccess"/>    </publicDirectory>    <projectProvidersDirectory enabled="false"/>  </projectDirectory></projectProfile>';
+        $expectedValue = '<?xml version="1.0"?><projectProfile>  <projectDirectory>    <projectProfileFile filesystemName=".zfproject.xml"/>    <applicationDirectory classNamePrefix="Application_">      <configsDirectory>        <applicationConfigFile type="ini"/>      </configsDirectory>      <controllersDirectory>        <controllerFile controllerName="index"/>        <controllerFile controllerName="error"/>      </controllersDirectory>      <layoutsDirectory enabled="false"/>      <modelsDirectory/>      <modulesDirectory enabled="false"/>      <servicesDirectory enabled="false"/>      <viewsDirectory>        <viewScriptsDirectory>          <viewControllerScriptsDirectory forControllerName="index">            <viewScriptFile scriptName="index"/>          </viewControllerScriptsDirectory>        </viewScriptsDirectory>        <viewHelpersDirectory/>        <viewFiltersDirectory enabled="false"/>      </viewsDirectory>      <bootstrapFile filesystemName="Bootstrap.php"/>    </applicationDirectory>    <dataDirectory enabled="false">      <cacheDirectory enabled="false"/>      <searchIndexesDirectory enabled="false"/>      <localesDirectory enabled="false"/>      <logsDirectory enabled="false"/>      <sessionsDirectory enabled="false"/>      <uploadsDirectory enabled="false"/>    </dataDirectory>    <libraryDirectory>      <zfStandardLibraryDirectory/>    </libraryDirectory>    <publicDirectory>      <publicStylesheetsDirectory enabled="false"/>      <publicScriptsDirectory enabled="false"/>      <publicImagesDirectory enabled="false"/>      <publicIndexFile filesystemName="index.php"/>      <htaccessFile filesystemName=".htaccess"/>    </publicDirectory>    <projectProvidersDirectory enabled="false"/>  </projectDirectory></projectProfile>';
         $this->assertEquals($expectedValue, str_replace(array("\r\n", "\n"), '', $this->_standardProfileFromData->storeToData()));
     }
 
@@ -284,7 +278,11 @@ class Zend_Tool_Project_ProfileTest extends PHPUnit_Framework_TestCase
 
         foreach (new RecursiveIteratorIterator($rdi, RecursiveIteratorIterator::CHILD_FIRST) as $dirIteratorItem) {
 
-            if (stristr($dirIteratorItem->getPathname(), '.svn')) {
+            $basename = $dirIteratorItem->getBasename();
+            if (stristr($dirIteratorItem->getPathname(), '.svn')
+                || '.' === $basename
+                || '..' === $basename)
+            {
                 continue;
             }
 
@@ -295,6 +293,4 @@ class Zend_Tool_Project_ProfileTest extends PHPUnit_Framework_TestCase
             }
         }
     }
-
 }
-

@@ -15,17 +15,15 @@
  * @category   Zend
  * @package    Zend_Captcha
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: DumbTest.php 24748 2012-05-05 00:27:40Z adamlundrigan $
  */
 
 // Call Zend_Captcha_DumbTest::main() if this source file is executed directly.
 if (!defined("PHPUnit_MAIN_METHOD")) {
     define("PHPUnit_MAIN_METHOD", "Zend_Captcha_DumbTest::main");
 }
-
-require_once dirname(__FILE__) . '/../../TestHelper.php';
 
 require_once 'Zend/Form/Element/Captcha.php';
 require_once 'Zend/View.php';
@@ -34,7 +32,7 @@ require_once 'Zend/View.php';
  * @category   Zend
  * @package    Zend_Captcha
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Captcha
  */
@@ -92,6 +90,35 @@ class Zend_Captcha_DumbTest extends PHPUnit_Framework_TestCase
         $html = $this->captcha->render(new Zend_View);
         $this->assertContains(strrev($word), $html);
         $this->assertNotContains($word, $html);
+    }
+
+    /**
+     * @group ZF-11522
+     */
+    public function testDefaultLabelIsUsedWhenNoAlternateLabelSet()
+    {
+        $this->assertEquals('Please type this word backwards', $this->captcha->getLabel());
+    }
+
+    /**
+     * @group ZF-11522
+     */
+    public function testChangeLabelViaSetterMethod()
+    {
+        $this->captcha->setLabel('Testing');
+        $this->assertEquals('Testing', $this->captcha->getLabel());
+    }
+
+    /**
+     * @group ZF-11522
+     */
+    public function testRendersLabelUsingProvidedValue()
+    {
+        $this->captcha->setLabel('Testing 123');
+
+        $id   = $this->captcha->generate('test');
+        $html = $this->captcha->render(new Zend_View);
+        $this->assertContains('Testing 123', $html);
     }
 }
 

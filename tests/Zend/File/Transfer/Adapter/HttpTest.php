@@ -15,17 +15,15 @@
  * @category   Zend
  * @package    Zend_File
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: HttpTest.php 25087 2012-11-06 21:15:45Z rob $
  */
 
 // Call Zend_File_Transfer_Adapter_HttpTest::main() if this source file is executed directly.
 if (!defined("PHPUnit_MAIN_METHOD")) {
     define("PHPUnit_MAIN_METHOD", "Zend_File_Transfer_Adapter_HttpTest::main");
 }
-
-require_once dirname(__FILE__) . '/../../../../TestHelper.php';
 
 require_once 'Zend/File/Transfer/Adapter/Http.php';
 require_once 'Zend/Filter/BaseName.php';
@@ -41,7 +39,7 @@ require_once 'Zend/Validate/File/Upload.php';
  * @category   Zend
  * @package    Zend_File
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_File
  */
@@ -148,6 +146,18 @@ class Zend_File_Transfer_Adapter_HttpTest extends PHPUnit_Framework_TestCase
         } catch (Zend_File_Transfer_Exception $e) {
             $this->assertContains('not find', $e->getMessage());
         }
+    }
+
+    /**
+     * @group ZF-12451
+     */
+    public function testReceiveEmptyArray()
+    {
+        $_SERVER['CONTENT_LENGTH'] = 10;
+        $_FILES = array();
+
+        $adapter = new Zend_File_Transfer_Adapter_Http();
+        $this->assertFalse($adapter->receive(array()));
     }
 
     public function testReceiveValidatedFile()

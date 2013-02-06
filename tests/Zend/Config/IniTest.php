@@ -15,15 +15,10 @@
  * @category   Zend
  * @package    Zend_Config
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: IniTest.php 24715 2012-04-17 13:53:52Z rob $
  */
-
-/**
- * Test helper
- */
-require_once dirname(__FILE__) . '/../../TestHelper.php';
 
 /**
  * Zend_Config_Ini
@@ -34,7 +29,7 @@ require_once 'Zend/Config/Ini.php';
  * @category   Zend
  * @package    Zend_Config
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Config
  */
@@ -264,11 +259,11 @@ class Zend_Config_IniTest extends PHPUnit_Framework_TestCase
             $config = new Zend_Config_Ini($this->_iniFileInvalid);
             $this->fail('An expected Zend_Config_Exception has not been raised');
         } catch (Zend_Config_Exception $expected) {
-            $this->assertRegexp('/(Error parsing|syntax error, unexpected)/', $expected->getMessage());
+            $this->assertRegexp('/(Error parsing|parse error|syntax error, unexpected)/', $expected->getMessage());
         }
 
     }
-    
+
     /**
      * @group ZF-8159
      */
@@ -278,11 +273,11 @@ class Zend_Config_IniTest extends PHPUnit_Framework_TestCase
             dirname(__FILE__) . '/_files/zf8159.ini',
             array('first', 'second')
         );
-        
+
         $this->assertTrue(isset(
            $config->user->login->elements->password
         ));
-        
+
         $this->assertEquals(
             'password',
             $config->user->login->elements->password->type
@@ -301,7 +296,7 @@ class Zend_Config_IniTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('1', $config->receiver->{0}->html);
         $this->assertNull($config->receiver->mail);
     }
-    
+
     /*
      * @group ZF-6508
      */
@@ -310,8 +305,8 @@ class Zend_Config_IniTest extends PHPUnit_Framework_TestCase
         $filename = dirname(__FILE__) . '/_files/zf6508.ini';
         $config = new Zend_Config_Ini($filename, 'all');
         $this->assertEquals(true, isset($config->{1002}));
-        
+
     }
-    
+
 
 }

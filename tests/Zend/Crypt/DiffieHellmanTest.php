@@ -15,24 +15,36 @@
  * @category   Zend
  * @package    Zend_Crypt
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: DiffieHellmanTest.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 require_once 'Zend/Crypt/DiffieHellman.php';
-require_once 'PHPUnit/Framework/TestCase.php';
+require_once 'Zend/Crypt/Math/BigInteger.php';
 
 /**
  * @category   Zend
  * @package    Zend_Crypt
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Crypt
  */
 class Zend_Crypt_DiffieHellmanTest extends PHPUnit_Framework_TestCase
 {
+    public function setUp()
+    {
+        try {
+            $math = new Zend_Crypt_Math_BigInteger();
+        } catch (Zend_Crypt_Math_BigInteger_Exception $e) {
+            if (strpos($e->getMessage(), 'big integer precision math support not detected') !== false) {
+                $this->markTestSkipped($e->getMessage());
+            } else {
+                throw $e;
+            }
+        }
+    }
 
     public function testDiffieWithSpec()
     {

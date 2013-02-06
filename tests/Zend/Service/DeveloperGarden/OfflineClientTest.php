@@ -15,19 +15,14 @@
  * @category   Zend
  * @package    Zend_Service_DeveloperGarden
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: OfflineClientTest.php 24791 2012-05-11 06:18:17Z bate $
  */
 
 if (!defined('PHPUnit_MAIN_METHOD')) {
     define('PHPUnit_MAIN_METHOD', 'Zend_Service_DeveloperGarden_CredentialTest::main');
 }
-
-/**
- * Test helper
- */
-require_once dirname(__FILE__) . '/../../../TestHelper.php';
 
 /**
  * @see Zend_Service_DeveloperGarden_IpLocation
@@ -40,9 +35,9 @@ require_once 'Zend/Service/DeveloperGarden/IpLocation.php';
  * @category   Zend
  * @package    Zend_Service_DeveloperGarden
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: OfflineClientTest.php 24791 2012-05-11 06:18:17Z bate $
  */
 class Zend_Service_DeveloperGarden_OfflineClientTest extends PHPUnit_Framework_TestCase
 {
@@ -135,6 +130,10 @@ class Zend_Service_DeveloperGarden_OfflineClientTest extends PHPUnit_Framework_T
 
     public function testGetSoapClient()
     {
+        if (!extension_loaded('soap')) {
+            $this->markTestSkipped('SOAP extension is not loaded');
+        }
+
         $options = array(
             'Username' => 'Zend',
             'Password' => 'Framework',
@@ -248,6 +247,10 @@ class Zend_Service_DeveloperGarden_OfflineClientTest extends PHPUnit_Framework_T
 
     public function testGetClientOptionsWithWsdlCache()
     {
+        if (!extension_loaded('soap')) {
+            $this->markTestSkipped('SOAP extension is not loaded');
+        }
+
         $this->assertNull(
             Zend_Service_DeveloperGarden_SecurityTokenServer_Cache::setWsdlCache(WSDL_CACHE_BOTH)
         );

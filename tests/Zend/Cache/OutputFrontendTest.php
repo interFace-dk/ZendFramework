@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Cache
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: OutputFrontendTest.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
@@ -28,15 +28,10 @@ require_once 'Zend/Cache/Frontend/Output.php';
 require_once 'Zend/Cache/Backend/Test.php';
 
 /**
- * PHPUnit test case
- */
-require_once 'PHPUnit/Framework/TestCase.php';
-
-/**
  * @category   Zend
  * @package    Zend_Cache
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Cache
  */
@@ -71,8 +66,7 @@ class Zend_Cache_OutputFrontendTest extends PHPUnit_Framework_TestCase {
             echo('foobar');
             $this->_instance->end();
         }
-        $data = ob_get_contents();
-        ob_end_clean();
+        $data = ob_get_clean();
         ob_implicit_flush(true);
         $this->assertEquals('foo', $data);
     }
@@ -85,8 +79,7 @@ class Zend_Cache_OutputFrontendTest extends PHPUnit_Framework_TestCase {
             echo('foobar');
             $this->_instance->end();
         }
-        $data = ob_get_contents();
-        ob_end_clean();
+        $data = ob_get_clean();
         ob_implicit_flush(true);
         $this->assertEquals('foobar', $data);
     }

@@ -15,12 +15,10 @@
  * @category   Zend
  * @package    Zend_Gdata_Calendar
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id $
  */
-
-require_once dirname(dirname(dirname(__FILE__))) . DIRECTORY_SEPARATOR . 'TestHelper.php';
 
 require_once 'Zend/Gdata/Calendar.php';
 require_once 'Zend/Gdata/Calendar/EventEntry.php';
@@ -31,7 +29,7 @@ require_once 'Zend/Http/Client.php';
  * @category   Zend
  * @package    Zend_Gdata_Calendar
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Gdata
  * @group      Zend_Gdata_Calendar
@@ -64,20 +62,21 @@ class Zend_Gdata_CalendarOnlineTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @see ZF-1701
+     * @group ZF-1701
      */
-    /*
     public function testCalendarOnlineFeed()
     {
         $eventFeed = $this->gdata->getCalendarEventFeed();
-        foreach ($eventFeed as $event) {
-            $title = $event->title;
-            $times = $event->when;
-            $location = $event->where;
-            $recurrence = $event->recurrence;
+        $this->assertTrue(strpos($eventFeed->title->text, TESTS_ZEND_GDATA_CLIENTLOGIN_EMAIL)
+                !== false);
+        $eventCount = 0;
+        foreach ( $eventFeed as $event ) {
+            $this->assertType('Zend_Gdata_Calendar_EventEntry', $event);
+            $eventCount++;
         }
+        $this->assertTrue($eventCount > 0 );
+        $this->assertTrue(count($eventFeed) == $eventCount);
     }
-    */
 
     function getEvent($eventId)
     {

@@ -15,15 +15,10 @@
  * @category   Zend
  * @package    Zend_Feed
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: IteratorTest.php 25083 2012-11-06 21:02:22Z rob $
  */
-
-/**
- * Test helper
- */
-require_once dirname(__FILE__) . '/../../TestHelper.php';
 
 /**
  * @see Zend_Feed
@@ -34,7 +29,7 @@ require_once 'Zend/Feed.php';
  * @category   Zend
  * @package    Zend_Feed
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Feed
  */
@@ -79,12 +74,18 @@ class Zend_Feed_IteratorTest extends PHPUnit_Framework_TestCase
     public function testCurrent()
     {
         foreach ($this->_feed as $f) {
-            $this->assertType('Zend_Feed_Entry_Atom', $f, 'Each feed entry should be an instance of Zend_Feed_Entry_Atom');
+            $this->assertTrue(
+                $f instanceof Zend_Feed_Entry_Atom,
+                'Each feed entry should be an instance of Zend_Feed_Entry_Atom'
+            );
             break;
         }
 
         foreach ($this->_nsfeed as $f) {
-            $this->assertType('Zend_Feed_Entry_Atom', $f, 'Each feed entry should be an instance of Zend_Feed_Entry_Atom');
+            $this->assertTrue(
+                $f instanceof Zend_Feed_Entry_Atom,
+                'Each feed entry should be an instance of Zend_Feed_Entry_Atom'
+            );
             break;
         }
     }

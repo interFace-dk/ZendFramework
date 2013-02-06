@@ -15,12 +15,10 @@
  * @category   Zend
  * @package    Zend_Rest
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: ClientTest.php 24593 2012-01-05 20:35:02Z matthew $
  */
-
-require_once dirname(__FILE__)."/../../TestHelper.php";
 
 /** Zend_Rest_Client */
 require_once 'Zend/Rest/Client.php';
@@ -28,16 +26,13 @@ require_once 'Zend/Rest/Client.php';
 /** Zend_Http_Client_Adapter_Test */
 require_once 'Zend/Http/Client/Adapter/Test.php';
 
-/** PHPUnit Test Case */
-require_once 'PHPUnit/Framework/TestCase.php';
-
 /**
  * Test cases for Zend_Rest_Client
  *
  * @category   Zend
  * @package    Zend_Rest
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Rest
  * @group      Zend_Rest_Client
@@ -55,6 +50,27 @@ class Zend_Rest_ClientTest extends PHPUnit_Framework_TestCase
         Zend_Rest_Client::setHttpClient($client);
 
         $this->rest = new Zend_Rest_Client('http://framework.zend.com/');
+    }
+    
+    /**
+     * @group ZF-10664
+     * 
+     * Test that you can post a file using a preset 
+     * Zend_Http_Client that has a file to post,
+     * by calling $restClient->setNoReset() prior to issuing the
+     * restPost() call.    
+     */
+    public function testCanPostFileInPresetHttpClient()
+    {
+        $client = new Zend_Rest_Client('http://framework.zend.com');
+        $httpClient = new Zend_Http_Client();
+        $text = 'this is some plain text';
+        $httpClient->setFileUpload('some_text.txt', 'upload', $text, 'text/plain');
+        $client->setHttpClient($httpClient);
+        $client->setNoReset();
+        $client->restPost('/file');
+        $request = $httpClient->getLastRequest();
+        $this->assertTrue(strpos($request, $text) !== false, 'The file is not in the request');
     }
 
     public function testUri()
@@ -225,10 +241,13 @@ class Zend_Rest_ClientTest extends PHPUnit_Framework_TestCase
         $this->adapter->setResponse($response);
 
         $reqXml   = file_get_contents($this->path . 'returnInt.xml');
-        $response = $this->rest->restDelete('/rest/');
+        $response = $this->rest->restDelete('/rest/', $reqXml);
         $this->assertTrue($response instanceof Zend_Http_Response);
         $body = $response->getBody();
         $this->assertContains($expXml, $response->getBody());
+        
+        $request = Zend_Rest_Client::getHttpClient()->getLastRequest();
+        $this->assertContains($reqXml, $request, $request);
     }
 
     public function testCallWithHttpMethod()
@@ -302,4 +321,27 @@ class Zend_Rest_ClientTest extends PHPUnit_Framework_TestCase
 
         }
     }
+    
+    /**
+     * @group ZF-11281
+     */
+    public function testCallStatusGetterOnResponseObjectWhenServerResponseHasNoStatusXmlElement()
+    {
+        $expXml   = file_get_contents($this->path . 'returnEmptyStatus.xml');
+        $response = "HTTP/1.0 200 OK\r\n"
+                  . "X-powered-by: PHP/5.2.0\r\n"
+                  . "Content-type: text/xml\r\n"
+                  . "Content-length: " . strlen($expXml) . "\r\n"
+                  . "Server: Apache/1.3.34 (Unix) PHP/5.2.0)\r\n"
+                  . "Date: Tue, 06 Feb 2007 15:01:47 GMT\r\n"
+                  . "Connection: close\r\n"
+                  . "\r\n"
+                  . $expXml;
+        $this->adapter->setResponse($response);
+
+        $response = $this->rest->get('/rest/');
+        $this->assertTrue($response instanceof Zend_Rest_Client_Result);
+        $this->assertFalse($response->getStatus());
+    }
+
 }

@@ -15,15 +15,10 @@
  * @category   Zend
  * @package    Zend_Console_Getop
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: GetoptTest.php 24593 2012-01-05 20:35:02Z matthew $
  */
-
-/**
- * Test helper
- */
-require_once dirname(__FILE__) . '/../../TestHelper.php';
 
 /**
  * Zend_Console_Getopt
@@ -31,15 +26,10 @@ require_once dirname(__FILE__) . '/../../TestHelper.php';
 require_once 'Zend/Console/Getopt.php';
 
 /**
- * PHPUnit test case
- */
-require_once 'PHPUnit/Framework/TestCase.php';
-
-/**
  * @category   Zend
  * @package    Zend_Console_Getopt
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Console_Getopt
  */
@@ -278,7 +268,7 @@ class Zend_Console_GetoptTest extends PHPUnit_Framework_TestCase
         unset($opts->a);
         $this->assertFalse(isset($opts->a));
     }
-    
+
     /**
      * @group ZF-5948
      */
@@ -294,7 +284,7 @@ class Zend_Console_GetoptTest extends PHPUnit_Framework_TestCase
             $this->assertEquals("Parameter #1 to setArguments should be an array",
                 $e->getMessage());
         }
-        
+
         try {
             $opts->addArguments('-b');
             $this->fail('Expected to catch a Zend_Console_Getopt_Exception');
@@ -304,7 +294,7 @@ class Zend_Console_GetoptTest extends PHPUnit_Framework_TestCase
             $this->assertEquals("Parameter #1 to addArguments should be an array",
                 $e->getMessage());
         }
-        
+
     }
 
     public function testGetoptAddArguments()

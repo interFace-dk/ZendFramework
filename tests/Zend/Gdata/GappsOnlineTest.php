@@ -15,12 +15,10 @@
  * @category   Zend
  * @package    Zend_Gdata_Gapps
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id $
  */
-
-require_once dirname(dirname(dirname(__FILE__))) . DIRECTORY_SEPARATOR . 'TestHelper.php';
 
 require_once 'Zend/Gdata/Gapps.php';
 require_once 'Zend/Gdata/Gapps/UserEntry.php';
@@ -32,7 +30,7 @@ require_once 'Zend/Http/Client.php';
  * @category   Zend
  * @package    Zend_Gdata_Gapps
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Gdata
  * @group      Zend_Gdata_Gapps
@@ -407,7 +405,7 @@ class Zend_Gdata_GappsOnlineTest extends PHPUnit_Framework_TestCase
     }
 
     // Test the convenience delete method for groups
-    public function testCanDeleteGroup() {  
+    public function testCanDeleteGroup() {
         // Create a group
         $generatedGroupName = strtolower(uniqid('zf-group-'));
         $group = $this->gdata->createGroup($generatedGroupName, 'Test Group',
@@ -644,7 +642,7 @@ class Zend_Gdata_GappsOnlineTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('new description here', $description);
 
     }
-    
+
     public function testEmailListCRUDOperations() {
         // Create email list
         $generatedListName = strtolower(uniqid('zf-list-'));

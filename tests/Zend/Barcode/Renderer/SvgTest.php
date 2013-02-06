@@ -15,12 +15,10 @@
  * @category   Zend
  * @package    Zend_Barcode
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: SvgTest.php 20096 2010-01-06 02:05:09Z bkarwin $
  */
-
-require_once dirname(dirname(dirname(dirname(__FILE__)))) . '/TestHelper.php';
 
 require_once dirname(__FILE__) . '/TestCommon.php';
 
@@ -32,7 +30,7 @@ require_once 'Zend/Barcode/Object/Code39.php';
  * @package    Zend_Barcode
  * @subpackage UnitTests
  * @group      Zend_Barcode
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Barcode_Renderer_SvgTest extends Zend_Barcode_Renderer_TestCommon
@@ -46,6 +44,40 @@ class Zend_Barcode_Renderer_SvgTest extends Zend_Barcode_Renderer_TestCommon
     public function testType()
     {
         $this->assertSame('svg', $this->_renderer->getType());
+    }
+
+    public function testGoodHeight()
+    {
+        $this->assertSame(0, $this->_renderer->getHeight());
+        $this->_renderer->setHeight(123);
+        $this->assertSame(123, $this->_renderer->getHeight());
+        $this->_renderer->setHeight(0);
+        $this->assertSame(0, $this->_renderer->getHeight());
+    }
+
+    /**
+     * @expectedException Zend_Barcode_Renderer_Exception
+     */
+    public function testBadHeight()
+    {
+        $this->_renderer->setHeight(-1);
+    }
+
+    public function testGoodWidth()
+    {
+        $this->assertSame(0, $this->_renderer->getWidth());
+        $this->_renderer->setWidth(123);
+        $this->assertSame(123, $this->_renderer->getWidth());
+        $this->_renderer->setWidth(0);
+        $this->assertSame(0, $this->_renderer->getWidth());
+    }
+
+    /**
+     * @expectedException Zend_Barcode_Renderer_Exception
+     */
+    public function testBadWidth()
+    {
+        $this->_renderer->setWidth(-1);
     }
 
     public function testGoodSvgResource()

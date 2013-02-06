@@ -15,12 +15,10 @@
  * @category   Zend
  * @package    Zend_Service_LiveDocx
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: $
  */
-
-require_once dirname(dirname(dirname(dirname(__FILE__)))) . DIRECTORY_SEPARATOR . 'TestHelper.php';
 
 if (!defined('PHPUnit_MAIN_METHOD')) {
     define('PHPUnit_MAIN_METHOD', 'Zend_Service_LiveDocx_LiveDocxTest::main');
@@ -36,7 +34,7 @@ require_once 'Zend/Service/LiveDocx/MailMerge.php';
  * @subpackage UnitTests
  * @group      Zend_Service
  * @group      Zend_Service_LiveDocx
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: $
  */
@@ -58,22 +56,22 @@ class Zend_Service_LiveDocX_LiveDocxTest extends PHPUnit_Framework_TestCase
             $this->markTestSkipped('LiveDocx tests disabled');
             return;
         }
-        
+
         $this->phpLiveDocx = new Zend_Service_LiveDocx_MailMerge();
         $this->phpLiveDocx->setUsername(TESTS_ZEND_SERVICE_LIVEDOCX_USERNAME)
                           ->setPassword(TESTS_ZEND_SERVICE_LIVEDOCX_PASSWORD);
 
         foreach ($this->phpLiveDocx->listTemplates() as $template) {
             $this->phpLiveDocx->deleteTemplate($template['filename']);
-        }        
+        }
     }
-    
+
     public function tearDown ()
     {
 	if (isset($this->phpLiveDocx)) {
 	    foreach ($this->phpLiveDocx->listTemplates() as $template) {
 		$this->phpLiveDocx->deleteTemplate($template['filename']);
-	    }   
+	    }
 	    unset($this->phpLiveDocx);
 	}
     }
@@ -86,10 +84,10 @@ class Zend_Service_LiveDocX_LiveDocxTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('doc', $this->phpLiveDocx->getFormat('document123.doc'));
         $this->assertEquals('doc', $this->phpLiveDocx->getFormat('document.123.doc'));
     }
-    
+
     public function testGetVersion ()
     {
-        $expectedResults = '1.2';
+        $expectedResults = '2.0';
         $this->assertEquals($expectedResults, $this->phpLiveDocx->getVersion());
     }
 }

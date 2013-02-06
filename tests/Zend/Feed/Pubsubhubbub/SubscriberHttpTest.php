@@ -14,12 +14,10 @@
  *
  * @category   Zend
  * @package    UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: SubscriberHttpTest.php 24593 2012-01-05 20:35:02Z matthew $
  */
-
-require_once dirname(dirname(dirname(dirname(__FILE__)))) . DIRECTORY_SEPARATOR . 'TestHelper.php';
 
 require_once 'Zend/Feed/Pubsubhubbub/Subscriber.php';
 require_once 'Zend/Http/Client.php';
@@ -40,7 +38,7 @@ require_once 'Zend/Uri/Http.php';
  * @subpackage UnitTests
  * @group      Zend_Feed
  * @group      Zend_Feed_Subsubhubbub
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Feed_Pubsubhubbub_SubscriberHttpTest extends PHPUnit_Framework_TestCase
@@ -74,8 +72,8 @@ class Zend_Feed_Pubsubhubbub_SubscriberHttpTest extends PHPUnit_Framework_TestCa
             $this->_client->setAdapter($this->_adapter);
             Zend_Feed_Pubsubhubbub::setHttpClient($this->_client);
             $this->_subscriber = new Zend_Feed_Pubsubhubbub_Subscriber;
-            
-            
+
+
             $this->_storage = $this->_getCleanMock('Zend_Feed_Pubsubhubbub_Entity_TopicSubscription');
             $this->_subscriber->setStorage($this->_storage);
 
@@ -115,7 +113,7 @@ class Zend_Feed_Pubsubhubbub_SubscriberHttpTest extends PHPUnit_Framework_TestCa
             .'&hub.verify_token=abc',
             $this->_client->getLastResponse()->getBody());
     }
-    
+
     protected function _getCleanMock($className) {
         $class = new ReflectionClass($className);
         $methods = $class->getMethods();

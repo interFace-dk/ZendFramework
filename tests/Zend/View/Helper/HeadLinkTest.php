@@ -15,19 +15,15 @@
  * @category   Zend
  * @package    Zend_View
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: HeadLinkTest.php 24858 2012-06-01 01:24:17Z adamlundrigan $
  */
 
 // Call Zend_View_Helper_HeadLinkTest::main() if this source file is executed directly.
 if (!defined("PHPUnit_MAIN_METHOD")) {
     define("PHPUnit_MAIN_METHOD", "Zend_View_Helper_HeadLinkTest::main");
 }
-
-require_once dirname(dirname(dirname(dirname(__FILE__)))) . '/TestHelper.php';
-require_once "PHPUnit/Framework/TestCase.php";
-require_once "PHPUnit/Framework/TestSuite.php";
 
 /** Zend_View_Helper_HeadLink */
 require_once 'Zend/View/Helper/HeadLink.php';
@@ -47,7 +43,7 @@ require_once 'Zend/View.php';
  * @category   Zend
  * @package    Zend_View
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_View
  * @group      Zend_View_Helper
@@ -71,7 +67,6 @@ class Zend_View_Helper_HeadLinkTest extends PHPUnit_Framework_TestCase
      */
     public static function main()
     {
-        require_once "PHPUnit/TextUI/TestRunner.php";
 
         $suite  = new PHPUnit_Framework_TestSuite("Zend_View_Helper_HeadLinkTest");
         $result = PHPUnit_TextUI_TestRunner::run($suite);
@@ -414,7 +409,7 @@ class Zend_View_Helper_HeadLinkTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @issue ZF-3928
+     * @group ZF-3928
      * @link http://framework.zend.com/issues/browse/ZF-3928
      */
     public function testTurnOffAutoEscapeDoesNotEncodeAmpersand()
@@ -445,7 +440,7 @@ class Zend_View_Helper_HeadLinkTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @issue ZF-5435
+     * @group ZF-5435
      */
     public function testContainerMaintainsCorrectOrderOfItems()
     {
@@ -462,6 +457,44 @@ class Zend_View_Helper_HeadLinkTest extends PHPUnit_Framework_TestCase
                   . '<link href="/test3.css" media="screen" rel="stylesheet" type="text/css" >';
 
         $this->assertEquals($expected, $test);
+    }
+
+    /**
+     * @group ZF-10345
+     */
+    public function testIdAttributeIsSupported()
+    {
+        $this->helper->appendStylesheet(array('href' => '/bar/baz', 'id' => 'foo'));
+        $this->assertContains('id="foo"', $this->helper->toString());
+    }
+
+    /**
+     * @group ZF-11811
+     */
+    public function testHeadLinkAllowsOverrideOfRelAttribute()
+    {
+        $this->helper->appendStylesheet('/css/auth.less', 'all', null, array('rel' => 'stylesheet/less'));
+        $this->assertEquals(1, substr_count($this->helper->toString(), "rel=\""));
+        $this->assertContains('rel="stylesheet/less"', $this->helper->toString());
+    }
+
+    /**
+     * @group ZF-11643
+     */
+    public function testSizesAttributeIsSupported()
+    {
+        $this->helper->headLink(
+            array(
+                 'rel'   => 'icon',
+                 'href'  => 'favicon.png',
+                 'sizes' => '16x16',
+                 'type'  => 'image/png',
+            )
+        );
+
+        $expected = '<link href="favicon.png" rel="icon" type="image/png" sizes="16x16" >';
+
+        $this->assertEquals($expected, $this->helper->toString());
     }
 }
 

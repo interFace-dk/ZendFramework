@@ -15,20 +15,15 @@
  * @category   Zend
  * @package    Zend_Cache
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: FactoryTest.php 24655 2012-02-26 06:02:05Z adamlundrigan $
  */
 
 /**
  * Zend_Cache
  */
 require_once 'Zend/Cache.php';
-
-/**
- * PHPUnit test case
- */
-require_once 'PHPUnit/Framework/TestCase.php';
 
 
 require_once 'Zend/Cache/Backend/File.php';
@@ -43,7 +38,7 @@ class FooBarTestFrontend extends Zend_Cache_Core { }
  * @category   Zend
  * @package    Zend_Cache
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Cache
  */
@@ -117,6 +112,32 @@ class Zend_Cache_FactoryTest extends PHPUnit_Framework_TestCase
             return;
         }
         $this->fail('Zend_Exception was expected but not thrown');
+    }
+    
+    /**
+     * @group ZF-11988
+     */
+    public function testNamespacedFrontendClassAccepted()
+    {
+        try {
+            Zend_Cache::factory('ZF11988\Frontend', 'File', array(), array(), true, false, false);
+            $this->fail('Zend_Cache_Exception was expected but not thrown');
+        } catch ( Zend_Cache_Exception $e ) {
+            $this->assertNotEquals('Invalid frontend name [ZF11988\Frontend]', $e->getMessage());
+        }
+    }
+    
+    /**
+     * @group ZF-11988
+     */
+    public function testNamespacedBackendClassAccepted()
+    {
+        try {
+            Zend_Cache::factory('Output', 'ZF11988\Backend', array(), array(), false, true, false);
+            $this->fail('Zend_Cache_Exception was expected but not thrown');
+        } catch ( Zend_Cache_Exception $e ) {
+            $this->assertNotEquals('Invalid backend name [ZF11988\Backend]', $e->getMessage());
+        }
     }
 
 }

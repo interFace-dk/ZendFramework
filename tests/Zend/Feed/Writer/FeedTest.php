@@ -15,12 +15,10 @@
  * @category   Zend
  * @package    Zend_Feed
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
-
-require_once dirname(dirname(dirname(dirname(__FILE__)))) . '/TestHelper.php';
 
 require_once 'Zend/Feed/Writer/Feed.php';
 
@@ -30,7 +28,7 @@ require_once 'Zend/Feed/Writer/Feed.php';
  * @subpackage UnitTests
  * @group      Zend_Feed
  * @group      Zend_Feed_Writer
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Feed_Writer_FeedTest extends PHPUnit_Framework_TestCase
@@ -197,6 +195,28 @@ class Zend_Feed_Writer_FeedTest extends PHPUnit_Framework_TestCase
         $myDate = new Zend_Date('1234567890', Zend_Date::TIMESTAMP);
         $this->assertTrue($myDate->equals($writer->getDateCreated()));
     }
+    
+    /**
+     * @group ZF-12023
+     */
+    public function testSetDateCreatedUsesGivenUnixTimestampThatIsLessThanTenDigits()
+    {
+        $writer = new Zend_Feed_Writer_Feed;
+        $writer->setDateCreated(123456789);
+        $myDate = new Zend_Date('123456789', Zend_Date::TIMESTAMP);
+        $this->assertTrue($myDate->equals($writer->getDateCreated()));
+    }
+    
+    /**
+     * @group ZF-11610
+     */
+    public function testSetDateCreatedUsesGivenUnixTimestampThatIsAVerySmallInteger()
+    {
+        $writer = new Zend_Feed_Writer_Feed;
+        $writer->setDateCreated(123);
+        $myDate = new Zend_Date('123', Zend_Date::TIMESTAMP);
+        $this->assertTrue($myDate->equals($writer->getDateCreated()));
+    }
 
     public function testSetDateCreatedUsesZendDateObject()
     {
@@ -219,6 +239,28 @@ class Zend_Feed_Writer_FeedTest extends PHPUnit_Framework_TestCase
         $writer = new Zend_Feed_Writer_Feed;
         $writer->setDateModified(1234567890);
         $myDate = new Zend_Date('1234567890', Zend_Date::TIMESTAMP);
+        $this->assertTrue($myDate->equals($writer->getDateModified()));
+    }
+
+    /**
+     * @group ZF-12023
+     */
+    public function testSetDateModifiedUsesGivenUnixTimestampThatIsLessThanTenDigits()
+    {
+        $writer = new Zend_Feed_Writer_Feed;
+        $writer->setDateModified(123456789);
+        $myDate = new Zend_Date('123456789', Zend_Date::TIMESTAMP);
+        $this->assertTrue($myDate->equals($writer->getDateModified()));
+    }
+
+    /**
+     * @group ZF-11610
+     */
+    public function testSetDateModifiedUsesGivenUnixTimestampThatIsAVerySmallInteger()
+    {
+        $writer = new Zend_Feed_Writer_Feed;
+        $writer->setDateModified(123);
+        $myDate = new Zend_Date('123', Zend_Date::TIMESTAMP);
         $this->assertTrue($myDate->equals($writer->getDateModified()));
     }
 
@@ -275,6 +317,28 @@ class Zend_Feed_Writer_FeedTest extends PHPUnit_Framework_TestCase
         $writer = new Zend_Feed_Writer_Feed;
         $writer->setLastBuildDate(1234567890);
         $myDate = new Zend_Date('1234567890', Zend_Date::TIMESTAMP);
+        $this->assertTrue($myDate->equals($writer->getLastBuildDate()));
+    }
+
+    /**
+     * @group ZF-12023
+     */
+    public function testSetLastBuildDateUsesGivenUnixTimestampThatIsLessThanTenDigits()
+    {
+        $writer = new Zend_Feed_Writer_Feed;
+        $writer->setLastBuildDate(123456789);
+        $myDate = new Zend_Date('123456789', Zend_Date::TIMESTAMP);
+        $this->assertTrue($myDate->equals($writer->getLastBuildDate()));
+    }
+
+    /**
+     * @group ZF-11610
+     */
+    public function testSetLastBuildDateUsesGivenUnixTimestampThatIsAVerySmallInteger()
+    {
+        $writer = new Zend_Feed_Writer_Feed;
+        $writer->setLastBuildDate(123);
+        $myDate = new Zend_Date('123', Zend_Date::TIMESTAMP);
         $this->assertTrue($myDate->equals($writer->getLastBuildDate()));
     }
 
@@ -343,6 +407,20 @@ class Zend_Feed_Writer_FeedTest extends PHPUnit_Framework_TestCase
         $writer = new Zend_Feed_Writer_Feed;
         $writer->setId('urn:uuid:60a76c80-d399-11d9-b93C-0003939e0af6');
         $this->assertEquals('urn:uuid:60a76c80-d399-11d9-b93C-0003939e0af6', $writer->getId());
+    }
+
+    public function testSetsIdAcceptsSimpleTagUri()
+    {
+        $writer = new Zend_Feed_Writer_Feed;
+        $writer->setId('tag:example.org,2010:/foo/bar/');
+        $this->assertEquals('tag:example.org,2010:/foo/bar/', $writer->getId());
+    }
+
+    public function testSetsIdAcceptsComplexTagUri()
+    {
+        $writer = new Zend_Feed_Writer_Feed;
+        $writer->setId('tag:diveintomark.org,2004-05-27:/archives/2004/05/27/howto-atom-linkblog');
+        $this->assertEquals('tag:diveintomark.org,2004-05-27:/archives/2004/05/27/howto-atom-linkblog', $writer->getId());
     }
 
     public function testSetIdThrowsExceptionOnInvalidParameter()
@@ -631,7 +709,7 @@ class Zend_Feed_Writer_FeedTest extends PHPUnit_Framework_TestCase
         $writer = new Zend_Feed_Writer_Feed;
         $this->assertTrue(is_null($writer->getFeedLinks()));
     }
-    
+
     public function testSetsBaseUrl()
     {
         $writer = new Zend_Feed_Writer_Feed;
@@ -654,14 +732,14 @@ class Zend_Feed_Writer_FeedTest extends PHPUnit_Framework_TestCase
         $writer = new Zend_Feed_Writer_Feed;
         $this->assertTrue(is_null($writer->getBaseUrl()));
     }
-    
+
     public function testAddsHubUrl()
     {
         $writer = new Zend_Feed_Writer_Feed;
         $writer->addHub('http://www.example.com/hub');
         $this->assertEquals(array('http://www.example.com/hub'), $writer->getHubs());
     }
-    
+
     public function testAddsManyHubUrls()
     {
         $writer = new Zend_Feed_Writer_Feed;
@@ -691,14 +769,14 @@ class Zend_Feed_Writer_FeedTest extends PHPUnit_Framework_TestCase
         $entry = $writer->createEntry();
         $this->assertTrue($entry instanceof Zend_Feed_Writer_Entry);
     }
-    
+
     public function testAddsCategory()
     {
         $writer = new Zend_Feed_Writer_Feed;
         $writer->addCategory(array('term'=>'cat_dog'));
         $this->assertEquals(array(array('term'=>'cat_dog')), $writer->getCategories());
     }
-    
+
     public function testAddsManyCategories()
     {
         $writer = new Zend_Feed_Writer_Feed;
@@ -715,7 +793,7 @@ class Zend_Feed_Writer_FeedTest extends PHPUnit_Framework_TestCase
         } catch (Zend_Feed_Exception $e) {
         }
     }
-    
+
     public function testAddingCategoryWithInvalidUriAsSchemeThrowsException()
     {
         $writer = new Zend_Feed_Writer_Feed;
@@ -821,7 +899,7 @@ class Zend_Feed_Writer_FeedTest extends PHPUnit_Framework_TestCase
             'width' => '88'
         ), $writer->getImage());
     }
-    
+
     public function testSetsImageDescription()
     {
         $writer = new Zend_Feed_Writer_Feed;
@@ -833,6 +911,50 @@ class Zend_Feed_Writer_FeedTest extends PHPUnit_Framework_TestCase
             'uri' => 'http://www.example.com/logo.gif',
             'description' => 'Image description'
         ), $writer->getImage());
+    }
+
+    // Icon Tests
+
+    public function testSetsIconUri()
+    {
+        $writer = new Zend_Feed_Writer_Feed;
+        $writer->setIcon(array(
+            'uri' => 'http://www.example.com/logo.gif'
+        ));
+        $this->assertEquals(array(
+            'uri' => 'http://www.example.com/logo.gif'
+        ), $writer->getIcon());
+    }
+
+    /**
+     * @expectedException Zend_Feed_Exception
+     */
+    public function testSetsIconUriThrowsExceptionOnEmptyUri()
+    {
+        $writer = new Zend_Feed_Writer_Feed;
+        $writer->setIcon(array(
+            'uri' => ''
+        ));
+    }
+
+    /**
+     * @expectedException Zend_Feed_Exception
+     */
+    public function testSetsIconUriThrowsExceptionOnMissingUri()
+    {
+        $writer = new Zend_Feed_Writer_Feed;
+        $writer->setIcon(array());
+    }
+
+    /**
+     * @expectedException Zend_Feed_Exception
+     */
+    public function testSetsIconUriThrowsExceptionOnInvalidUri()
+    {
+        $writer = new Zend_Feed_Writer_Feed;
+        $writer->setIcon(array(
+            'uri' => 'http://'
+        ));
     }
 
     public function testGetCategoriesReturnsNullIfNotSet()

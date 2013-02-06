@@ -15,17 +15,15 @@
  * @category   Zend
  * @package    Zend_View
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: HeadTitleTest.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 // Call Zend_View_Helper_HeadTitleTest::main() if this source file is executed directly.
 if (!defined("PHPUnit_MAIN_METHOD")) {
     define("PHPUnit_MAIN_METHOD", "Zend_View_Helper_HeadTitleTest::main");
 }
-
-require_once dirname(dirname(dirname(dirname(__FILE__)))) . '/TestHelper.php';
 
 /** Zend_View_Helper_HeadTitle */
 require_once 'Zend/View/Helper/HeadTitle.php';
@@ -42,7 +40,7 @@ require_once 'Zend/Registry.php';
  * @category   Zend
  * @package    Zend_View
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_View
  * @group      Zend_View_Helper
@@ -185,7 +183,7 @@ class Zend_View_Helper_HeadTitleTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @issue ZF-2918
+     * @group ZF-2918
      * @link http://framework.zend.com/issues/browse/ZF-2918
      */
     public function testZF2918()
@@ -198,7 +196,7 @@ class Zend_View_Helper_HeadTitleTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @issue ZF-3577
+     * @group ZF-3577
      * @link http://framework.zend.com/issues/browse/ZF-3577
      */
     public function testZF3577()
@@ -223,7 +221,7 @@ class Zend_View_Helper_HeadTitleTest extends PHPUnit_Framework_TestCase
     }
 
    /**
-    * @see ZF-8036
+    * @group ZF-8036
     */
     public function testHeadTitleZero()
     {
@@ -237,6 +235,15 @@ class Zend_View_Helper_HeadTitleTest extends PHPUnit_Framework_TestCase
         $placeholder = $this->helper->headTitle('Foo');
         $placeholder = $this->helper->headTitle('Bar');
         $this->assertContains('BarFoo', $placeholder->toString());
+    }
+
+    /**
+     * @group ZF-10284
+     */
+    public function testReturnTypeDefaultAttachOrder()
+    {
+        $this->assertTrue($this->helper->setDefaultAttachOrder('PREPEND') instanceof  Zend_View_Helper_HeadTitle);
+        $this->assertEquals('PREPEND', $this->helper->getDefaultAttachOrder());
     }
 }
 

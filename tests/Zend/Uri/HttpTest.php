@@ -15,15 +15,10 @@
  * @category   Zend
  * @package    Zend_Uri
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: HttpTest.php 24593 2012-01-05 20:35:02Z matthew $
  */
-
-/**
- * Test helper
- */
-require_once dirname(dirname(dirname(__FILE__))) . DIRECTORY_SEPARATOR . 'TestHelper.php';
 
 /**
  * @see Zend_Uri
@@ -35,28 +30,23 @@ require_once 'Zend/Uri.php';
  */
 require_once 'Zend/Uri/Http.php';
 
-/**
- * PHPUnit test case
- */
-require_once 'PHPUnit/Framework/TestCase.php';
-
 
 /**
  * @category   Zend
  * @package    Zend_Uri
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Uri
  */
 class Zend_Uri_HttpTest extends PHPUnit_Framework_TestCase
 {
-    
+
     public function setup()
     {
         Zend_Uri::setConfig(array('allow_unwise' => false));
     }
-    
+
     /**
      * Tests for proper URI decomposition
      */
@@ -89,7 +79,7 @@ class Zend_Uri_HttpTest extends PHPUnit_Framework_TestCase
      * Make sure an exception is thrown when trying to use fromString() with a
      * non-HTTP scheme
      *
-     * @see http://framework.zend.com/issues/browse/ZF-4395
+     * @group ZF-4395
      *
      * @expectedException Zend_Uri_Exception
      */
@@ -242,7 +232,7 @@ class Zend_Uri_HttpTest extends PHPUnit_Framework_TestCase
             'http://example.com/?q=^',
             'http://example.com/?q=`',
         );
-        
+
         foreach ($unwise as $uri) {
             $this->assertFalse(Zend_Uri::check($uri), "failed for URI $uri");
         }
@@ -390,7 +380,7 @@ class Zend_Uri_HttpTest extends PHPUnit_Framework_TestCase
     public function testSetInvalidHost()
     {
         $uri = Zend_Uri::factory('http://example.com');
-        $host = 'example,com';
+        $host = 'example§com';
         $this->setExpectedException('Zend_Uri_Exception');
         $uri->setHost($host);
     }
@@ -439,5 +429,20 @@ class Zend_Uri_HttpTest extends PHPUnit_Framework_TestCase
             'c' => 3
         ), $uri->getQueryAsArray());
         $this->assertEquals('a=1&c=3', $uri->getQuery());
+    }
+
+    /**
+     * @group ZF-11188
+     * @see http://www.ietf.org/rfc/rfc2732.txt
+     */
+    public function testParserSupportsLiteralIpv6AddressesInUri()
+    {
+      $this->assertTrue(Zend_Uri_Http::fromString('http://[FEDC:BA98:7654:3210:FEDC:BA98:7654:3210]:80/index.html')->valid());
+      $this->assertTrue(Zend_Uri_Http::fromString('http://[1080:0:0:0:8:800:200C:417A]/index.html')->valid());
+      $this->assertTrue(Zend_Uri_Http::fromString('http://[3ffe:2a00:100:7031::1]')->valid());
+      $this->assertTrue(Zend_Uri_Http::fromString('http://[1080::8:800:200C:417A]/foo')->valid());
+      $this->assertTrue(Zend_Uri_Http::fromString('http://[::192.9.5.5]/ipng')->valid());
+      $this->assertTrue(Zend_Uri_Http::fromString('http://[::FFFF:129.144.52.38]:80/index.html')->valid());
+      $this->assertTrue(Zend_Uri_Http::fromString('http://[2010:836B:4179::836B:4179]')->valid());
     }
 }

@@ -15,12 +15,11 @@
  * @category   Zend
  * @package    Zend_View
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: TestAbstract.php 25019 2012-07-06 10:42:51Z rob $
  */
 
-require_once 'PHPUnit/Framework/TestCase.php';
 require_once 'Zend/Acl.php';
 require_once 'Zend/Acl/Resource.php';
 require_once 'Zend/Acl/Role.php';
@@ -37,7 +36,7 @@ require_once 'Zend/Navigation.php';
  * @category   Zend
  * @package    Zend_View
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_View
  * @group      Zend_View_Helper
@@ -82,6 +81,13 @@ abstract class Zend_View_Helper_Navigation_TestAbstract
      */
     protected $_nav2;
 
+    /**
+     * The third container in the config file (_files/navigation.xml)
+     *
+     * @var Zend_Navigation
+     */
+    protected $_nav3;
+
     private $_oldControllerDir;
 
     /**
@@ -99,6 +105,7 @@ abstract class Zend_View_Helper_Navigation_TestAbstract
         // setup containers from config
         $this->_nav1 = new Zend_Navigation($config->get('nav_test1'));
         $this->_nav2 = new Zend_Navigation($config->get('nav_test2'));
+        $this->_nav3 = new Zend_Navigation($config->get('nav_test3'));
 
         // setup view
         $view = new Zend_View();
@@ -139,7 +146,11 @@ abstract class Zend_View_Helper_Navigation_TestAbstract
      */
     protected function _getExpected($file)
     {
-        return file_get_contents($this->_files . '/expected/' . $file);
+        return str_replace(
+            "\n",
+            PHP_EOL,
+            file_get_contents($this->_files . '/expected/' . $file)
+        );        
     }
 
     /**

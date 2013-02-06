@@ -15,16 +15,14 @@
  * @category   Zend
  * @package    Zend_Form
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: DisplayGroupTest.php 25093 2012-11-07 20:08:05Z rob $
  */
 
 if (!defined('PHPUnit_MAIN_METHOD')) {
     define('PHPUnit_MAIN_METHOD', 'Zend_Form_DisplayGroupTest::main');
 }
-
-require_once dirname(__FILE__) . '/../../TestHelper.php';
 
 require_once 'Zend/Form/DisplayGroup.php';
 
@@ -44,7 +42,7 @@ require_once 'Zend/View.php';
  * @category   Zend
  * @package    Zend_Form
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Form
  */
@@ -314,7 +312,7 @@ class Zend_Form_DisplayGroupTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @see ZF-3069
+     * @group ZF-3069
      */
     public function testRemovingNamedDecoratorsShouldWork()
     {
@@ -362,7 +360,7 @@ class Zend_Form_DisplayGroupTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @see ZF-3494
+     * @group ZF-3494
      */
     public function testGetViewShouldNotReturnNullWhenViewRendererIsActive()
     {
@@ -804,6 +802,32 @@ class Zend_Form_DisplayGroupTest extends PHPUnit_Framework_TestCase
         $this->group->setDecorators($t1);
         $t2 = $this->group->getDecorators();
         $this->assertEquals($t1, $t2);
+    }
+
+    /**
+     * @group ZF-12375
+     */
+    public function testHasTranslatorWithDefaultValue()
+    {
+        $this->assertFalse($this->group->hasTranslator());
+    }
+
+    /**
+     * @group ZF-12375
+     */
+    public function testHasTranslatorWithTranslateObject()
+    {
+        $this->group->setTranslator(
+            new Zend_Translate(
+                array(
+                    'adapter' => 'array',
+                    'content' => array(
+                        'foo' => 'Foo',
+                    ),
+                )
+            )
+        );
+        $this->assertTrue($this->group->hasTranslator());
     }
 }
 

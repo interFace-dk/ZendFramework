@@ -15,12 +15,11 @@
  * @category   Zend
  * @package    Zend_Navigation
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: UriTest.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
-require_once 'PHPUnit/Framework/TestCase.php';
 require_once 'Zend/Navigation/Page/Uri.php';
 
 /**
@@ -29,7 +28,7 @@ require_once 'Zend/Navigation/Page/Uri.php';
  * @category   Zend
  * @package    Zend_Navigation
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Navigation
  */
@@ -100,5 +99,23 @@ class Zend_Navigation_Page_UriTest extends PHPUnit_Framework_TestCase
         $page->setUri($uri);
 
         $this->assertEquals($uri, $page->getHref());
+    }
+
+    /**
+     * @group ZF-8922
+     */
+    public function testGetHrefWithFragmentIdentifier()
+    {
+        $uri = 'http://www.example.com/foo.html';
+        
+        $page = new Zend_Navigation_Page_Uri();
+        $page->setUri($uri);
+        $page->setFragment('bar');
+        
+        $this->assertEquals($uri . '#bar', $page->getHref());
+        
+        $page->setUri('#');
+        
+        $this->assertEquals('#bar', $page->getHref());
     }
 }

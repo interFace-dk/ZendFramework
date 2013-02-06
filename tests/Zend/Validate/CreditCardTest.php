@@ -15,15 +15,10 @@
  * @category   Zend
  * @package    Zend_Validate
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id:$
  */
-
-/**
- * Test helper
- */
-require_once dirname(__FILE__) . '/../../TestHelper.php';
 
 /**
  * @see Zend_Validate_CreditCard
@@ -34,7 +29,7 @@ require_once 'Zend/Validate/CreditCard.php';
  * @category   Zend
  * @package    Zend_Validate
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Validate
  */
@@ -49,13 +44,15 @@ class Zend_Validate_CreditCardTest extends PHPUnit_Framework_TestCase
     {
         $validator      = new Zend_Validate_CreditCard();
         $valuesExpected = array(
-            '4111111111111111' => true,
-            '5404000000000001' => true,
-            '374200000000004'  => true,
-            '4444555566667777' => false,
-            'ABCDEF'           => false
+            array('4111111111111111', true),
+            array('5404000000000001', true),
+            array('374200000000004',  true),
+            array('4444555566667777', false),
+            array('ABCDEF',           false)
             );
-        foreach ($valuesExpected as $input => $result) {
+        foreach ($valuesExpected as $test) {
+            $input = $test[0];
+            $result = $test[1];
             $this->assertEquals($result, $validator->isValid($input), 'Test failed at ' . $input);
         }
     }
@@ -120,13 +117,15 @@ class Zend_Validate_CreditCardTest extends PHPUnit_Framework_TestCase
     {
         $validator      = new Zend_Validate_CreditCard(Zend_Validate_CreditCard::VISA);
         $valuesExpected = array(
-            '4111111111111111' => true,
-            '5404000000000001' => false,
-            '374200000000004'  => false,
-            '4444555566667777' => false,
-            'ABCDEF'           => false
+            array('4111111111111111', true),
+            array('5404000000000001', false),
+            array('374200000000004',  false),
+            array('4444555566667777', false),
+            array('ABCDEF',           false)
             );
-        foreach ($valuesExpected as $input => $result) {
+        foreach ($valuesExpected as $test) {
+            $input = $test[0];
+            $result = $test[1];
             $this->assertEquals($result, $validator->isValid($input));
         }
     }

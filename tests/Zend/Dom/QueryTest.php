@@ -15,17 +15,15 @@
  * @category   Zend
  * @package    Zend_Dojo
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: QueryTest.php 25033 2012-08-17 19:50:08Z matthew $
  */
 
 // Call Zend_Dom_QueryTest::main() if this source file is executed directly.
 if (!defined("PHPUnit_MAIN_METHOD")) {
     define("PHPUnit_MAIN_METHOD", "Zend_Dom_QueryTest::main");
 }
-
-require_once dirname(__FILE__) . '/../../TestHelper.php';
 
 /** Zend_Dom_Query */
 require_once 'Zend/Dom/Query.php';
@@ -36,7 +34,7 @@ require_once 'Zend/Dom/Query.php';
  * @category   Zend
  * @package    Zend_Dom
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Dom
  */
@@ -89,7 +87,7 @@ class Zend_Dom_QueryTest extends PHPUnit_Framework_TestCase
         $this->query->setDocument($this->getHtml());
     }
 
-    public function handleError($msg, $code = 0) 
+    public function handleError($msg, $code = 0)
     {
         $this->error = $msg;
     }
@@ -243,7 +241,7 @@ class Zend_Dom_QueryTest extends PHPUnit_Framework_TestCase
         $this->assertTrue(is_array($errors));
         $this->assertTrue(0 < count($errors));
     }
-    
+
     /**
      * @group ZF-9765
      */
@@ -270,6 +268,99 @@ EOF;
         $this->assertEquals(2, count($results), $results->getXpathQuery());
         $results = $this->query->query('input[type="hidden"][value="0"]');
         $this->assertEquals(1, count($results));
+    }
+
+    /**
+     * @group ZF-3938
+     */
+    public function testAllowsSpecifyingEncodingAtConstruction()
+    {
+        $doc = new Zend_Dom_Query($this->getHtml(), 'iso-8859-1');
+        $this->assertEquals('iso-8859-1', $doc->getEncoding());
+    }
+
+    /**
+     * @group ZF-3938
+     */
+    public function testAllowsSpecifyingEncodingWhenSettingDocument()
+    {
+        $this->query->setDocument($this->getHtml(), 'iso-8859-1');
+        $this->assertEquals('iso-8859-1', $this->query->getEncoding());
+    }
+
+    /**
+     * @group ZF-3938
+     */
+    public function testAllowsSpecifyingEncodingViaSetter()
+    {
+        $this->query->setEncoding('iso-8859-1');
+        $this->assertEquals('iso-8859-1', $this->query->getEncoding());
+    }
+
+    /**
+     * @group ZF-3938
+     */
+    public function testSpecifyingEncodingSetsEncodingOnDomDocument()
+    {
+        $this->query->setDocument($this->getHtml(), 'utf-8');
+        $test = $this->query->query('.foo');
+        $this->assertType('Zend_Dom_Query_Result', $test);
+        $doc  = $test->getDocument();
+        $this->assertType('DOMDocument', $doc);
+        $this->assertEquals('utf-8', $doc->encoding);
+    }
+    
+    /**
+     * @group ZF-11376
+     */
+    public function testXhtmlDocumentWithXmlDeclaration()
+    {
+        $xhtmlWithXmlDecl = <<<EOB
+<?xml version="1.0" encoding="UTF-8" ?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head><title /></head>
+    <body><p>Test paragraph.</p></body>
+</html>
+EOB;
+        $this->query->setDocument($xhtmlWithXmlDecl, 'utf-8');
+        $this->assertEquals(1, $this->query->query('//p')->count());
+    }
+    
+    /**
+     * @group ZF-12106
+     */
+    public function testXhtmlDocumentWithXmlAndDoctypeDeclaration()
+    {
+        $xhtmlWithXmlDecl = <<<EOB
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <title>Virtual Library</title>
+  </head>
+  <body>
+    <p>Moved to <a href="http://example.org/">example.org</a>.</p>
+  </body>
+</html>
+EOB;
+        $this->query->setDocument($xhtmlWithXmlDecl, 'utf-8');
+        $this->assertEquals(1, $this->query->query('//p')->count());
+    }
+
+    public function testLoadingXmlContainingDoctypeShouldFailToPreventXxeAndXeeAttacks()
+    {
+        $xml = <<<XML
+<?xml version="1.0"?>
+<!DOCTYPE results [<!ENTITY harmless "completely harmless">]>
+<results>
+    <result>This result is &harmless;</result>
+</results>
+XML;
+        $this->query->setDocumentXml($xml);
+        $this->setExpectedException("Zend_Dom_Exception");
+        $this->query->queryXpath('/');
     }
 }
 

@@ -15,28 +15,10 @@
  * @category   Zend
  * @package    Zend_Session
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: SessionTestHelper.php 24593 2012-01-05 20:35:02Z matthew $
  */
-
-
-/** Test helper */
-// require_once dirname(dirname(dirname(__FILE__))) . DIRECTORY_SEPARATOR . 'TestHelper.php';
-
-// Do not include TestHelper.php since it takes too much time
-// Directly include part of it
-$zfRoot        = dirname(dirname(dirname(dirname(__FILE__))));
-$zfCoreLibrary = "$zfRoot/library";
-$zfCoreTests   = "$zfRoot/tests";
-
-$path = array(
-    $zfCoreLibrary,
-    $zfCoreTests,
-    get_include_path()
-    );
-set_include_path(implode(PATH_SEPARATOR, $path));
-
 
 /**
  * @see Zend_Session
@@ -48,7 +30,7 @@ require_once 'Zend/Session.php';
  * @category   Zend
  * @package    Zend_Session
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Session
  */
@@ -93,6 +75,9 @@ class Zend_Session_TestHelper
         }
         else {
             $s = new Zend_Session_Namespace();
+        }
+        if (isset($args[2]) && ($args[2] == 'ZF-7196')) {
+            unset($s->foo);
         }
         $result = '';
         foreach ($s->getIterator() as $key => $val) {

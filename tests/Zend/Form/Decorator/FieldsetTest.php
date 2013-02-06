@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Form
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: FieldsetTest.php 24961 2012-06-15 14:15:47Z adamlundrigan $
  */
 
 // Call Zend_Form_Decorator_FieldsetTest::main() if this source file is executed directly.
@@ -25,23 +25,19 @@ if (!defined("PHPUnit_MAIN_METHOD")) {
     define("PHPUnit_MAIN_METHOD", "Zend_Form_Decorator_FieldsetTest::main");
 }
 
-require_once dirname(__FILE__) . '/../../../TestHelper.php';
-require_once "PHPUnit/Framework/TestCase.php";
-require_once "PHPUnit/Framework/TestSuite.php";
-
 require_once 'Zend/Form/Decorator/Fieldset.php';
 
 require_once 'Zend/Form.php';
 require_once 'Zend/Form/Element.php';
 require_once 'Zend/View.php';
-
+require_once 'Zend/Form/SubForm.php';
 /**
  * Test class for Zend_Form_Decorator_Fieldset
  *
  * @category   Zend
  * @package    Zend_Form
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Form
  */
@@ -54,7 +50,6 @@ class Zend_Form_Decorator_FieldsetTest extends PHPUnit_Framework_TestCase
      */
     public static function main()
     {
-        require_once "PHPUnit/TextUI/TestRunner.php";
 
         $suite  = new PHPUnit_Framework_TestSuite("Zend_Form_Decorator_FieldsetTest");
         $result = PHPUnit_TextUI_TestRunner::run($suite);
@@ -132,7 +127,7 @@ class Zend_Form_Decorator_FieldsetTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @see ZF-7054
+     * @group ZF-7054
      */
     public function testCustomIdSupersedesElementId()
     {
@@ -146,7 +141,7 @@ class Zend_Form_Decorator_FieldsetTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @see ZF-2981
+     * @group ZF-2981
      */
     public function testActionAndMethodAttributesShouldNotBePresentInFieldsetTag()
     {
@@ -162,7 +157,7 @@ class Zend_Form_Decorator_FieldsetTest extends PHPUnit_Framework_TestCase
     }
 
     /**#@+
-     * @see ZF-3731
+     * @group ZF-3731
      */
     public function testIdShouldBePrefixedWithFieldset()
     {
@@ -189,7 +184,7 @@ class Zend_Form_Decorator_FieldsetTest extends PHPUnit_Framework_TestCase
     /**#@-*/
 
     /**
-     * @see ZF-3728
+     * @group ZF-3728
      */
     public function testEnctypeAttributeShouldNotBePresentInFieldsetTag()
     {
@@ -205,7 +200,7 @@ class Zend_Form_Decorator_FieldsetTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @see ZF-3499
+     * @group ZF-3499
      */
     public function testHelperAttributeShouldNotBePresentInFieldsetTag()
     {
@@ -218,6 +213,49 @@ class Zend_Form_Decorator_FieldsetTest extends PHPUnit_Framework_TestCase
         $test = $this->decorator->render('content');
         $this->assertContains('<fieldset', $test, $test);
         $this->assertNotContains('helper="', $test);
+    }
+
+    /**
+     * @group ZF-10679
+     */
+    public function testFieldsetIdOverridesFormId()
+    {
+        $form = new Zend_Form();
+        $form->setName('bar')
+             ->setAttrib('id', 'form-id')
+             ->setView($this->getView());
+        $html = $this->decorator->setElement($form)
+                                ->setOption('id', 'fieldset-id')
+                                ->render('content');
+        $this->assertContains('<fieldset id="fieldset-id"', $html);
+    }
+
+    /**
+     * @group ZF-8822
+     */
+    public function testStripAcceptCharsetAttribute()
+    {
+        $form = new Zend_Form();
+        $form->setAttrib('accept-charset', 'ISO-8859-15');
+        $form->setView($this->getView());
+
+        $html = $this->decorator->setElement($form)->render('');
+
+        $this->assertEquals('<fieldset></fieldset>', $html);
+    }
+    
+    /**
+     * @group ZF-10803
+     */
+    public function testFormIdOverridesFieldsetId()
+    {
+        $form = new Zend_Form();
+        $form->setAttrib('id', 'form-id')
+             ->setView($this->getView());
+        
+        $html = $this->decorator->setElement($form)->render('content');
+        
+        $this->assertContains('<fieldset id="fieldset-form-id"', $html);
     }
 }
 

@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Controller
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: Apache404Test.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 // Call Zend_Controller_Request_Apache404Test::main() if this source file is executed directly.
@@ -25,8 +25,6 @@ if (!defined("PHPUnit_MAIN_METHOD")) {
     define("PHPUnit_MAIN_METHOD", "Zend_Controller_Request_Apache404Test::main");
 }
 
-require_once "PHPUnit/Framework/TestCase.php";
-require_once "PHPUnit/Framework/TestSuite.php";
 
 require_once 'Zend/Controller/Request/Apache404.php';
 
@@ -37,7 +35,7 @@ require_once 'Zend/Controller/Request/Apache404.php';
  * @category   Zend
  * @package    Zend_Controller
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Controller
  * @group      Zend_Controller_Request
@@ -58,7 +56,6 @@ class Zend_Controller_Request_Apache404Test extends PHPUnit_Framework_TestCase
      */
     public static function main()
     {
-        require_once "PHPUnit/TextUI/TestRunner.php";
 
         $suite  = new PHPUnit_Framework_TestSuite("Zend_Controller_Request_Apache404Test");
         $result = PHPUnit_TextUI_TestRunner::run($suite);
@@ -86,11 +83,12 @@ class Zend_Controller_Request_Apache404Test extends PHPUnit_Framework_TestCase
 
     /**
      * @group ZF-3057
+     * @group ZF-9776
      */
     public function testRedirectQueryStringShouldBeParsedIntoGetVars()
     {
         $_SERVER['REDIRECT_URL']         = '/foo/bar';
-        $_SERVER['REDIRECT_QUERYSTRING'] = 'baz=bat&bat=delta';
+        $_SERVER['REDIRECT_QUERY_STRING'] = 'baz=bat&bat=delta';
         $_SERVER['REQUEST_URI']          = '/baz/bat';
 
         $request = new Zend_Controller_Request_Apache404();

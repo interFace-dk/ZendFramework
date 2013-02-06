@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Gdata_Calendar
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id $
  */
@@ -28,7 +28,7 @@ require_once 'Zend/Http/Client.php';
  * @category   Zend
  * @package    Zend_Gdata_Calendar
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Gdata
  * @group      Zend_Gdata_Calendar
@@ -48,7 +48,7 @@ class Zend_Gdata_Calendar_EventQueryTest extends PHPUnit_Framework_TestCase
     public function testDefaultBaseUrlForQuery()
     {
         $queryUrl = $this->query->getQueryUrl();
-        $this->assertEquals('http://www.google.com/calendar/feeds/default/public/full',
+        $this->assertEquals('https://www.google.com/calendar/feeds/default/public/full',
                 $queryUrl);
     }
 
@@ -245,7 +245,7 @@ class Zend_Gdata_Calendar_EventQueryTest extends PHPUnit_Framework_TestCase
         $this->query->setProjection("composite");
         $this->query->setEvent(self::ZEND_CONFERENCE_EVENT);
         $this->query->setComments(self::ZEND_CONFERENCE_EVENT_COMMENT);
-        $this->assertEquals("http://www.google.com/calendar/feeds/developer-calendar@google.com/private/composite/" .
+        $this->assertEquals("https://www.google.com/calendar/feeds/developer-calendar@google.com/private/composite/" .
                 self::ZEND_CONFERENCE_EVENT . "/comments/" . self::ZEND_CONFERENCE_EVENT_COMMENT,
                 $this->query->getQueryUrl());
     }
@@ -253,7 +253,7 @@ class Zend_Gdata_Calendar_EventQueryTest extends PHPUnit_Framework_TestCase
     public function testDefaultQueryURIGeneration()
     {
         $this->query->resetParameters();
-        $this->assertEquals("http://www.google.com/calendar/feeds/default/public/full",
+        $this->assertEquals("https://www.google.com/calendar/feeds/default/public/full",
                 $this->query->getQueryUrl());
     }
 

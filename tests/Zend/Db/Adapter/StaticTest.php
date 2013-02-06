@@ -15,18 +15,10 @@
  * @category   Zend
  * @package    Zend_Db
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: StaticTest.php 24593 2012-01-05 20:35:02Z matthew $
  */
-
-
-/**
- * Test helper
- */
-require_once dirname(__FILE__) . '/../../../TestHelper.php';
-
-PHPUnit_Util_Filter::addFileToFilter(__FILE__);
 
 /**
  * @see Zend_Db
@@ -48,7 +40,7 @@ require_once 'Zend/Db/Adapter/Static.php';
  * @category   Zend
  * @package    Zend_Db
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Db
  * @group      Zend_Db_Adapter
@@ -378,6 +370,33 @@ class Zend_Db_Adapter_StaticTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('Test_MyCompany1_Db_Adapter', get_class($adapter));
         set_include_path($oldIncludePath);
 
+    }
+
+    /**
+     * @group ZF-6620
+     */
+    public function testDbConstructorSetOptionFetchMode()
+    {
+        $db = new Zend_Db_Adapter_Static(array('dbname' => 'dummy'));
+        $this->assertEquals($db->getFetchMode(), Zend_Db::FETCH_ASSOC);
+
+        $params = array(
+            'dbname' => 'dummy',
+            'options' => array(
+                Zend_Db::FETCH_MODE => 'obj'
+             )
+        );
+        $db = new Zend_Db_Adapter_Static($params);
+        $this->assertEquals($db->getFetchMode(), Zend_Db::FETCH_OBJ);
+
+        $params = array(
+            'dbname' => 'dummy',
+            'options' => array(
+                Zend_Db::FETCH_MODE => Zend_Db::FETCH_OBJ
+             )
+        );
+        $db = new Zend_Db_Adapter_Static($params);
+        $this->assertEquals($db->getFetchMode(), Zend_Db::FETCH_OBJ);
     }
 
     protected function _isCaseSensitiveFileSystem()

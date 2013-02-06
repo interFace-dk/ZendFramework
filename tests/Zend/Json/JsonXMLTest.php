@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Json
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: JsonXMLTest.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 error_reporting( E_ALL | E_STRICT ); // now required for each test suite
@@ -27,16 +27,12 @@ error_reporting( E_ALL | E_STRICT ); // now required for each test suite
  */
 require_once 'Zend/Json.php';
 
-/**
- * PHPUnit test case
- */
-require_once 'PHPUnit/Framework.php';
 
 /**
  * @category   Zend
  * @package    Zend_Json
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Json
  */
@@ -518,7 +514,7 @@ EOT;
      * XML characteristic to be tested: XML containing invalid syntax.
      *
      */
-/*
+
     public function testUsingXML7()
     {
         // Set the XML contents that will be tested here.
@@ -551,7 +547,120 @@ EOT;
 
         $this->assertNotSame($ex, null, "Zend_JSON::fromXml returned an exception.");
     } // End of function testUsingXML7
-*/
+
+    /**
+     *  @group ZF-3257
+     */
+
+    public function testUsingXML8() {
+
+        // Set the XML contents that will be tested here.
+        $xmlStringContents = <<<EOT
+<?xml version="1.0"?>
+<a><b id="foo" />bar</a>
+
+EOT;
+
+        // There are not going to be any XML attributes in this test XML.
+        // Hence, set the flag to ignore XML attributes.
+        $ignoreXmlAttributes = false;
+        $jsonContents = "";
+        $ex = null;
+
+        // Convert XML to JSON now.
+        // fromXml function simply takes a String containing XML contents as input.
+        try {
+            $jsonContents = Zend_Json::fromXml($xmlStringContents, $ignoreXmlAttributes);
+        } catch (Exception $ex) {
+            ;
+        }
+        $this->assertSame($ex, null, "Zend_JSON::fromXml returned an exception.");
+
+        // Convert the JSON string into a PHP array.
+        $phpArray = Zend_Json::decode($jsonContents);
+        // Test if it is not a NULL object.
+        $this->assertNotNull($phpArray, "JSON result for XML input 1 is NULL");
+
+        $this->assertSame("bar", $phpArray['a']['@text'], "The text element of a is not correct");
+        $this->assertSame("foo", $phpArray['a']['b']['@attributes']['id'], "The id attribute of b is not correct");
+
+    }
+
+    /**
+     * @group ZF-11385
+     * @expectedException Zend_Json_Exception
+     * @dataProvider providerNestingDepthIsHandledProperly
+     */
+    public function testNestingDepthIsHandledProperlyWhenNestingDepthExceedsMaximum($xmlStringContents)
+    {        
+        Zend_Json::$maxRecursionDepthAllowed = 1;
+        Zend_Json::fromXml($xmlStringContents, true);
+    }
+    
+    /**
+     * @group ZF-11385
+     * @dataProvider providerNestingDepthIsHandledProperly
+     */
+    public function testNestingDepthIsHandledProperlyWhenNestingDepthDoesNotExceedMaximum($xmlStringContents)
+    {   
+        try {
+            Zend_Json::$maxRecursionDepthAllowed = 25;
+            $jsonString = Zend_Json::fromXml($xmlStringContents, true);
+            $jsonArray = Zend_Json::decode($jsonString);
+            $this->assertNotNull($jsonArray, "JSON decode result is NULL");
+            $this->assertSame('A', $jsonArray['response']['message_type']['defaults']['close_rules']['after_responses']);
+        } catch ( Zend_Json_Exception $ex ) {
+            $this->fail('Zend_Json::fromXml does not implement recursion check properly');
+        }
+    }
+    
+    /**
+     * XML document provider for ZF-11385 tests
+     * @return array
+     */
+    public static function providerNestingDepthIsHandledProperly()
+    {
+        $xmlStringContents = <<<EOT
+<response>
+	<status>success</status>
+	<description>200 OK</description>
+	<message_type>
+		<system_name>A</system_name>
+		<shortname>B</shortname>
+		<long_name>C</long_name>
+		<as_verb>D</as_verb>
+		<as_noun>E</as_noun>
+		<challenge_phrase>F</challenge_phrase>
+		<recipient_details>G</recipient_details>
+		<sender_details>H</sender_details>
+		<example_text>A</example_text>
+		<short_description>B</short_description>
+		<long_description>C</long_description>
+		<version>D</version>
+		<developer>E</developer>
+		<config_instructions>A</config_instructions>
+		<config_fragment>B</config_fragment>
+		<icon_small>C</icon_small>
+		<icon_medium>D</icon_medium>
+		<icon_large>E</icon_large>
+		<defaults>
+			<close_rules>
+				<after_responses>A</after_responses>
+			</close_rules>
+			<recipient_visibility>B</recipient_visibility>
+			<recipient_invite>C</recipient_invite>
+			<results_visibility>A</results_visibility>
+			<response_visibility>B</response_visibility>
+			<recipient_resubmit>C</recipient_resubmit>
+			<feed_status>D</feed_status>
+		</defaults>
+	</message_type>
+	<execution_time>0.0790269374847</execution_time>	
+</response>
+EOT;
+        return array(array($xmlStringContents));
+    }
+    
 } // End of class Zend_Json_JsonXMLTest
 
 

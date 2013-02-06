@@ -15,15 +15,10 @@
  * @category   Zend
  * @package    Zend_Feed
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: RssTest.php 25083 2012-11-06 21:02:22Z rob $
  */
-
-/**
- * Test helper
- */
-require_once dirname(__FILE__) . '/../../../TestHelper.php';
 
 /**
  * @see Zend_Feed
@@ -34,7 +29,7 @@ require_once 'Zend/Feed.php';
  * @category   Zend
  * @package    Zend_Feed
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Feed
  */
@@ -44,10 +39,10 @@ class Zend_Feed_Entry_RssTest extends PHPUnit_Framework_TestCase
     public function testContentEncodedSupport()
     {
         $feed = Zend_Feed::importFile(dirname(__FILE__) . '/../_files/TestFeedEntryRssContentEncoded.xml');
-        $this->assertType('Zend_Feed_Rss', $feed);
+        $this->assertTrue($feed instanceof Zend_Feed_Rss);
 
         $item = $feed->current();
-        $this->assertType('Zend_Feed_Entry_Rss', $item);
+        $this->assertTrue($item instanceof Zend_Feed_Entry_Rss);
 
         $this->assertTrue(isset($item->content));
         $this->assertContains(
@@ -65,11 +60,11 @@ class Zend_Feed_Entry_RssTest extends PHPUnit_Framework_TestCase
     public function testContentEncodedNullIfEmpty()
     {
         $feed = Zend_Feed::importFile(dirname(__FILE__) . '/../_files/TestFeedEntryRssContentEncoded.xml');
-        $this->assertType('Zend_Feed_Rss', $feed);
+        $this->assertTrue($feed instanceof Zend_Feed_Rss);
 
         $feed->next();
         $item =  $feed->current();
-        $this->assertType('Zend_Feed_Entry_Rss', $item);
+        $this->assertTrue($item instanceof Zend_Feed_Entry_Rss);
         $this->assertFalse(isset($item->content));
         $this->assertNull($item->content());
         // $this->assertNull($item->content); // always return DOMElement Object

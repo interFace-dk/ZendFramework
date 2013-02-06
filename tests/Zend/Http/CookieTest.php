@@ -15,12 +15,11 @@
  * @category   Zend
  * @package    Zend_Http_Cookie
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: CookieTest.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
-require_once dirname(__FILE__) . '/../../TestHelper.php';
 require_once 'Zend/Http/Cookie.php';
 
 /**
@@ -29,7 +28,7 @@ require_once 'Zend/Http/Cookie.php';
  * @category   Zend
  * @package    Zend_Http_Cookie
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Http
  * @group      Zend_Http_Cookie
@@ -448,6 +447,14 @@ class Zend_Http_CookieTest extends PHPUnit_Framework_TestCase
         $expTime = "Sat, 29-Jan-2039 00:54:42 GMT";
         $cookie = Zend_Http_Cookie::fromString("foo=bar; domain=.example.com; expires=$expTime");
         $this->assertFalse($cookie->isExpired(), 'Expiry: ' . $cookie->getExpiryTime());
+    }
+
+    /**
+     * @group ZF-10506
+     */
+    public function testPregMatchIsQuoted()
+    {
+        $this->assertFalse(Zend_Http_Cookie::matchCookieDomain('foo.bar.com', 'www.foozbar.com'));
     }
 
     /**

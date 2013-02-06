@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Gdata
  * @subpackage Demos
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -23,7 +23,7 @@
  * PHP sample code for the Google Calendar data API.  Utilizes the
  * Zend Framework Gdata components to communicate with the Google API.
  *
- * Requires the Zend Framework Gdata components and PHP >= 5.1.4
+ * Requires the Zend Framework Gdata components and PHP >= 5.2.11
  *
  * You can run this sample both from the command line (CLI) and also
  * from a web browser.  When running through a web browser, only
@@ -618,7 +618,7 @@ function setReminder($client, $eventId, $minutes=15)
         $reminder = $gc->newReminder();
         $reminder->setMinutes($minutes);
         $reminder->setMethod($method);
-        $when->reminder = array($reminder);
+        $when->reminders = array($reminder);
     }
     $eventNew = $event->save();
     return $eventNew;

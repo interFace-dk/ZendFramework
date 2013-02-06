@@ -15,27 +15,141 @@
  * @category   Zend
  * @package    Zend_Db
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id $
  */
 
 require_once 'Zend/Db/Statement/TestCommon.php';
+require_once 'Zend/Db/Statement/Mysqli.php';
 
-PHPUnit_Util_Filter::addFileToFilter(__FILE__);
+/**
+ * Wrapper class for test protected function _stripQuoted
+ */
+class Zend_Db_Statement_Mysqli_Test_Class extends Zend_Db_Statement_Mysqli
+{
+    public function stripQuoted($sql)
+    {
+        return $this->_stripQuoted($sql);
+    }
+}
 
 /**
  * @category   Zend
  * @package    Zend_Db
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Db
  * @group      Zend_Db_Statement
  */
 class Zend_Db_Statement_MysqliTest extends Zend_Db_Statement_TestCommon
 {
+    protected $_Zend_Db_Statement_Mysqli_Test_Class = null;
+    /**
+     * @group ZF-7911
+     */
+    public function testStripQuoted()
+    {
+        $this->_Zend_Db_Statement_Mysqli_Test_Class = new Zend_Db_Statement_Mysqli_Test_Class($this->_db, "SELECT 1");
+        
+        $input = <<<INPUT
+in: [SELECT * FROM `strange`table1`]
+out: [SELECT * FROM table1`]
+    
+in: [SELECT * FROM `strange``table2`]
+out: [SELECT * FROM ]
+    
+in: [SELECT * FROM `strange```table3`]
+out: [SELECT * FROM table3`]
+    
+in: [SELECT * FROM `strange\`table4`]
+out: [SELECT * FROM table4`]
+    
+in: [SELECT * FROM `strange\``table5`]
+out: [SELECT * FROM ]
+    
+in: [SELECT * FROM `strange\```table6`]
+out: [SELECT * FROM table6`]
+    
+in: [SELECT 'value7' AS identifier]
+out: [SELECT  AS identifier]
+    
+in: [SELECT 'strange:value8' AS identifier]
+out: [SELECT  AS identifier]
+    
+in: [SELECT 'strange'value9' AS identifier]
+out: [SELECT value9' AS identifier]
+    
+in: [SELECT 'strange''value10' AS identifier]
+out: [SELECT  AS identifier]
+    
+in: [SELECT 'strange'''value11' AS identifier]
+out: [SELECT value11' AS identifier]
+    
+in: [SELECT 'strange\'value12' AS identifier]
+out: [SELECT  AS identifier]
+    
+in: [SELECT 'strange\''value13' AS identifier]
+out: [SELECT value13' AS identifier]
+    
+in: [SELECT 'strange'''value14' AS identifier]
+out: [SELECT value14' AS identifier]
+    
+in: [SELECT "value15" AS identifier]
+out: [SELECT  AS identifier]
+    
+in: [SELECT "strange:value16" AS identifier]
+out: [SELECT  AS identifier]
+    
+in: [SELECT "strange"value17" AS identifier]
+out: [SELECT value17" AS identifier]
+    
+in: [SELECT "strange""value18" AS identifier]
+out: [SELECT  AS identifier]
+    
+in: [SELECT "strange"""value19" AS identifier]
+out: [SELECT value19" AS identifier]
+    
+in: [SELECT "strange\"value20" AS identifier]
+out: [SELECT  AS identifier]
+    
+in: [SELECT "strange\""value21" AS identifier]
+out: [SELECT value21" AS identifier]
+    
+in: [SELECT "strange"""value22" AS identifier]
+out: [SELECT value22" AS identifier]
+        
+in: [SELECT 'strange\'''value23' AS identifier]
+out: [SELECT  AS identifier]
+        
+in: [SELECT '?`' `x`, col `y` FROM t WHERE u = ?;]
+out: [SELECT  , col  FROM t WHERE u = ?;]
 
+in: [SELECT "?`" `x`, col `y` FROM t WHERE u = ?;]
+out: [SELECT  , col  FROM t WHERE u = ?;]
+
+in: [INSERT INTO `pcre` (`test`) VALUES ('In MySQL, the backtick (`) is used to quoted identifiers, and here is another backtick: ` ...ooops');]
+out: [INSERT INTO  () VALUES ();]
+INPUT;
+        // parse the input
+        $inputOutputLines = explode('in:', $input);
+        $count = 0;
+    
+        foreach ($inputOutputLines as $ioLine) {
+            if (!trim($ioLine)) {
+                continue;
+            }
+    
+            $count++;
+            $io = explode('out:', $ioLine);
+            $in = str_replace(array('[', ']'),'', trim($io[0]));
+            $out = str_replace(array('[', ']'),'', trim($io[1]));
+            $actual = $this->_Zend_Db_Statement_Mysqli_Test_Class->stripQuoted($in);
+            $this->assertSame($out, $actual, $count . ' - unexpected output');
+        }
+    }
+    
     public function testStatementRowCount()
     {
         $products = $this->_db->quoteIdentifier('zfproducts');
@@ -144,10 +258,10 @@ class Zend_Db_Statement_MysqliTest extends Zend_Db_Statement_TestCommon
         $result = $stmt->fetch();
         $this->assertFalse($result);
     }
-    
+
 	/**
 	 * Test to verify valid report of issue
-	 * 
+	 *
      * @group ZF-8986
      */
     public function testNumberOfBoundParamsDoesNotMatchNumberOfTokens()
@@ -160,7 +274,7 @@ class Zend_Db_Statement_MysqliTest extends Zend_Db_Statement_TestCommon
     		'object_long'   => 'REAL',
         ));
         $tableName = $this->_util->getTableName('zf_objects');
-        
+
         $numRows = $this->_db->insert($tableName, array (
         	'object_id' => 1,
         	'object_type' => 1,
@@ -168,11 +282,11 @@ class Zend_Db_Statement_MysqliTest extends Zend_Db_Statement_TestCommon
         	'object_lati' => 1.12345,
         	'object_long' => 1.54321,
         ));
-        
+
         $sql = 'SELECT object_id, object_type, object_status,'
-             . ' object_lati, object_long FROM ' . $tableName 
+             . ' object_lati, object_long FROM ' . $tableName
              . ' WHERE object_id = ?';
-             
+
         try {
         	$stmt = $this->_db->query($sql, 1);
         } catch (Exception $e) {

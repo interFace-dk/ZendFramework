@@ -15,11 +15,10 @@
  * @category   Zend
  * @package    Zend_XmlRpc
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version $Id$
+ * @version $Id: ClientTest.php 24593 2012-01-05 20:35:02Z matthew $
  */
-require_once dirname(__FILE__) . '/../../TestHelper.php';
 
 require_once 'Zend/XmlRpc/Client.php';
 
@@ -35,7 +34,7 @@ require_once 'Zend/XmlRpc/Value/DateTime.php';
  * @category   Zend
  * @package    Zend_XmlRpc
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_XmlRpc
  */
@@ -154,7 +153,7 @@ class Zend_XmlRpc_ClientTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @see ZF-2090
+     * @group ZF-2090
      */
     public function testSuccessfullyDetectsEmptyArrayParameterAsArray()
     {
@@ -175,7 +174,7 @@ class Zend_XmlRpc_ClientTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @see ZF-1412
+     * @group ZF-1412
      *
      * @return void
      */
@@ -664,7 +663,7 @@ class Zend_XmlRpc_ClientTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($this->xmlrpcClient->call('method'));
         $this->assertSame($expectedUserAgent, $this->httpClient->getHeader('user-agent'));
     }
-    
+
     /**
      * @group ZF-8478
      */
@@ -675,7 +674,7 @@ class Zend_XmlRpc_ClientTest extends PHPUnit_Framework_TestCase
         	$introspector = new Zend_XmlRpc_Client_ServerIntrospection(
                 new Test_XmlRpc_Client('http://localhost/')
             );
-            
+
             $signature = $introspector->getMethodSignature('add');
             if (!is_array($signature)) {
                 $this->fail('Expected exception has not been thrown');
@@ -684,6 +683,57 @@ class Zend_XmlRpc_ClientTest extends PHPUnit_Framework_TestCase
         catch (Zend_XmlRpc_Client_IntrospectException $e) {
             $this->assertEquals('Invalid signature for method "add"', $e->getMessage());
         }
+    }
+
+    /**
+     * @group ZF-8580
+     */
+    public function testCallSelectsCorrectSignatureIfMoreThanOneIsAvailable()
+    {
+        $this->mockIntrospector();
+
+        $this->mockedIntrospector
+             ->expects($this->exactly(2))
+             ->method('getMethodSignature')
+             ->with('get')
+             ->will($this->returnValue(array(
+                 array('parameters' => array('int')),
+                 array('parameters' => array('array'))
+             )));
+
+          $expectedResult = 'array';
+          $this->setServerResponseTo($expectedResult);
+
+          $this->assertSame(
+              $expectedResult,
+              $this->xmlrpcClient->call('get', array(array(1)))
+          );
+
+          $expectedResult = 'integer';
+          $this->setServerResponseTo($expectedResult);
+
+          $this->assertSame(
+              $expectedResult,
+              $this->xmlrpcClient->call('get', array(1))
+          );
+    }
+    
+    /**
+     * @group ZF-1897
+     */
+    public function testHandlesLeadingOrTrailingWhitespaceInChunkedResponseProperly()
+    {
+        $baseUri = "http://foo:80";
+        $this->httpAdapter = new Zend_Http_Client_Adapter_Test();
+        $this->httpClient = new Zend_Http_Client(null, array('adapter' => $this->httpAdapter));
+        
+        $respBody = file_get_contents(dirname(__FILE__) . "/_files/ZF1897-response-chunked.txt");
+        $this->httpAdapter->setResponse($respBody);
+
+        $this->xmlrpcClient = new Zend_XmlRpc_Client($baseUri);
+        $this->xmlrpcClient->setHttpClient($this->httpClient);
+        
+        $this->assertEquals('FOO', $this->xmlrpcClient->call('foo'));
     }
 
     // Helpers

@@ -15,12 +15,10 @@
  * @category   Zend
  * @package    Zend_Barcode
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: ImageTest.php 24593 2012-01-05 20:35:02Z matthew $
  */
-
-require_once dirname(dirname(dirname(dirname(__FILE__)))) . '/TestHelper.php';
 
 require_once dirname(__FILE__) . '/TestCommon.php';
 
@@ -32,7 +30,7 @@ require_once 'Zend/Barcode/Object/Code39.php';
  * @package    Zend_Barcode
  * @subpackage UnitTests
  * @group      Zend_Barcode
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Barcode_Renderer_ImageTest extends Zend_Barcode_Renderer_TestCommon
@@ -127,7 +125,7 @@ class Zend_Barcode_Renderer_ImageTest extends Zend_Barcode_Renderer_TestCommon
     public function testDrawReturnResource()
     {
         $this->_checkTTFRequirement();
-        
+
         $barcode = new Zend_Barcode_Object_Code39(array('text' => '0123456789'));
         $this->_renderer->setBarcode($barcode);
         $resource = $this->_renderer->draw();
@@ -139,7 +137,7 @@ class Zend_Barcode_Renderer_ImageTest extends Zend_Barcode_Renderer_TestCommon
     public function testDrawWithExistantResourceReturnResource()
     {
         $this->_checkTTFRequirement();
-        
+
         $barcode = new Zend_Barcode_Object_Code39(array('text' => '0123456789'));
         $this->_renderer->setBarcode($barcode);
         $imageResource = imagecreatetruecolor(500, 500);
@@ -267,59 +265,59 @@ class Zend_Barcode_Renderer_ImageTest extends Zend_Barcode_Renderer_TestCommon
     public function testHorizontalPositionToLeft()
     {
         $this->_checkTTFRequirement();
-        
+
         parent::testHorizontalPositionToLeft();
     }
 
     public function testHorizontalPositionToCenter()
     {
         $this->_checkTTFRequirement();
-        
+
         parent::testHorizontalPositionToCenter();
     }
 
     public function testHorizontalPositionToRight()
     {
         $this->_checkTTFRequirement();
-        
+
         parent::testHorizontalPositionToRight();
     }
 
     public function testVerticalPositionToTop()
     {
         $this->_checkTTFRequirement();
-        
+
         parent::testVerticalPositionToTop();
     }
 
     public function testVerticalPositionToMiddle()
     {
         $this->_checkTTFRequirement();
-        
+
         parent::testVerticalPositionToMiddle();
     }
 
     public function testVerticalPositionToBottom()
     {
         $this->_checkTTFRequirement();
-        
+
         parent::testVerticalPositionToBottom();
     }
-    
+
     public function testLeftOffsetOverrideHorizontalPosition()
     {
         $this->_checkTTFRequirement();
-        
+
         parent::testLeftOffsetOverrideHorizontalPosition();
     }
-    
+
     public function testTopOffsetOverrideVerticalPosition()
     {
         $this->_checkTTFRequirement();
-        
+
         parent::testTopOffsetOverrideVerticalPosition();
-    } 
-    
+    }
+
     protected function _checkTTFRequirement()
     {
         if (!function_exists('imagettfbbox')) {

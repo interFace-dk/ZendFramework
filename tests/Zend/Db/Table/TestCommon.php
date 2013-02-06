@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Db
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: TestCommon.php 24957 2012-06-15 13:40:23Z adamlundrigan $
  */
 
 
@@ -36,14 +36,15 @@ require_once 'Zend/Registry.php';
  */
 require_once 'Zend/Db/Table.php';
 
-PHPUnit_Util_Filter::addFileToFilter(__FILE__);
+
+
 
 
 /**
  * @category   Zend
  * @package    Zend_Db
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 abstract class Zend_Db_Table_TestCommon extends Zend_Db_Table_TestSetup
@@ -670,6 +671,28 @@ abstract class Zend_Db_Table_TestCommon extends Zend_Db_Table_TestSetup
         $this->assertEquals($insertResult, $lastInsertId);
         $this->assertEquals(5, $lastInsertId);
     }
+    
+    /**
+     * @group ZF-3837
+     */
+    public function testTableInsertWhenAutoIncrementFieldIsAnEmptyStringShouldProduceNewAutoIncrementValue()
+    {
+        $table = $this->_table['bugs'];
+        $row = array (
+            'bug_id'          => '',
+            'bug_description' => 'New bug',
+            'bug_status'      => 'NEW',
+            'created_on'      => '2007-04-02',
+            'updated_on'      => '2007-04-02',
+            'reported_by'     => 'micky',
+            'assigned_to'     => 'goofy',
+            'verified_by'     => 'dduck'
+        );
+        $insertResult = $table->insert($row);
+        $lastInsertId = $this->_db->lastInsertId();
+        $this->assertEquals($insertResult, $lastInsertId);
+        $this->assertEquals(5, $lastInsertId);
+    }
 
     public function testTableInsertWithSchema()
     {
@@ -778,8 +801,9 @@ abstract class Zend_Db_Table_TestCommon extends Zend_Db_Table_TestSetup
 
     /**
      * See ZF-1739 in our issue tracker.
+     * @group ZF-1739
      */
-    public function testTableInsertMemoryUsageZf1739()
+    public function testTableInsertWithHighMemoryUsage()
     {
         $this->markTestSkipped('Very slow test inserts thousands of rows');
 
@@ -807,6 +831,50 @@ abstract class Zend_Db_Table_TestCommon extends Zend_Db_Table_TestSetup
         // compare new memory usage to original
         $mem_delta = $mem2-$mem1;
         $this->assertThat($mem_delta, $this->lessThan(513));
+    }
+    
+    /**
+     * @group ZF-2953
+     */
+    public function testTableInsertWithEmptyValueAsPrimaryKey()
+    {
+        $table = $this->_table['bugs'];
+        $row = array (
+            'bug_description' => 'New bug',
+            'bug_status'      => 'NEW',
+            'created_on'      => '2007-04-02',
+            'updated_on'      => '2007-04-02',
+            'reported_by'     => 'micky',
+            'assigned_to'     => 'goofy',
+            'verified_by'     => 'dduck'
+        );
+        
+        // empty string
+        $row['bug_id'] = '';
+        $insertResult = $table->insert($row);
+        $this->assertTrue(is_numeric($insertResult), 'Empty string did not return assigned primary key');
+        
+        // false (bool)
+        $row['bug_id'] = false;
+        $insertResult = $table->insert($row);
+        $this->assertTrue(is_numeric($insertResult), 'Bool false did not return assigned primary key');
+
+        // empty array
+        $row['bug_id'] = array();
+        $insertResult = $table->insert($row);
+        $this->assertTrue(is_numeric($insertResult), 'Empty array did not return assigned primary key');
+        
+        // zero '0'
+        $row['bug_id'] = '0';
+        $table->delete('bug_id > 0'); // clear table
+        $insertResult = $table->insert($row);
+        $this->assertEquals('0', $insertResult, 'Zero string did not return assigned primary key');
+        
+        // zero 0
+        $row['bug_id'] = 0;
+        $table->delete('bug_id > 0'); // clear table
+        $insertResult = $table->insert($row);
+        $this->assertEquals('0', $insertResult, 'Zero int did not return assigned primary key');
     }
 
     public function testTableUpdate()
@@ -965,6 +1033,44 @@ abstract class Zend_Db_Table_TestCommon extends Zend_Db_Table_TestSetup
             'Expecting object of type Zend_Db_Table_Row_Abstract, got '.get_class($row));
         $this->assertTrue(isset($row->bug_description));
         $this->assertEquals('New bug', $row->bug_description);
+    }
+
+    /**
+     * @group ZF-8944
+     * @group ZF-10598
+     * @group ZF-11253
+     */
+    public function testTableFetchRowOffset()
+    {
+        $reported_by = $this->_db->quoteIdentifier('reported_by', true);
+
+        $table = $this->_table['bugs'];
+        $row = $table->fetchRow(array("$reported_by = ?" => 'goofy'), null, 1);
+        $this->assertType('Zend_Db_Table_Row_Abstract', $row,
+            'Expecting object of type Zend_Db_Table_Row_Abstract, got '.get_class($row));
+        $bug_id = $this->_db->foldCase('bug_id');
+        $this->assertEquals(2, $row->$bug_id);
+    }
+
+    /**
+     * @group ZF-8944
+     * @group ZF-10598
+     * @group ZF-11253
+     */
+    public function testTableFetchRowOffsetSelect()
+    {
+        $reported_by = $this->_db->quoteIdentifier('reported_by', true);
+
+        $table = $this->_table['bugs'];
+        $select = $table->select()
+            ->where("$reported_by = ?", 'goofy')
+            ->limit(1, 1);
+
+        $row = $table->fetchRow($select);
+        $this->assertType('Zend_Db_Table_Row_Abstract', $row,
+            'Expecting object of type Zend_Db_Table_Row_Abstract, got '.get_class($row));
+        $bug_id = $this->_db->foldCase('bug_id');
+        $this->assertEquals(2, $row->$bug_id);
     }
 
     public function testTableFetchRow()
@@ -1507,6 +1613,72 @@ abstract class Zend_Db_Table_TestCommon extends Zend_Db_Table_TestSetup
         $this->assertEquals(0, count($rows));
     }
 
+    /**
+     * @group ZF-1103
+     */
+    public function testTableCascadeRecurseDelete()
+    {
+        $tblRecursive = $this->_getTable('My_ZendDbTable_TableCascadeRecursive');
+
+        // Enforce initial table structure
+        $parentRow = $tblRecursive->find(1)->current();
+        $this->assertType('Zend_Db_Table_Row', $parentRow);
+        $childRows = $parentRow->findDependentRowset('My_ZendDbTable_TableCascadeRecursive', 'Children');
+        $this->assertType('Zend_Db_Table_Rowset', $childRows);
+        $this->assertEquals(2, count($childRows));
+        foreach ( $childRows as $childRow ) {
+            $this->assertType('Zend_Db_Table_Row', $childRow);
+            $subChildRows = $childRow->findDependentRowset('My_ZendDbTable_TableCascadeRecursive', 'Children');
+            $this->assertType('Zend_Db_Table_Rowset', $subChildRows);
+            $this->assertEquals( $childRow['item_id'] == 3 ? 2 : 0 , count($subChildRows));
+        }
+
+        // Perform the delete
+        $parentRow->delete();
+
+        // Assert that all children of #1 (2,3,4,5) are removed recursively
+        $this->assertNull($tblRecursive->find(1)->current());
+        $this->assertNull($tblRecursive->find(2)->current());
+        $this->assertNull($tblRecursive->find(3)->current());
+        $this->assertNull($tblRecursive->find(4)->current());
+        $this->assertNull($tblRecursive->find(5)->current());
+        //... but #6 remains
+        $this->assertType('Zend_Db_Table_Row', $tblRecursive->find(6)->current());
+    }
+
+    /**
+     * @group ZF-11810
+     */
+    public function testTableCascadeRecurseDeleteUsingTableDeleteMethod()
+    {
+        $tblRecursive = $this->_getTable('My_ZendDbTable_TableCascadeRecursive');
+
+        // Enforce initial table structure
+        $parentRow = $tblRecursive->find(1)->current();
+        $this->assertType('Zend_Db_Table_Row', $parentRow);
+        $childRows = $parentRow->findDependentRowset('My_ZendDbTable_TableCascadeRecursive', 'Children');
+        $this->assertType('Zend_Db_Table_Rowset', $childRows);
+        $this->assertEquals(2, count($childRows));
+        foreach ( $childRows as $childRow ) {
+            $this->assertType('Zend_Db_Table_Row', $childRow);
+            $subChildRows = $childRow->findDependentRowset('My_ZendDbTable_TableCascadeRecursive', 'Children');
+            $this->assertType('Zend_Db_Table_Rowset', $subChildRows);
+            $this->assertEquals( $childRow['item_id'] == 3 ? 2 : 0 , count($subChildRows));
+        }
+
+        // Perform the delete
+        $tblRecursive->delete($tblRecursive->getAdapter()->quoteInto('item_id = ?', 1));
+
+        // Assert that all children of #1 (2,3,4,5) are removed recursively
+        $this->assertNull($tblRecursive->find(1)->current());
+        $this->assertNull($tblRecursive->find(2)->current());
+        $this->assertNull($tblRecursive->find(3)->current());
+        $this->assertNull($tblRecursive->find(4)->current());
+        $this->assertNull($tblRecursive->find(5)->current());
+        //... but #6 remains
+        $this->assertType('Zend_Db_Table_Row', $tblRecursive->find(6)->current());
+    }
+
     public function testSerialiseTable()
     {
         $table = $this->_table['products'];
@@ -1638,4 +1810,53 @@ abstract class Zend_Db_Table_TestCommon extends Zend_Db_Table_TestSetup
     {
         return array('stuff' => 'information');
     }
+
+    /**
+     * @group ZF-7042
+     * @group ZF-10778
+     */
+    public function testCacheIdGeneratedToMetadata()
+    {
+        /**
+         * @see Zend_Cache
+         */
+        require_once 'Zend/Cache.php';
+
+        /**
+         * @see Zend_Cache_Backend_BlackHole
+         */
+        require_once 'Zend/Cache/Backend/BlackHole.php';
+
+        Zend_Db_Table::setDefaultAdapter($this->_db);
+        $dbConfig     = $this->_db->getConfig();
+        $cacheId = md5(
+                (isset($dbConfig['port']) ? ':'.$dbConfig['port'] : null)
+                . (isset($dbConfig['host']) ? ':'.$dbConfig['host'] : null)
+                . '/'.$dbConfig['dbname'].':.cache_metadata'
+                );
+
+        $metadata = array('id' => array('PRIMARY' => true));
+        $cacheBackend = $this->getMock('Zend_Cache_Backend_BlackHole');
+        $cacheBackend->expects($this->any())
+                     ->method('load')
+                     ->with($this->equalTo($cacheId))
+                     ->will($this->returnValue($metadata));
+
+        $cache = Zend_Cache::factory('Core', $cacheBackend, array('automatic_serialization' => false));
+        Zend_Db_Table_Abstract::setDefaultMetadataCache($cache);
+
+        $this->_util->createTable('cache_metadata', array(
+            'id'   => 'IDENTITY',
+            'name' => 'VARCHAR(32)'
+        ));
+        $configTable = array(
+            'name'    => 'cache_metadata',
+            'primary' => 'id'
+        );
+        $table = new Zend_Db_Table($configTable);
+        $table->info(Zend_Db_Table::METADATA);
+        $this->_util->dropTable('cache_metadata');
+        Zend_Db_Table_Abstract::setDefaultMetadataCache(null);
+    }
 }
+

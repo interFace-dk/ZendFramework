@@ -15,12 +15,10 @@
  * @category   Zend
  * @package    Zend_Feed
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
-
-require_once dirname(dirname(dirname(dirname(__FILE__)))) . '/TestHelper.php';
 
 require_once 'Zend/Feed/Writer/Entry.php';
 
@@ -30,7 +28,7 @@ require_once 'Zend/Feed/Writer/Entry.php';
  * @subpackage UnitTests
  * @group      Zend_Feed
  * @group      Zend_Feed_Writer
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Feed_Writer_EntryTest extends PHPUnit_Framework_TestCase
@@ -168,7 +166,7 @@ class Zend_Feed_Writer_EntryTest extends PHPUnit_Framework_TestCase
         );
         $this->assertEquals($expected, $entry->getAuthors());
     }
-    
+
     public function testAddsEnclosure()
     {
         $entry = new Zend_Feed_Writer_Entry;
@@ -184,7 +182,7 @@ class Zend_Feed_Writer_EntryTest extends PHPUnit_Framework_TestCase
         );
         $this->assertEquals($expected, $entry->getEnclosure());
     }
-    
+
     /**
      * @expectedException Zend_Feed_Exception
      */
@@ -196,7 +194,7 @@ class Zend_Feed_Writer_EntryTest extends PHPUnit_Framework_TestCase
             'length' => '1337'
         ));
     }
-    
+
     /**
      * @expectedException Zend_Feed_Exception
      */
@@ -260,6 +258,28 @@ class Zend_Feed_Writer_EntryTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($myDate->equals($entry->getDateCreated()));
     }
 
+    /**
+     * @group ZF-12070
+     */
+    public function testSetDateCreatedUsesGivenUnixTimestampWhenItIsLessThanTenDigits()
+    {
+        $entry = new Zend_Feed_Writer_Entry;
+        $entry->setDateCreated(123456789);
+        $myDate = new Zend_Date('123456789', Zend_Date::TIMESTAMP);
+        $this->assertTrue($myDate->equals($entry->getDateCreated()));
+    }
+
+    /**
+     * @group ZF-11610
+     */
+    public function testSetDateCreatedUsesGivenUnixTimestampWhenItIsAVerySmallInteger()
+    {
+        $entry = new Zend_Feed_Writer_Entry;
+        $entry->setDateCreated(123);
+        $myDate = new Zend_Date('123', Zend_Date::TIMESTAMP);
+        $this->assertTrue($myDate->equals($entry->getDateCreated()));
+    }
+
     public function testSetDateCreatedUsesZendDateObject()
     {
         $entry = new Zend_Feed_Writer_Entry;
@@ -281,6 +301,28 @@ class Zend_Feed_Writer_EntryTest extends PHPUnit_Framework_TestCase
         $entry = new Zend_Feed_Writer_Entry;
         $entry->setDateModified(1234567890);
         $myDate = new Zend_Date('1234567890', Zend_Date::TIMESTAMP);
+        $this->assertTrue($myDate->equals($entry->getDateModified()));
+    }
+
+    /**
+     * @group ZF-12070
+     */
+    public function testSetDateModifiedUsesGivenUnixTimestampWhenItIsLessThanTenDigits()
+    {
+        $entry = new Zend_Feed_Writer_Entry;
+        $entry->setDateModified(123456789);
+        $myDate = new Zend_Date('123456789', Zend_Date::TIMESTAMP);
+        $this->assertTrue($myDate->equals($entry->getDateModified()));
+    }
+
+    /**
+     * @group ZF-11610
+     */
+    public function testSetDateModifiedUsesGivenUnixTimestampWhenItIsAVerySmallInteger()
+    {
+        $entry = new Zend_Feed_Writer_Entry;
+        $entry->setDateModified(123);
+        $myDate = new Zend_Date('123', Zend_Date::TIMESTAMP);
         $this->assertTrue($myDate->equals($entry->getDateModified()));
     }
 
@@ -451,7 +493,7 @@ class Zend_Feed_Writer_EntryTest extends PHPUnit_Framework_TestCase
     public function testSetsCommentFeedLink()
     {
         $entry = new Zend_Feed_Writer_Entry;
-        
+
         $entry->setCommentFeedLink(array('uri'=>'http://www.example.com/id/comments', 'type'=>'rdf'));
         $this->assertEquals(array(array('uri'=>'http://www.example.com/id/comments', 'type'=>'rdf')), $entry->getCommentFeedLinks());
     }
@@ -475,7 +517,7 @@ class Zend_Feed_Writer_EntryTest extends PHPUnit_Framework_TestCase
         } catch (Zend_Feed_Exception $e) {
         }
     }
-    
+
     public function testSetCommentFeedLinkThrowsExceptionOnInvalidType()
     {
         $entry = new Zend_Feed_Writer_Entry;
@@ -520,6 +562,16 @@ class Zend_Feed_Writer_EntryTest extends PHPUnit_Framework_TestCase
         $entry = new Zend_Feed_Writer_Entry;
         $entry->setCommentCount('10');
         $this->assertEquals(10, $entry->getCommentCount());
+    }
+    
+    /**
+     * @group ZF-11150
+     */
+    public function testSetCommentCountAcceptsZero()
+    {
+        $entry = new Zend_Feed_Writer_Entry();
+        $entry->setCommentCount(0);
+        $this->assertEquals(0, $entry->getCommentCount());
     }
 
     public function testSetCommentCountThrowsExceptionOnInvalidEmptyParameter()

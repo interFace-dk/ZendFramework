@@ -15,19 +15,14 @@
  * @category   Zend
  * @package    Zend_Application
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: ApplicationTest.php 24805 2012-05-14 17:50:59Z adamlundrigan $
  */
 
 if (!defined('PHPUnit_MAIN_METHOD')) {
     define('PHPUnit_MAIN_METHOD', 'Zend_Application_ApplicationTest::main');
 }
-
-/**
- * Test helper
- */
-require_once dirname(__FILE__) . '/../../TestHelper.php';
 
 /** Zend_Loader_Autoloader */
 require_once 'Zend/Loader/Autoloader.php';
@@ -39,7 +34,7 @@ require_once 'Zend/Application.php';
  * @category   Zend
  * @package    Zend_Application
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Application
  */
@@ -169,15 +164,15 @@ class Zend_Application_ApplicationTest extends PHPUnit_Framework_TestCase
 
     public function testPassingPhpSettingsSetsIniValues()
     {
-        $this->iniOptions[] = 'y2k_compliance';
-        $orig     = ini_get('y2k_compliance');
+        $this->iniOptions[] = 'html_errors';
+        $orig     = ini_get('html_errors');
         $expected = $orig ? 0 : 1;
         $this->application->setOptions(array(
             'phpSettings' => array(
-                'y2k_compliance' => $expected,
+                'html_errors' => $expected,
             ),
         ));
-        $this->assertEquals($expected, ini_get('y2k_compliance'));
+        $this->assertEquals($expected, ini_get('html_errors'));
     }
 
     public function testPassingPhpSettingsAsArrayShouldConstructDotValuesAndSetRelatedIniValues()
@@ -286,6 +281,52 @@ class Zend_Application_ApplicationTest extends PHPUnit_Framework_TestCase
     public function testPassingStringIncConfigPathOptionToConstructorShouldLoadOptions()
     {
         $application = new Zend_Application('testing', dirname(__FILE__) . '/_files/appconfig.inc');
+        $this->assertTrue($application->hasOption('foo'));
+    }
+
+    /**
+     * @group ZF-10898
+     */
+    public function testPassingStringIniDistfileConfigPathOptionToConstructorShouldLoadOptions()
+    {
+        $application = new Zend_Application('testing', dirname(__FILE__) . '/_files/appconfig.ini.dist');
+        $this->assertTrue($application->hasOption('foo'));
+    }
+
+    /**
+     * @group ZF-10898
+     */
+    public function testPassingArrayOptionsWithConfigKeyDistfileShouldLoadOptions()
+    {
+        $application = new Zend_Application('testing', array('bar' => 'baz', 'config' => dirname(__FILE__) . '/_files/appconfig.ini.dist'));
+        $this->assertTrue($application->hasOption('foo'));
+        $this->assertTrue($application->hasOption('bar'));
+    }
+
+    /**
+     * @group ZF-10568
+     */
+    public function testPassingStringYamlConfigPathOptionToConstructorShouldLoadOptions()
+    {
+        $application = new Zend_Application('testing', dirname(__FILE__) . '/_files/appconfig.yaml');
+        $this->assertTrue($application->hasOption('foo'));
+    }
+
+    /**
+     * @group ZF-10568
+     */
+    public function testPassingStringJsonConfigPathOptionToConstructorShouldLoadOptions()
+    {
+        $application = new Zend_Application('testing', dirname(__FILE__) . '/_files/appconfig.json');
+        $this->assertTrue($application->hasOption('foo'));
+    }
+    
+    /**
+     * @group ZF-11425
+     */
+    public function testPassingStringYmlConfigPathOptionToConstructorShouldLoadOptionsAsYaml()
+    {
+        $application = new Zend_Application('testing', dirname(__FILE__) . '/_files/appconfig.yml');
         $this->assertTrue($application->hasOption('foo'));
     }
 
@@ -458,7 +499,7 @@ class Zend_Application_ApplicationTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(1, $application->getBootstrap()->fooExecuted);
         $this->assertEquals(0, $application->getBootstrap()->barExecuted);
     }
-    
+
     public function testOptionsCanHandleMuiltipleConigFiles()
     {
         $application = new Zend_Application('testing', array(
@@ -468,7 +509,7 @@ class Zend_Application_ApplicationTest extends PHPUnit_Framework_TestCase
                 )
             )
         );
-        
+
         $this->assertEquals('baz', $application->getOption('foo'));
     }
 }

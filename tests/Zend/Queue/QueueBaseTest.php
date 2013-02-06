@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Queue
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: QueueBaseTest.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /*
@@ -27,9 +27,6 @@
  * All methods marked not supported are explictly checked for for throwing
  * an exception.
  */
-
-/** TestHelper.php */
-require_once dirname(__FILE__) . '/../../TestHelper.php';
 
 /** Zend_Config */
 require_once 'Zend/Config.php';
@@ -47,7 +44,7 @@ require_once 'Zend/Queue/Adapter/Array.php';
  * @category   Zend
  * @package    Zend_Queue
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Queue
  */

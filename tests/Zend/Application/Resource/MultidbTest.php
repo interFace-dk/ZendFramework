@@ -15,19 +15,14 @@
  * @category   Zend
  * @package    Zend_Application
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
 
 if (!defined('PHPUnit_MAIN_METHOD')) {
-    define('PHPUnit_MAIN_METHOD', 'Zend_Application_Resource_MailTest::main');
+    define('PHPUnit_MAIN_METHOD', 'Zend_Application_Resource_MultidbTest::main');
 }
-
-/**
- * Test helper
- */
-require_once dirname(__FILE__) . '/../../../TestHelper.php';
 
 /**
  * Zend_Loader_Autoloader
@@ -46,7 +41,7 @@ require_once 'Zend/Db/Table.php';
  * @category   Zend
  * @package    Zend_Application
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Application
  */
@@ -188,7 +183,10 @@ class Zend_Application_Resource_MultidbTest extends PHPUnit_Framework_TestCase
             'username' => 'dba',
             'charset' => null,
             'persistent' => false,
-            'options' => array('caseFolding' => 0, 'autoQuoteIdentifiers' => true),
+            'options' => array(
+                'caseFolding'          => 0,
+                'autoQuoteIdentifiers' => true,
+                'fetchMode'            => 2),
             'driver_options' => array());
         $this->assertEquals($expected, $res->getDb('db2')->getConfig());
 
@@ -246,6 +244,6 @@ class Zend_Application_Resource_MultidbTest extends PHPUnit_Framework_TestCase
     }
 }
 
-if (PHPUnit_MAIN_METHOD == 'Zend_Application_Resource_LogTest::main') {
-    Zend_Application_Resource_LogTest::main();
+if (PHPUnit_MAIN_METHOD == 'Zend_Application_Resource_MultidbTest::main') {
+    Zend_Application_Resource_MultidbTest::main();
 }

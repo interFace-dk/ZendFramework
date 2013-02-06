@@ -15,15 +15,10 @@
  * @category   Zend
  * @package    Zend_Config
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: ArrayTest.php 24593 2012-01-05 20:35:02Z matthew $
  */
-
-/**
- * Test helper
- */
-require_once dirname(__FILE__) . '/../../../TestHelper.php';
 
 /**
  * Zend_Config
@@ -39,7 +34,7 @@ require_once 'Zend/Config/Writer/Array.php';
  * @category   Zend
  * @package    Zend_Config
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Config
  */
@@ -138,7 +133,7 @@ class Zend_Config_Writer_ArrayTest extends PHPUnit_Framework_TestCase
         $expected .= "    1 => 'foo',\n";
         $expected .= "  ),\n";
         $expected .= ");\n";
-        
+
         $this->assertEquals($expected, $configString);
     }
 }

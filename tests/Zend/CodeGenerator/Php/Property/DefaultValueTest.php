@@ -15,15 +15,10 @@
  * @category   Zend
  * @package    Zend_CodeGenerator
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id $
  */
-
-/**
- * @see TestHelper
- */
-require_once dirname(__FILE__) . '/../../../../TestHelper.php';
 
 require_once 'Zend/CodeGenerator/Php/Property/DefaultValue.php';
 
@@ -31,7 +26,7 @@ require_once 'Zend/CodeGenerator/Php/Property/DefaultValue.php';
  * @category   Zend
  * @package    Zend_CodeGenerator
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  *
  * @group Zend_CodeGenerator
@@ -117,6 +112,8 @@ array(
         PHP_EOL
         );
 EOS;
+        // On Windows, we need PHP_EOL, but heredoc provides \n
+        $expectedSource = str_replace("\n", PHP_EOL, $expectedSource);
 
         $propDefaultValue = new Zend_CodeGenerator_Php_Property_DefaultValue();
         $propDefaultValue->setValue($targetValue);

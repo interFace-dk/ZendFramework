@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Queue
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: DbTest.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /*
@@ -27,9 +27,6 @@
  * All methods marked not supported are explictly checked for for throwing
  * an exception.
  */
-
-/** TestHelp.php */
-require_once dirname(__FILE__) . '/../../../TestHelper.php';
 
 /** Zend_Queue */
 require_once 'Zend/Queue.php';
@@ -52,15 +49,22 @@ require_once 'Zend/Db/Select.php';
  * @category   Zend
  * @package    Zend_Queue
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Queue
  */
 class Zend_Queue_Adapter_DbTest extends Zend_Queue_Adapter_AdapterTest
 {
-    protected function setUp()
+    /**
+     * Test setup
+     */
+    public function setUp()
     {
+        if (!TESTS_ZEND_QUEUE_DB) {
+            $this->markTestSkipped('TESTS_ZEND_QUEUE_DB is not enabled in TestConfiguration.php');
+        }
         date_default_timezone_set('GMT');
+        parent::setUp();
     }
 
     /**
@@ -137,6 +141,24 @@ class Zend_Queue_Adapter_DbTest extends Zend_Queue_Adapter_AdapterTest
                 $this->assertTrue(true, $arg . ' is required.');
             }
         }
+    }
+    
+    /**
+     * @group ZF-7650
+     */
+    public function testReceiveWillRetrieveZeroItems()
+    {
+        $options = $this->getTestConfig();
+        $options['name'] = '/temp-queue/ZF7650';
+
+        $queue = new Zend_Queue('Db', $options);
+        $queue2 = $queue->createQueue('queue');
+
+        $queue->send('My Test Message 1');
+        $queue->send('My Test Message 2');
+
+        $messages = $queue->receive(0);
+        $this->assertEquals(0, count($messages));
     }
 }
 

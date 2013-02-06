@@ -15,15 +15,10 @@
  * @category   Zend
  * @package    Zend_Service_ReCaptcha
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: ReCaptchaTest.php 25153 2012-11-28 11:56:23Z cogo $
  */
-
-/**
- * Test helper
- */
-require_once dirname(__FILE__) . '/../../../TestHelper.php';
 
 /** @see Zend_Service_ReCaptcha */
 require_once 'Zend/Service/ReCaptcha.php';
@@ -38,7 +33,7 @@ require_once 'Zend/Config.php';
  * @category   Zend
  * @package    Zend_Service_ReCaptcha
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Service
  * @group      Zend_Service_ReCaptcha
@@ -215,20 +210,6 @@ class Zend_Service_ReCaptcha_ReCaptchaTest extends PHPUnit_Framework_TestCase
         $this->_reCaptcha->setPrivateKey($this->_privateKey);
         $this->_reCaptcha->setIp('127.0.0.1');
 
-        if (defined('TESTS_ZEND_SERVICE_RECAPTCHA_ONLINE_ENABLED') &&
-            constant('TESTS_ZEND_SERVICE_RECAPTCHA_ONLINE_ENABLED')) {
-
-            $this->_testVerifyOnline();
-        } else {
-            $this->_testVerifyOffline();
-        }
-    }
-
-    protected function _testVerifyOnline() {
-
-    }
-
-    protected function _testVerifyOffline() {
         $adapter = new Zend_Http_Client_Adapter_Test();
         $client = new Zend_Http_Client(null, array(
             'adapter' => $adapter
@@ -236,7 +217,10 @@ class Zend_Service_ReCaptcha_ReCaptchaTest extends PHPUnit_Framework_TestCase
 
         Zend_Service_ReCaptcha::setHttpClient($client);
 
+        // Set a header that will be reset in the recaptcha class before sending the request
+        $client->setHeaders('host', 'example.com');
         $resp = $this->_reCaptcha->verify('challengeField', 'responseField');
+        $this->assertNotSame('example.com', $client->getHeader('host'));
 
         // See if we have a valid object and that the status is false
         $this->assertTrue($resp instanceof Zend_Service_ReCaptcha_Response);
@@ -259,6 +243,15 @@ class Zend_Service_ReCaptcha_ReCaptchaTest extends PHPUnit_Framework_TestCase
         $this->assertNotSame(false, strstr($html, 'src="' . Zend_Service_ReCaptcha::API_SECURE_SERVER . '/challenge?k=' . $this->_publicKey . '&error=' . $errorMsg . '"'));
     }
 
+    /** @group ZF-10991 */
+    public function testHtmlGenerationWillUseSuppliedNameForNoScriptElements()
+    {
+        $this->_reCaptcha->setPublicKey($this->_publicKey);
+        $html = $this->_reCaptcha->getHtml('contact');
+        $this->assertContains('contact[recaptcha_challenge_field]', $html);
+        $this->assertContains('contact[recaptcha_response_field]', $html);
+    }
+
     public function testVerifyWithMissingPrivateKey() {
         $this->setExpectedException('Zend_Service_ReCaptcha_Exception');
 
@@ -273,18 +266,16 @@ class Zend_Service_ReCaptcha_ReCaptchaTest extends PHPUnit_Framework_TestCase
     }
 
     public function testVerifyWithMissingChallengeField() {
-        $this->setExpectedException('Zend_Service_ReCaptcha_Exception');
-
         $this->_reCaptcha->setPrivateKey($this->_privateKey);
         $this->_reCaptcha->setIp('127.0.0.1');
-        $this->_reCaptcha->verify('', 'response');
+        $response = $this->_reCaptcha->verify('', 'response');
+        $this->assertFalse($response->getStatus());
     }
 
     public function testVerifyWithMissingResponseField() {
-        $this->setExpectedException('Zend_Service_ReCaptcha_Exception');
-
         $this->_reCaptcha->setPrivateKey($this->_privateKey);
         $this->_reCaptcha->setIp('127.0.0.1');
-        $this->_reCaptcha->verify('challenge', '');
+        $response = $this->_reCaptcha->verify('challenge', '');
+        $this->assertFalse($response->getStatus());
     }
 }

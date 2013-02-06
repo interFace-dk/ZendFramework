@@ -15,13 +15,14 @@
  * @category   Zend
  * @package    Zend_Log
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: SyslogTest.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
-/** PHPUnit_Framework_TestCase */
-require_once 'PHPUnit/Framework/TestCase.php';
+if (!defined('PHPUnit_MAIN_METHOD')) {
+    define('PHPUnit_MAIN_METHOD', 'Zend_Log_Writer_SyslogTest::main');
+}
 
 /** Zend_Log_Writer_Syslog */
 require_once 'Zend/Log/Writer/Syslog.php';
@@ -30,12 +31,18 @@ require_once 'Zend/Log/Writer/Syslog.php';
  * @category   Zend
  * @package    Zend_Log
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Log
  */
 class Zend_Log_Writer_SyslogTest extends PHPUnit_Framework_TestCase
 {
+    public static function main()
+    {
+        $suite  = new PHPUnit_Framework_TestSuite(__CLASS__);
+        $result = PHPUnit_TextUI_TestRunner::run($suite);
+    }
+
     public function testWrite()
     {
         $fields = array('message' => 'foo', 'priority' => LOG_NOTICE);
@@ -96,4 +103,43 @@ class Zend_Log_Writer_SyslogTest extends PHPUnit_Framework_TestCase
 
         $this->assertTrue($instance instanceof Zend_Log_Writer_Syslog);
     }
+
+    /**
+     * @group ZF-10769
+     */
+    public function testPastFacilityViaConstructor()
+    {
+        $writer = new WriterSyslogCustom(array('facility' => LOG_USER));
+        $this->assertEquals(LOG_USER, $writer->getFacility());
+    }
+
+    /**
+     * @group ZF-8382
+     */
+    public function testWriteWithFormatter()
+    {
+        $event = array(
+        	'message' => 'tottakai',
+            'priority' => Zend_Log::ERR
+        );
+
+        $writer = Zend_Log_Writer_Syslog::factory(array());
+        require_once 'Zend/Log/Formatter/Simple.php';
+        $formatter = new Zend_Log_Formatter_Simple('%message% (this is a test)');
+        $writer->setFormatter($formatter);
+
+        $writer->write($event);
+    }
+}
+
+class WriterSyslogCustom extends Zend_Log_Writer_Syslog
+{
+    public function getFacility()
+    {
+        return $this->_facility;
+    }
+}
+
+if (PHPUnit_MAIN_METHOD == 'Zend_Log_Writer_SyslogTest::main') {
+    Zend_Log_Writer_SyslogTest::main();
 }

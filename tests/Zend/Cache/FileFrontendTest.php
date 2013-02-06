@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Cache
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: FileFrontendTest.php 24989 2012-06-21 07:24:13Z mabe $
  */
 
 /**
@@ -28,15 +28,10 @@ require_once 'Zend/Cache/Frontend/File.php';
 require_once 'Zend/Cache/Backend/Test.php';
 
 /**
- * PHPUnit test case
- */
-require_once 'PHPUnit/Framework/TestCase.php';
-
-/**
  * @category   Zend
  * @package    Zend_Cache
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Cache
  */
@@ -77,7 +72,15 @@ class Zend_Cache_FileFrontendTest extends PHPUnit_Framework_TestCase {
         if (!$this->_instance3) {
             touch($this->_masterFile1, 123455);
             touch($this->_masterFile2, 123455);
-            $this->_instance3 = new Zend_Cache_Frontend_File(array('master_files' => array($this->_masterFile1, $this->_masterFile2)));
+            $this->_instance3 = new Zend_Cache_Frontend_File(
+                array(
+                    'master_files' => array(
+                        // ZF-10682: test Undefined offset: 0
+                        'file1' => $this->_masterFile1,
+                        'file2' => $this->_masterFile2
+                    )
+                )
+            );
             $this->_backend = new Zend_Cache_Backend_Test();
             $this->_instance3->setBackend($this->_backend);
         }
@@ -220,6 +223,12 @@ class Zend_Cache_FileFrontendTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals('foo', $this->_instance1->load('cache_id', true));
     }
 
+    /**
+     * @group ZF-11547
+     */
+    public function testMultipleMasterFiles()
+    {
+        $this->assertEquals(2, count($this->_instance3->getOption('master_files')));
+        $this->assertNotNull($this->_instance3->getOption('master_file'));
+    }
 }
-
-

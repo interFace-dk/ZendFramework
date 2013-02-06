@@ -15,12 +15,10 @@
  * @category   Zend
  * @package    Zend_Controller
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: RegexTest.php 24593 2012-01-05 20:35:02Z matthew $
  */
-
-require_once dirname(__FILE__) . '/../../../../TestHelper.php';
 
 /** Zend_Controller_Router_Route_Regex */
 require_once 'Zend/Controller/Router/Route/Regex.php';
@@ -29,7 +27,7 @@ require_once 'Zend/Controller/Router/Route/Regex.php';
  * @category   Zend
  * @package    Zend_Controller
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Controller
  * @group      Zend_Controller_Router
@@ -410,7 +408,7 @@ class Zend_Controller_Router_Route_RegexTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @issue ZF-2301
+     * @group ZF-2301
      */
     public function testAssemblyOfRouteWithMergedMatchedParts()
     {

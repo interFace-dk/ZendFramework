@@ -15,19 +15,14 @@
  * @category   Zend
  * @package    Zend_Application
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: DbTest.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 if (!defined('PHPUnit_MAIN_METHOD')) {
     define('PHPUnit_MAIN_METHOD', 'Zend_Application_Resource_DbTest::main');
 }
-
-/**
- * Test helper
- */
-require_once dirname(__FILE__) . '/../../../TestHelper.php';
 
 /**
  * Zend_Loader_Autoloader
@@ -38,7 +33,7 @@ require_once 'Zend/Loader/Autoloader.php';
  * @category   Zend
  * @package    Zend_Application
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Application
  */
@@ -202,6 +197,54 @@ class Zend_Application_Resource_DbTest extends PHPUnit_Framework_TestCase
         $resource = new Zend_Application_Resource_Db($config);
         $resource->init();
         $this->assertType('Zend_Cache_Core', Zend_Db_Table::getDefaultMetadataCache());
+    }
+
+    /**
+     * @group ZF-6620
+     */
+    public function testSetOptionFetchMode()
+    {
+        $config = array(
+            'bootstrap' => $this->bootstrap,
+            'adapter' => 'PDO_SQLite',
+            'params'  => array(
+                'dbname'    => ':memory:',
+                'options'   => array(
+                    'fetchMode' => 'obj'
+                )
+            ),
+        );
+        $resource = new Zend_Application_Resource_Db($config);
+        $db = $resource->init();
+        $this->assertEquals($db->getFetchMode(), Zend_Db::FETCH_OBJ);
+    }
+
+    /**
+     * @group ZF-10543
+     */
+    public function testSetDefaultMetadataCacheThroughBootstrap()
+    {
+        $options = array(
+            'resources' => array(
+                'db'    => array(
+                    'adapter'  => 'Pdo_Sqlite',
+                    'params'   => array(
+                        'dbname'   => ':memory:'
+                     ),
+                     'defaultMetadataCache' => 'default'
+                ),
+                'cachemanager' => array(
+                    'default'  => array(
+                        'backend' => array('name' => 'black-hole')
+                    )
+                )
+            )
+        );
+
+        $this->bootstrap->setOptions($options);
+        $this->bootstrap->bootstrap();
+        $resource = $this->bootstrap->getResource('cachemanager');
+        $this->assertEquals($resource->getCache('default'), Zend_Db_Table::getDefaultMetadataCache());
     }
 }
 

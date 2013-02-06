@@ -15,17 +15,15 @@
  * @category   Zend
  * @package    Zend_Form
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: SelectTest.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 // Call Zend_Form_Element_SelectTest::main() if this source file is executed directly.
 if (!defined("PHPUnit_MAIN_METHOD")) {
     define("PHPUnit_MAIN_METHOD", "Zend_Form_Element_SelectTest::main");
 }
-
-require_once dirname(__FILE__) . '/../../../TestHelper.php';
 
 require_once 'Zend/Form/Element/Select.php';
 
@@ -35,7 +33,7 @@ require_once 'Zend/Form/Element/Select.php';
  * @category   Zend
  * @package    Zend_Form
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Form
  */
@@ -139,7 +137,7 @@ class Zend_Form_Element_SelectTest extends PHPUnit_Framework_TestCase
     /**
      * No explicit assertions; just checking for error conditions
      *
-     * @see ZF-2847
+     * @group ZF-2847
      */
     public function testTranslationShouldNotRaiseWarningsWithNestedGroups()
     {
@@ -164,7 +162,6 @@ class Zend_Form_Element_SelectTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @see   ZF-3953
      * @group ZF-3953
      */
     public function testUsingZeroAsValueShouldSelectAppropriateOption()
@@ -204,7 +201,7 @@ class Zend_Form_Element_SelectTest extends PHPUnit_Framework_TestCase
      * Test isValid() on select elements without optgroups. This
      * ensures fixing ZF-3985 doesn't break existing functionality.
      *
-     * @see ZF-3985
+     * @group ZF-3985
      */
     public function testIsValidWithPlainOptions()
     {

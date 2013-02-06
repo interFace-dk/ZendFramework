@@ -15,12 +15,10 @@
  * @category   Zend
  * @package    Zend_Server
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: AllTests.php 24593 2012-01-05 20:35:02Z matthew $
  */
-
-require_once dirname(dirname(dirname(__FILE__))) . DIRECTORY_SEPARATOR . 'TestHelper.php';
 
 if (!defined('PHPUnit_MAIN_METHOD')) {
     define('PHPUnit_MAIN_METHOD', 'Zend_Server_AllTests::main');
@@ -29,6 +27,7 @@ if (!defined('PHPUnit_MAIN_METHOD')) {
 require_once 'Zend/Server/DefinitionTest.php';
 require_once 'Zend/Server/Method/DefinitionTest.php';
 require_once 'Zend/Server/Method/CallbackTest.php';
+require_once 'Zend/Server/Method/ParameterTest.php';
 require_once 'Zend/Server/Method/PrototypeTest.php';
 
 require_once 'Zend/Server/ReflectionTest.php';
@@ -44,7 +43,7 @@ require_once 'Zend/Server/Reflection/ReturnValueTest.php';
  * @category   Zend
  * @package    Zend_Server
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Server
  */
@@ -62,6 +61,7 @@ class Zend_Server_AllTests
         $suite->addTestSuite('Zend_Server_DefinitionTest');
         $suite->addTestSuite('Zend_Server_Method_DefinitionTest');
         $suite->addTestSuite('Zend_Server_Method_CallbackTest');
+        $suite->addTestSuite('Zend_Server_Method_ParameterTest');
         $suite->addTestSuite('Zend_Server_Method_PrototypeTest');
         $suite->addTestSuite('Zend_Server_ReflectionTest');
         $suite->addTestSuite('Zend_Server_Reflection_ClassTest');

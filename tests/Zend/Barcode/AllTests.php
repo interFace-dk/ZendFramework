@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Barcode
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: AllTests.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 
@@ -25,20 +25,12 @@ if (!defined('PHPUnit_MAIN_METHOD')) {
     define('PHPUnit_MAIN_METHOD', 'Zend_Feed_AllTests::main');
 }
 
-/**
- * Test helper
- */
-require_once dirname(__FILE__) . '/../../TestHelper.php';
-
-/**
- * Exclude from code coverage report
- */
-PHPUnit_Util_Filter::addFileToFilter(__FILE__);
-
-
 require_once 'Zend/Barcode/FactoryTest.php';
 
 require_once 'Zend/Barcode/Object/Code39Test.php';
+
+require_once 'Zend/Barcode/Object/Code128Test.php';
+
 require_once 'Zend/Barcode/Object/Code25Test.php';
 require_once 'Zend/Barcode/Object/Code25interleavedTest.php';
 require_once 'Zend/Barcode/Object/Itf14Test.php';
@@ -67,7 +59,7 @@ require_once 'Zend/Barcode/Renderer/SvgTest.php';
  * @category   Zend
  * @package    Zend_Barcode
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Feed
  */
@@ -85,6 +77,9 @@ class Zend_Barcode_AllTests
         $suite->addTestSuite('Zend_Barcode_FactoryTest');
 
         $suite->addTestSuite('Zend_Barcode_Object_Code39Test');
+
+        $suite->addTestSuite('Zend_Barcode_Object_Code128Test');
+
         $suite->addTestSuite('Zend_Barcode_Object_Code25Test');
         $suite->addTestSuite('Zend_Barcode_Object_Code25interleavedTest');
         $suite->addTestSuite('Zend_Barcode_Object_Itf14Test');

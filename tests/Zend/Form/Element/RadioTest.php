@@ -15,17 +15,15 @@
  * @category   Zend
  * @package    Zend_Form
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: RadioTest.php 25109 2012-11-07 20:48:04Z rob $
  */
 
 // Call Zend_Form_Element_RadioTest::main() if this source file is executed directly.
 if (!defined("PHPUnit_MAIN_METHOD")) {
     define("PHPUnit_MAIN_METHOD", "Zend_Form_Element_RadioTest::main");
 }
-
-require_once dirname(__FILE__) . '/../../../TestHelper.php';
 
 require_once 'Zend/Form/Element/Radio.php';
 
@@ -35,7 +33,7 @@ require_once 'Zend/Form/Element/Radio.php';
  * @category   Zend
  * @package    Zend_Form
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Form
  */
@@ -183,7 +181,9 @@ class Zend_Form_Element_RadioTest extends PHPUnit_Framework_TestCase
 
         $element = $form->getElement('foo');
 
-        $this->assertType('My_Decorator_Label', $element->getDecorator('Label'));
+        $this->assertTrue(
+            $element->getDecorator('Label') instanceof My_Decorator_Label
+        );
     }
 
     /**
@@ -198,6 +198,45 @@ class Zend_Form_Element_RadioTest extends PHPUnit_Framework_TestCase
              ->setLabel('Foo');
         $html = $this->element->render($this->getView());
         $this->assertNotContains('for="foo"', $html);
+    }
+
+    /**
+     * @group ZF-11517
+     */
+    public function testCreationWithIndividualDecoratorsAsConstructorOptionsWithoutLabel()
+    {
+        $element = new Zend_Form_Element_Radio(array(
+            'name'         => 'foo',
+            'multiOptions' => array(
+                'bar'  => 'Bar',
+                'baz'  => 'Baz',
+            ),
+            'decorators' => array(
+                'ViewHelper',
+            ),
+        ));
+
+        $this->assertFalse($element->getDecorator('label'));
+    }
+
+    /**
+     * @group ZF-11517
+     */
+    public function testRenderingWithIndividualDecoratorsAsConstructorOptionsWithoutLabel()
+    {
+        $element = new Zend_Form_Element_Radio(array(
+            'name'         => 'foo',
+            'multiOptions' => array(
+                'bar'  => 'Bar',
+                'baz'  => 'Baz',
+            ),
+            'decorators' => array(
+                'ViewHelper',
+            ),
+        ));
+
+        $html = $element->render($this->getView());
+        $this->assertNotContains('<dt id="foo-label">&#160;</dt>', $html);
     }
 
     /**

@@ -15,16 +15,13 @@
  * @category   Zend
  * @package    Zend_XmlRpc
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version $Id$
+ * @version $Id: ValueTest.php 24593 2012-01-05 20:35:02Z matthew $
  */
-require_once "PHPUnit/Framework/TestCase.php";
-require_once "PHPUnit/Framework/TestSuite.php";
 
 require_once 'Zend/XmlRpc/Value.php';
 require_once 'Zend/XmlRpc/Value/Scalar.php';
-require_once 'Zend/XmlRpc/Value/BigInteger.php';
 require_once 'Zend/XmlRpc/Value/Collection.php';
 require_once 'Zend/XmlRpc/Value/Array.php';
 require_once 'Zend/XmlRpc/Value/Base64.php';
@@ -35,7 +32,6 @@ require_once 'Zend/XmlRpc/Value/Integer.php';
 require_once 'Zend/XmlRpc/Value/String.php';
 require_once 'Zend/XmlRpc/Value/Nil.php';
 require_once 'Zend/XmlRpc/Value/Struct.php';
-require_once 'Zend/Crypt/Math/BigInteger.php';
 require_once 'Zend/XmlRpc/TestProvider.php';
 require_once 'Zend/Date.php';
 
@@ -45,14 +41,15 @@ require_once 'Zend/Date.php';
  * @category   Zend
  * @package    Zend_XmlRpc
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_XmlRpc
  */
 class Zend_XmlRpc_ValueTest extends PHPUnit_Framework_TestCase
 {
-    // Boolean
+    public $xmlRpcDateFormat = 'Ymd\\TH:i:s';
 
+    // Boolean
     public function testFactoryAutodetectsBoolean()
     {
         foreach (array(true, false) as $native) {
@@ -136,7 +133,6 @@ class Zend_XmlRpc_ValueTest extends PHPUnit_Framework_TestCase
     {
         $this->setExpectedException('Zend_XmlRpc_Value_Exception', 'Overlong integer given');
         $x = Zend_XmlRpc_Value::getXmlRpcValue(PHP_INT_MAX + 5000, Zend_XmlRpc_Value::XMLRPC_TYPE_I4);
-        var_dump($x);
     }
 
     /**
@@ -146,53 +142,6 @@ class Zend_XmlRpc_ValueTest extends PHPUnit_Framework_TestCase
     {
         $this->setExpectedException('Zend_XmlRpc_Value_Exception', 'Overlong integer given');
         Zend_XmlRpc_Value::getXmlRpcValue(PHP_INT_MAX + 5000, Zend_XmlRpc_Value::XMLRPC_TYPE_INTEGER);
-    }
-
-    // BigInteger
-
-    /**
-     * @group ZF-6445
-     * @dataProvider Zend_XmlRpc_TestProvider::provideGenerators
-     */
-    public function testMarshalBigIntegerFromFromXmlRpc(Zend_XmlRpc_Generator_GeneratorAbstract $generator)
-    {
-        Zend_XmlRpc_Value::setGenerator($generator);
-        $bigInt = (string)(PHP_INT_MAX + 1);
-        $native = new Zend_Crypt_Math_BigInteger();
-        $native->init($bigInt);
-
-        $xmlStrings = array("<value><i8>$bigInt</i8></value>",
-                            "<value><ex:i8 xmlns:ex=\"http://ws.apache.org/xmlrpc/namespaces/extensions\">$bigInt</ex:i8></value>");
-
-        foreach ($xmlStrings as $xml) {
-            $value = Zend_XmlRpc_Value::getXmlRpcValue($xml, Zend_XmlRpc_Value::XML_STRING);
-            $this->assertEquals($native, $value->getValue());
-            $this->assertEquals('i8', $value->getType());
-            $this->assertEquals($this->wrapXml($xml), $value->saveXml());
-        }
-    }
-
-    /**
-     * @group ZF-6445
-     */
-    public function testMarshalBigIntegerFromNative()
-    {
-        $native = (string)(PHP_INT_MAX + 1);
-        $types = array(Zend_XmlRpc_Value::XMLRPC_TYPE_APACHEI8,
-                       Zend_XmlRpc_Value::XMLRPC_TYPE_I8);
-
-        $bigInt = new Zend_Crypt_Math_BigInteger();
-        $bigInt->init($native);
-
-        foreach ($types as $type) {
-            $value = Zend_XmlRpc_Value::getXmlRpcValue($native, $type);
-            $this->assertSame('i8', $value->getType());
-            $this->assertEquals($bigInt, $value->getValue());
-        }
-
-        $value = Zend_XmlRpc_Value::getXmlRpcValue($bigInt);
-        $this->assertSame('i8', $value->getType());
-        $this->assertEquals($bigInt, $value->getValue());
     }
 
     // Double
@@ -628,8 +577,8 @@ class Zend_XmlRpc_ValueTest extends PHPUnit_Framework_TestCase
 
         $this->assertXmlRpcType('dateTime', $val);
 
-        $expected = '1997-07-16T19:20+01:00';
-        $this->assertSame(strtotime($native), strtotime($val->getValue()));
+        $expected = new Datetime($native);
+        $this->assertSame($expected->format($this->xmlRpcDateFormat), $val->getValue());
     }
 
     public function testMarshalDateTimeFromNativeStringProducesIsoOutput()
@@ -640,17 +589,14 @@ class Zend_XmlRpc_ValueTest extends PHPUnit_Framework_TestCase
 
         $this->assertXmlRpcType('dateTime', $val);
 
-        $expected = date('c', strtotime($native));
-        $expected = substr($expected, 0, strlen($expected) - 6);
-        $expected = str_replace('-', '', $expected);
+        $expected = new DateTime($native);
         $received = $val->getValue();
-        $this->assertEquals($expected, $received);
+        $this->assertEquals($expected->format($this->xmlRpcDateFormat), $received);
     }
 
     public function testMarshalDateTimeFromInvalidString()
     {
-        $this->setExpectedException('Zend_XmlRpc_Value_Exception',
-            "Cannot convert given value 'foobarbaz' to a timestamp");
+        $this->setExpectedException('Exception', "foobarbaz");
         Zend_XmlRpc_Value::getXmlRpcValue('foobarbaz', Zend_XmlRpc_Value::XMLRPC_TYPE_DATETIME);
     }
 
@@ -662,6 +608,17 @@ class Zend_XmlRpc_ValueTest extends PHPUnit_Framework_TestCase
 
         $this->assertXmlRpcType('dateTime', $val);
         $this->assertSame($native, strtotime($val->getValue()));
+    }
+
+    /**
+     * @group ZF-11588
+     */
+    public function testMarshalDateTimeBeyondUnixEpochFromNativeStringPassedToConstructor()
+    {
+        $native = '2040-01-01T00:00:00';
+        $value  = new Zend_XmlRpc_Value_DateTime($native);
+        $expected = new DateTime($native);
+        $this->assertSame($expected->format($this->xmlRpcDateFormat), $value->getValue());
     }
 
     /**
@@ -678,7 +635,10 @@ class Zend_XmlRpc_ValueTest extends PHPUnit_Framework_TestCase
 
         $this->assertXmlRpcType('dateTime', $val);
         $this->assertEquals('dateTime.iso8601', $val->getType());
-        $this->assertSame(strtotime($iso8601), strtotime($val->getValue()));
+
+        $expected = new DateTime($iso8601);
+        $this->assertSame($expected->format($this->xmlRpcDateFormat), $val->getValue());
+
         $this->assertEquals($this->wrapXml($xml), $val->saveXml());
     }
 
@@ -757,6 +717,26 @@ class Zend_XmlRpc_ValueTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('dateTime.iso8601', $val->getType());
         $this->assertSame($dateString, $val->getValue());
         $this->assertEquals(trim($xml), trim($val->saveXml()));
+    }
+
+    /**
+     * @group ZF-10776
+     */
+    public function testGetValueDatetime()
+    {
+        $expectedValue = '20100101T00:00:00';
+        $zfDate         = new Zend_Date('2010-01-01 00:00:00', 'yyyy-MM-dd HH:mm:ss');
+        $phpDatetime     = new DateTime('20100101T00:00:00');
+        $phpDateNative   = '20100101T00:00:00';
+
+        $xmlRpcValueDateTime = new Zend_XmlRpc_Value_DateTime($zfDate);
+        $this->assertEquals($expectedValue, $xmlRpcValueDateTime->getValue());
+
+        $xmlRpcValueDateTime = new Zend_XmlRpc_Value_DateTime($phpDatetime);
+        $this->assertEquals($expectedValue, $xmlRpcValueDateTime->getValue());
+
+        $xmlRpcValueDateTime = new Zend_XmlRpc_Value_DateTime($phpDateNative);
+        $this->assertEquals($expectedValue, $xmlRpcValueDateTime->getValue());
     }
 
     // Base64
@@ -846,6 +826,83 @@ class Zend_XmlRpc_ValueTest extends PHPUnit_Framework_TestCase
     {
         $xmlRpcValue = new Zend_XmlRpc_Value_String('foo');
         $this->assertSame($xmlRpcValue, Zend_XmlRpc_Value::getXmlRpcValue($xmlRpcValue));
+    }
+
+    public function testGetXmlRpcTypeByValue()
+    {
+        $this->assertSame(
+            Zend_XmlRpc_Value::XMLRPC_TYPE_NIL,
+            Zend_XmlRpc_Value::getXmlRpcTypeByValue(new Zend_XmlRpc_Value_Nil)
+        );
+
+        $this->assertEquals(
+            Zend_XmlRpc_Value::XMLRPC_TYPE_DATETIME,
+            Zend_XmlRpc_Value::getXmlRpcTypeByValue(new DateTime)
+        );
+
+        $this->assertEquals(
+            Zend_XmlRpc_Value::XMLRPC_TYPE_DATETIME,
+            Zend_XmlRpc_Value::getXmlRpcTypeByValue(new Zend_Date)
+        );
+
+        $this->assertEquals(
+            Zend_XmlRpc_Value::XMLRPC_TYPE_STRUCT,
+            Zend_XmlRpc_Value::getXmlRpcTypeByValue(array('foo' => 'bar'))
+        );
+
+        $object = new stdClass;
+        $object->foo = 'bar';
+
+        $this->assertEquals(
+            Zend_XmlRpc_Value::XMLRPC_TYPE_STRUCT,
+            Zend_XmlRpc_Value::getXmlRpcTypeByValue($object)
+        );
+
+        $this->assertEquals(
+            Zend_XmlRpc_Value::XMLRPC_TYPE_ARRAY,
+            Zend_XmlRpc_Value::getXmlRpcTypeByValue(new stdClass)
+        );
+
+        $this->assertEquals(
+            Zend_XmlRpc_Value::XMLRPC_TYPE_ARRAY,
+            Zend_XmlRpc_Value::getXmlRpcTypeByValue(array(1, 3, 3, 7))
+        );
+
+        $this->assertEquals(
+            Zend_XmlRpc_Value::XMLRPC_TYPE_INTEGER,
+            Zend_XmlRpc_Value::getXmlRpcTypeByValue(42)
+        );
+
+        $this->assertEquals(
+            Zend_XmlRpc_Value::XMLRPC_TYPE_DOUBLE,
+            Zend_XmlRpc_Value::getXmlRpcTypeByValue(13.37)
+        );
+
+        $this->assertEquals(
+            Zend_XmlRpc_Value::XMLRPC_TYPE_BOOLEAN,
+            Zend_XmlRpc_Value::getXmlRpcTypeByValue(true)
+        );
+
+        $this->assertEquals(
+            Zend_XmlRpc_Value::XMLRPC_TYPE_BOOLEAN,
+            Zend_XmlRpc_Value::getXmlRpcTypeByValue(false)
+        );
+
+        $this->assertEquals(
+            Zend_XmlRpc_Value::XMLRPC_TYPE_NIL,
+            Zend_XmlRpc_Value::getXmlRpcTypeByValue(null)
+        );
+
+        $this->assertEquals(
+            Zend_XmlRpc_Value::XMLRPC_TYPE_STRING,
+            Zend_XmlRpc_Value::getXmlRpcTypeByValue('Zend Framework')
+        );
+    }
+
+    public function testGetXmlRpcTypeByValueThrowsExceptionOnInvalidValue()
+    {
+        $this->setExpectedException('Zend_XmlRpc_Value_Exception');
+        Zend_XmlRpc_Value::getXmlRpcTypeByValue(fopen(__FILE__, 'r'));
     }
 
     // Custom Assertions and Helper Methods

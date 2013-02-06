@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Gdata_Photos
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id $
  */
@@ -29,7 +29,7 @@ require_once 'Zend/Http/Client/Adapter/Test.php';
  * @category   Zend
  * @package    Zend_Gdata_Photos
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Gdata
  * @group      Zend_Gdata_Photos
@@ -42,7 +42,7 @@ class Zend_Gdata_Photos_PhotosUserQueryTest extends PHPUnit_Framework_TestCase
       */
     public function testSimpleUserQuery()
     {
-        $queryString = "http://picasaweb.google.com/data/feed/api/user/sample.user";
+        $queryString = "https://picasaweb.google.com/data/feed/api/user/sample.user";
 
         $query = new Zend_Gdata_Photos_UserQuery();
         $query->setUser("sample.user");
@@ -59,7 +59,7 @@ class Zend_Gdata_Photos_PhotosUserQueryTest extends PHPUnit_Framework_TestCase
       */
     public function testBaseUserQuery()
     {
-        $queryString = "http://picasaweb.google.com/data/feed/base/user/sample.user";
+        $queryString = "https://picasaweb.google.com/data/feed/base/user/sample.user";
 
         $query = new Zend_Gdata_Photos_UserQuery();
         $query->setUser("sample.user");
@@ -102,7 +102,7 @@ class Zend_Gdata_Photos_PhotosUserQueryTest extends PHPUnit_Framework_TestCase
       */
     public function testTagFilterUserQuery()
     {
-        $queryString = "http://picasaweb.google.com/data/feed/api/user/sample.user?tag=test";
+        $queryString = "https://picasaweb.google.com/data/feed/api/user/sample.user?tag=test";
 
         $query = new Zend_Gdata_Photos_UserQuery();
         $query->setUser("sample.user");
@@ -119,7 +119,7 @@ class Zend_Gdata_Photos_PhotosUserQueryTest extends PHPUnit_Framework_TestCase
       */
     public function testPrivateUserQuery()
     {
-        $queryString = "http://picasaweb.google.com/data/feed/api/user/sample.user?access=private";
+        $queryString = "https://picasaweb.google.com/data/feed/api/user/sample.user?access=private";
 
         $query = new Zend_Gdata_Photos_UserQuery();
         $query->setUser("sample.user");

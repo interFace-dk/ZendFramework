@@ -15,12 +15,10 @@
  * @category   Zend
  * @package    Zend_Feed
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
-
-require_once dirname(dirname(dirname(dirname(__FILE__)))) . '/TestHelper.php';
 
 require_once 'Zend/Feed/Writer/Deleted.php';
 
@@ -30,7 +28,7 @@ require_once 'Zend/Feed/Writer/Deleted.php';
  * @subpackage UnitTests
  * @group      Zend_Feed
  * @group      Zend_Feed_Writer
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Feed_Writer_DeletedTest extends PHPUnit_Framework_TestCase
@@ -58,7 +56,7 @@ class Zend_Feed_Writer_DeletedTest extends PHPUnit_Framework_TestCase
         $entry = new Zend_Feed_Writer_Deleted;
         $this->assertTrue(is_null($entry->getReference()));
     }
-    
+
     public function testSetWhenDefaultsToCurrentTime()
     {
         $entry = new Zend_Feed_Writer_Deleted;
@@ -74,6 +72,28 @@ class Zend_Feed_Writer_DeletedTest extends PHPUnit_Framework_TestCase
         $myDate = new Zend_Date('1234567890', Zend_Date::TIMESTAMP);
         $this->assertTrue($myDate->equals($entry->getWhen()));
     }
+ 
+    /**
+     * @group ZF-12070
+     */
+    public function testSetWhenUsesGivenUnixTimestampWhenItIsLessThanTenDigits()
+    {
+        $entry = new Zend_Feed_Writer_Deleted;
+        $entry->setWhen(123456789);
+        $myDate = new Zend_Date('123456789', Zend_Date::TIMESTAMP);
+        $this->assertTrue($myDate->equals($entry->getWhen()));
+    }
+ 
+    /**
+     * @group ZF-11610
+     */
+    public function testSetWhenUsesGivenUnixTimestampWhenItIsAVerySmallInteger()
+    {
+        $entry = new Zend_Feed_Writer_Deleted;
+        $entry->setWhen(123);
+        $myDate = new Zend_Date('123', Zend_Date::TIMESTAMP);
+        $this->assertTrue($myDate->equals($entry->getWhen()));
+    }
 
     public function testSetWhenUsesZendDateObject()
     {
@@ -82,7 +102,7 @@ class Zend_Feed_Writer_DeletedTest extends PHPUnit_Framework_TestCase
         $myDate = new Zend_Date('1234567890', Zend_Date::TIMESTAMP);
         $this->assertTrue($myDate->equals($entry->getWhen()));
     }
-    
+
     public function testSetWhenThrowsExceptionOnInvalidParameter()
     {
         $entry = new Zend_Feed_Writer_Deleted;
@@ -92,13 +112,13 @@ class Zend_Feed_Writer_DeletedTest extends PHPUnit_Framework_TestCase
         } catch (Zend_Feed_Exception $e) {
         }
     }
-    
+
     public function testGetWhenReturnsNullIfDateNotSet()
     {
         $entry = new Zend_Feed_Writer_Deleted;
         $this->assertTrue(is_null($entry->getWhen()));
     }
-    
+
     public function testAddsByNameFromArray()
     {
         $entry = new Zend_Feed_Writer_Deleted;

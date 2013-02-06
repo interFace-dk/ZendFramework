@@ -15,17 +15,15 @@
  * @category   Zend
  * @package    Zend_Form
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: FormErrorsTest.php 24869 2012-06-02 02:09:54Z adamlundrigan $
  */
 
 // Call Zend_Form_Decorator_FormErrorsTest::main() if this source file is executed directly.
 if (!defined("PHPUnit_MAIN_METHOD")) {
     define("PHPUnit_MAIN_METHOD", "Zend_Form_Decorator_FormErrorsTest::main");
 }
-
-require_once dirname(__FILE__) . '/../../../TestHelper.php';
 
 require_once 'Zend/Form/Decorator/FormErrors.php';
 require_once 'Zend/Form.php';
@@ -38,7 +36,7 @@ require_once 'Zend/View.php';
  * @category   Zend
  * @package    Zend_Form
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Form
  */
@@ -136,6 +134,18 @@ class Zend_Form_Decorator_FormErrorsTest extends PHPUnit_Framework_TestCase
     {
         $form = new Zend_Form();
         $this->decorator->setElement($form);
+        $content = 'test content';
+        $this->assertSame($content, $this->decorator->render($content));
+    }
+
+    public function testNotGeneratingSubformErrorMarkupWrappingWhenNoErrors()
+    {
+        $form1 = new Zend_Form_SubForm();
+        $form2 = new Zend_Form();
+        $form2->addSubForm($form1, 'sub');
+        $form2->setView($this->getView());
+        $this->decorator->setElement($form2);
+
         $content = 'test content';
         $this->assertSame($content, $this->decorator->render($content));
     }
@@ -291,6 +301,7 @@ class Zend_Form_Decorator_FormErrorsTest extends PHPUnit_Framework_TestCase
         $this->assertNotContains('form-badness', $html);
     }
 
+
     /**
      * @dataProvider markupOptionMethodsProvider
      */
@@ -305,6 +316,50 @@ class Zend_Form_Decorator_FormErrorsTest extends PHPUnit_Framework_TestCase
         } else {
             $this->assertEquals('foo', $this->decorator->$getter());
         }
+    }
+
+    /**
+     * @group ZF-11151
+     */
+    public function testOptionShowCustomFormErrors()
+    {
+        $this->decorator
+             ->setOption('showCustomFormErrors', true);
+
+        $this->assertTrue($this->decorator->getShowCustomFormErrors());
+    }
+
+    /**
+     * @group ZF-11225
+     */
+    public function testRenderingEscapesFormErrorsByDefault()
+    {
+        $this->setupForm();
+        $this->form->addDecorator($this->decorator)
+                   ->addError('<strong>form-badness</strong>');
+        $html = $this->form->render();
+        $this->assertContains('&lt;strong&gt;form-badness&lt;/strong&gt;', $html);
+    }
+
+    /**
+     * @group ZF-11225
+     */
+    public function testCanDisableEscapingFormErrors()
+    {
+        $this->setupForm();
+        $this->form->addDecorator($this->decorator);
+
+        // Set error message with html content
+        $this->form->addError('<strong>form-badness</strong>');
+
+        // Set element label with html content
+        $this->form->getElement('bar')->setLabel('<strong>Sub Bar: </strong>');
+
+        $this->form->getDecorator('FormErrors')->setEscape(false);
+
+        $html = $this->form->render();
+        $this->assertContains('<li><strong>form-badness</strong>', $html);
+        $this->assertContains('<li><b><strong>Sub Bar: </strong>', $html);
     }
 
     public function markupOptionMethodsProvider()

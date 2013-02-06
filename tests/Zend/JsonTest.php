@@ -15,15 +15,10 @@
  * @category   Zend
  * @package    Zend_Json
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: JsonTest.php 25059 2012-11-02 21:01:06Z rob $
  */
-
-/**
- * Test helper
- */
-require_once dirname(__FILE__) . '/../TestHelper.php';
 
 /**
  * @see Zend_Json
@@ -49,7 +44,7 @@ require_once 'Zend/Json/Decoder.php';
  * @category   Zend
  * @package    Zend_Json
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Json
  */
@@ -123,6 +118,47 @@ class Zend_JsonTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(0, $zero, 'Failed 0 integer test. Encoded: ' . serialize(Zend_Json_Encoder::encode(0)));
     }
 
+    /**
+     * @group ZF-10185
+     */
+    public function testJsonPrettyPrintWorksWithArrayNotationInStringLiteral()
+    {
+        $o = new stdClass();
+        $o->test = 1;
+        $o->faz = 'fubar';
+        
+        // The escaped double-quote in item 'stringwithjsonchars' ensures that 
+        // escaped double-quotes don't throw off prettyPrint's string literal detection
+        $test = array(
+            'simple'=>'simple test string',
+            'stringwithjsonchars'=>'\"[1,2]',
+            'complex'=>array(
+                'foo'=>'bar',
+                'far'=>'boo',
+                'faz'=>array(
+                    'obj'=>$o
+                )
+            )
+        );
+        $pretty = Zend_Json::prettyPrint(Zend_Json::encode($test), array("indent"  => " "));
+        $expected = <<<EOB
+{
+ "simple":"simple test string",
+ "stringwithjsonchars":"\\\\\\"[1,2]",
+ "complex":{
+  "foo":"bar",
+  "far":"boo",
+  "faz":{
+   "obj":{
+    "test":1,
+    "faz":"fubar"
+   }
+  }
+ }
+}
+EOB;
+        $this->assertSame($expected, $pretty);
+    }
 
     /**
      * test float encoding/decoding
@@ -718,9 +754,29 @@ class Zend_JsonTest extends PHPUnit_Framework_TestCase
 
     public function testEncodeObjectImplementingIterator()
     {
-        $this->markTestIncomplete('Test is not yet finished.');
+        $iterator = new ArrayIterator(array(
+            'foo' => 'bar',
+            'baz' => 5
+        ));
+        $target = '{"__className":"ArrayIterator","foo":"bar","baz":5}';
+
+        Zend_Json::$useBuiltinEncoderDecoder = true;
+        $this->assertEquals($target, Zend_Json::encode($iterator));
     }
-    
+
+    /**
+     * @group ZF-12347
+     */
+    public function testEncodeObjectImplementingIteratorAggregate()
+    {
+        $iterator = new ZF12347_IteratorAggregate();
+        $target = '{"__className":"ZF12347_IteratorAggregate","foo":"bar","baz":5}';
+
+        Zend_Json::$useBuiltinEncoderDecoder = true;
+        $this->assertEquals($target, Zend_Json::encode($iterator));
+    }
+
+
     /**
      * @group ZF-8663
      */
@@ -728,12 +784,12 @@ class Zend_JsonTest extends PHPUnit_Framework_TestCase
     {
         $source = "</foo><foo>bar</foo>";
         $target = '"<\\/foo><foo>bar<\\/foo>"';
-        
+
         // first test ext/json
         Zend_Json::$useBuiltinEncoderDecoder = false;
         $this->assertEquals($target, Zend_Json::encode($source));
     }
-    
+
     /**
      * @group ZF-8663
      */
@@ -741,12 +797,12 @@ class Zend_JsonTest extends PHPUnit_Framework_TestCase
     {
         $source = "</foo><foo>bar</foo>";
         $target = '"<\\/foo><foo>bar<\\/foo>"';
-        
+
         // first test ext/json
         Zend_Json::$useBuiltinEncoderDecoder = true;
         $this->assertEquals($target, Zend_Json::encode($source));
     }
-    
+
     /**
      * @group ZF-8918
      * @expectedException Zend_Json_Exception
@@ -767,6 +823,105 @@ class Zend_JsonTest extends PHPUnit_Framework_TestCase
         $expectedDecoding = '{"__className":"ArrayIterator","0":"foo"}';
         $this->assertEquals($encoded, $expectedDecoding);
     }
+    
+    /**
+     * @group ZF-11356
+     */
+    public function testEncoderEscapesNamespacedClassNamesProperly()
+    {
+        if (version_compare(PHP_VERSION, '5.3.0') === -1) {
+            $this->markTestSkipped('Namespaces not available in PHP < 5.3.0');
+        }
+        
+        require_once dirname(__FILE__ ) . "/Json/_files/ZF11356-NamespacedClass.php";        
+        $className = '\Zend\JsonTest\ZF11356\NamespacedClass';
+        $inputValue = new $className(array('foo'));
+        
+        $encoded = Zend_Json_Encoder::encode($inputValue);
+        $this->assertEquals(
+            '{"__className":"Zend\\\\JsonTest\\\\ZF11356\\\\NamespacedClass","0":"foo"}',
+            $encoded
+        );
+    }
+
+    /**
+     * @group ZF-9577
+     */
+    public function testJsonPrettyPrintWorksWithTxtOutputFormat()
+    {
+        $o = new stdClass;
+        $o->four = 4;
+        $o->foo = array(1,2,3);
+
+        $jsonstr = Zend_Json::encode($o);
+
+        $targetTxtOutput = "{\n\t\"four\":4,\n\t\"foo\":[\n\t\t1,\n\t\t2,\n\t\t3\n\t]\n}";
+        $this->assertEquals($targetTxtOutput, Zend_Json::prettyPrint($jsonstr));
+    }
+
+    /**
+     * @group ZF-9577
+     */
+    public function testJsonPrettyPrintWorksWithHtmlOutputFormat()
+    {
+        $o = new stdClass;
+        $o->four = 4;
+        $o->foo = array(1,2,3);
+
+        $jsonstr = Zend_Json::encode($o);
+        $targetHtmlOutput = '{<br />&nbsp;&nbsp;&nbsp;&nbsp;"four":4,<br />&nbsp;&nbsp;&nbsp;&nbsp;"foo":[<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1,<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2,<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3<br />&nbsp;&nbsp;&nbsp;&nbsp;]<br />}';
+        $this->assertEquals($targetHtmlOutput, Zend_Json::prettyPrint($jsonstr, array('format' => 'html')));
+    }
+
+    /**
+     * @group ZF-11167
+     */
+    public function testEncodeWillUseToArrayMethodWhenAvailable()
+    {
+        $o = new ZF11167_ToArrayClass();
+        $objJson = Zend_Json::encode($o);
+        $arrJson = Zend_Json::encode($o->toArray());
+        $this->assertSame($arrJson, $objJson);
+    }
+
+    /**
+     * @group ZF-11167
+     */
+    public function testEncodeWillUseToJsonWhenBothToJsonAndToArrayMethodsAreAvailable()
+    {
+        $o = new ZF11167_ToArrayToJsonClass();
+        $objJson = Zend_Json::encode($o);
+        $this->assertEquals('"bogus"', $objJson);
+        $arrJson = Zend_Json::encode($o->toArray());
+        $this->assertNotSame($objJson, $arrJson);
+    }
+
+    /**
+     * @group ZF-9521
+     */
+    public function testWillEncodeArrayOfObjectsEachWithToJsonMethod()
+    {
+        $array = array('one'=>new ToJsonClass());
+        $expected = '{"one":{"__className":"ToJsonClass","firstName":"John","lastName":"Doe","email":"john@doe.com"}}';
+
+        Zend_Json::$useBuiltinEncoderDecoder = true;
+        $json = Zend_Json::encode($array);
+        $this->assertEquals($expected, $json);
+    }
+    
+    /**
+     * @group ZF-7586
+     */
+    public function testWillDecodeStructureWithEmptyKeyToObjectProperly()
+    {
+        Zend_Json::$useBuiltinEncoderDecoder = true;
+        
+        $json = '{"":"test"}';
+        $object = Zend_Json::decode($json, Zend_Json::TYPE_OBJECT);
+        $this->assertTrue(isset($object->_empty_));
+        $this->assertEquals('test', $object->_empty_);
+    }
+
 }
 
 /**
@@ -822,6 +977,41 @@ class ToJsonClass
 }
 
 /**
+ * Serializable class exposing a toArray() method
+ * @see ZF-11167
+ */
+class ZF11167_ToArrayClass
+{
+    private $_firstName = 'John';
+
+    private $_lastName = 'Doe';
+
+    private $_email = 'john@doe.com';
+
+    public function toArray()
+    {
+        $data = array(
+            'firstName' => $this->_firstName,
+            'lastName'  => $this->_lastName,
+            'email'     => $this->_email
+        );
+        return $data;
+    }
+}
+
+/**
+ * Serializable class exposing both toArray() and toJson() methods
+ * @see ZF-11167
+ */
+class ZF11167_ToArrayToJsonClass extends ZF11167_ToArrayClass
+{    
+    public function toJson()
+    {
+        return Zend_Json::encode('bogus');
+    }
+}
+
+/**
  * ISSUE  ZF-4946
  *
  */
@@ -840,5 +1030,20 @@ class Zend_Json_ToJsonWithExpr
         );
 
         return Zend_Json::encode($data, false, array('enableJsonExprFinder' => true));
+    }
+}
+
+/**
+ * @see ZF-12347
+ */
+class ZF12347_IteratorAggregate implements IteratorAggregate
+{
+    protected $array = array(
+        'foo' => 'bar',
+        'baz' => 5
+    );
+
+    public function getIterator() {
+        return new ArrayIterator($this->array);
     }
 }

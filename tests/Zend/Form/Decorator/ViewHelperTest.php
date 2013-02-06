@@ -15,19 +15,15 @@
  * @category   Zend
  * @package    Zend_Form
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: ViewHelperTest.php 24873 2012-06-02 02:54:34Z adamlundrigan $
  */
 
 // Call Zend_Form_Decorator_ViewHelperTest::main() if this source file is executed directly.
 if (!defined("PHPUnit_MAIN_METHOD")) {
     define("PHPUnit_MAIN_METHOD", "Zend_Form_Decorator_ViewHelperTest::main");
 }
-
-require_once dirname(__FILE__) . '/../../../TestHelper.php';
-require_once "PHPUnit/Framework/TestCase.php";
-require_once "PHPUnit/Framework/TestSuite.php";
 
 require_once 'Zend/Form/Decorator/ViewHelper.php';
 
@@ -41,7 +37,7 @@ require_once 'Zend/View.php';
  * @category   Zend
  * @package    Zend_Form
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Form
  */
@@ -54,7 +50,6 @@ class Zend_Form_Decorator_ViewHelperTest extends PHPUnit_Framework_TestCase
      */
     public static function main()
     {
-        require_once "PHPUnit/TextUI/TestRunner.php";
 
         $suite  = new PHPUnit_Framework_TestSuite("Zend_Form_Decorator_ViewHelperTest");
         $result = PHPUnit_TextUI_TestRunner::run($suite);
@@ -184,6 +179,62 @@ class Zend_Form_Decorator_ViewHelperTest extends PHPUnit_Framework_TestCase
             $this->assertNotContains($value, $test);
             $this->assertContains($translations[$value], $test);
         }
+    }
+    
+    /**
+     * @group ZF-9689
+     */
+    public function testRenderWithListSeparatorForMulticheckbox()
+    {
+        require_once 'Zend/Form/Element/MultiCheckbox.php';
+        
+        $element = new Zend_Form_Element_MultiCheckbox('foo');
+        $options = array(
+            'foo' => 'Foo',
+            'bar' => 'Bar',
+        );
+        $element->setMultiOptions($options);
+        $element->setSeparator('</p><p>');
+        $element->setDecorators(
+            array(
+                array('ViewHelper', array('separator' => '')),
+                array('HtmlTag', array('tag' => 'p')),
+            )
+        );
+        
+        $expected = '<p><label><input type="checkbox" name="foo[]" id="foo-foo" value="foo">Foo</label></p>'
+                  . '<p><label><input type="checkbox" name="foo[]" id="foo-bar" value="bar">Bar</label></p>';
+        $actual   = $element->render($this->getView());
+        
+        $this->assertEquals($expected, $actual);
+    }
+    
+    /**
+     * @group ZF-9689
+     */
+    public function testRenderWithListSeparatorForRadio()
+    {
+        require_once 'Zend/Form/Element/Radio.php';
+        
+        $element = new Zend_Form_Element_Radio('foo');
+        $options = array(
+            'foo' => 'Foo',
+            'bar' => 'Bar',
+        );
+        $element->setMultiOptions($options);
+        $element->setSeparator('</p><p>');
+        $element->setDecorators(
+            array(
+                array('ViewHelper', array('separator' => '')),
+                array('HtmlTag', array('tag' => 'p')),
+            )
+        );
+        
+        $expected = '<p><label><input type="radio" name="foo" id="foo-foo" value="foo">Foo</label></p>'
+                  . '<p><label><input type="radio" name="foo" id="foo-bar" value="bar">Bar</label></p>';
+        $actual   = $element->render($this->getView());
+        
+        $this->assertEquals($expected, $actual);
     }
 }
 

@@ -15,13 +15,13 @@
  * @category   Zend
  * @package    Zend_Controller
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: HelperBrokerController.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
-require_once 'PHPUnit/Util/Filter.php';
-PHPUnit_Util_Filter::addFileToFilter(__FILE__);
+
+
 
 require_once 'Zend/Controller/Action.php';
 
@@ -31,7 +31,7 @@ require_once 'Zend/Controller/Action.php';
  * @category   Zend
  * @package    Zend_Controller
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class HelperBrokerController extends Zend_Controller_Action
@@ -93,4 +93,13 @@ class HelperBrokerController extends Zend_Controller_Action
         $this->getResponse()->appendBody(get_class($this->_helper->TestHelper));
     }
 
+    public function testCanLoadNamespacedHelperAction()
+    {
+        try {
+            $helper = $this->_helper->getHelper('NamespacedHelper');
+            $this->getResponse()->appendBody(get_class($helper));
+        } catch (Exception $e) {
+            $this->getResponse()->appendBody($e->getMessage());
+        }
+    }
 }

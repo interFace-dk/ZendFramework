@@ -22,11 +22,6 @@ require_once 'Zend/Log/Writer/Null.php';
 require_once 'CommonBackendTest.php';
 
 /**
- * PHPUnit test case
- */
-require_once 'PHPUnit/Framework/TestCase.php';
-
-/**
  * @package    Zend_Cache
  * @subpackage UnitTests
  */
@@ -117,12 +112,45 @@ class Zend_Cache_StaticBackendTest extends Zend_Cache_CommonBackendTest {
         $res = $this->_instance->save('data to cache', bin2hex('/foo'), array('tag1', 'tag2'), 10);
         $this->assertTrue($res);
     }
-    
+
     public function testSaveWithSpecificExtension()
     {
         $res = $this->_instance->save(serialize(array('data to cache', 'xml')), bin2hex('/foo2'));
         $this->assertTrue($this->_instance->test(bin2hex('/foo2')));
         unlink($this->_instance->getOption('public_dir') . '/foo2.xml');
+    }
+
+    public function testSaveWithSubFolder()
+    {
+        $res = $this->_instance->save('data to cache', bin2hex('/foo/bar'));
+        $this->assertTrue($res);
+        $this->assertTrue($this->_instance->test(bin2hex('/foo/bar')));
+
+        unlink($this->_instance->getOption('public_dir') . '/foo/bar.html');
+        rmdir($this->_instance->getOption('public_dir') . '/foo');
+    }
+
+    public function testFilename0()
+    {
+        $res = $this->_instance->save('content', bin2hex('/0'));
+        $this->assertTrue($res);
+
+        $this->assertTrue($this->_instance->test(bin2hex('/0')));
+        $this->assertEquals('content', $this->_instance->load(bin2hex('/0')));
+    }
+
+    public function testDirectoryUmaskAsString()
+    {
+        $this->_instance->setOption('cache_directory_umask', '777');
+
+        $res = $this->_instance->save('data to cache', bin2hex('/foo/bar'));
+        $this->assertTrue($res);
+
+        $perms = fileperms($this->_instance->getOption('public_dir') . '/foo');
+        $this->assertEquals('777', substr(decoct($perms), -3));
+
+        unlink($this->_instance->getOption('public_dir') . '/foo/bar.html');
+        rmdir($this->_instance->getOption('public_dir') . '/foo');
     }
 
     public function testSaveWithSpecificExtensionWithTag()
@@ -131,7 +159,7 @@ class Zend_Cache_StaticBackendTest extends Zend_Cache_CommonBackendTest {
         $this->assertTrue($this->_instance->test(bin2hex('/foo')));
         unlink($this->_instance->getOption('public_dir') . '/foo.xml');
     }
-    
+
     public function testRemovalWithSpecificExtension()
     {
         $res = $this->_instance->save(serialize(array('data to cache', 'xml')), bin2hex('/foo3'), array('tag1'));
@@ -221,6 +249,22 @@ class Zend_Cache_StaticBackendTest extends Zend_Cache_CommonBackendTest {
         $this->assertTrue($this->_instance->clean('all'));
         $this->assertFalse($this->_instance->test(bin2hex('bar')));
         $this->assertFalse($this->_instance->test(bin2hex('bar2')));
+    }
+
+    /**
+     * @group ZF-10558
+     */
+    public function testRemoveRecursively()
+    {
+        @mkdir($this->_cache_dir . '/issues/zf10558', 0777, true);
+        $id = '/issues/zf10558';
+        $pathFile = $this->_cache_dir . $id . '/index.html';
+        file_put_contents($pathFile, '<strong>foo</strong>');
+
+        $this->_instance->removeRecursively($id);
+        $this->assertFileNotExists($pathFile);
+        $this->assertFileNotExists(dirname($pathFile));
+        rmdir($this->_cache_dir . '/issues/');
     }
 
 

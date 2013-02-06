@@ -15,19 +15,15 @@
  * @category   Zend
  * @package    Zend_View
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: JsonTest.php 25091 2012-11-07 19:58:48Z rob $
  */
 
 // Call Zend_View_Helper_JsonTest::main() if this source file is executed directly.
 if (!defined("PHPUnit_MAIN_METHOD")) {
     define("PHPUnit_MAIN_METHOD", "Zend_View_Helper_JsonTest::main");
 }
-
-require_once dirname(__FILE__) . '/../../../TestHelper.php';
-require_once "PHPUnit/Framework/TestCase.php";
-require_once "PHPUnit/Framework/TestSuite.php";
 
 require_once 'Zend/View/Helper/Json.php';
 require_once 'Zend/Controller/Front.php';
@@ -41,7 +37,7 @@ require_once 'Zend/Layout.php';
  * @category   Zend
  * @package    Zend_View
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_View
  * @group      Zend_View_Helper
@@ -55,7 +51,6 @@ class Zend_View_Helper_JsonTest extends PHPUnit_Framework_TestCase
      */
     public static function main()
     {
-        require_once "PHPUnit/TextUI/TestRunner.php";
 
         $suite  = new PHPUnit_Framework_TestSuite("Zend_View_Helper_JsonTest");
         $result = PHPUnit_TextUI_TestRunner::run($suite);
@@ -98,9 +93,12 @@ class Zend_View_Helper_JsonTest extends PHPUnit_Framework_TestCase
         $found = false;
         foreach ($headers as $header) {
             if ('Content-Type' == $header['name']) {
+                if ($found) {
+                    $this->fail('Content-Type header has been set twice.');
+                    return null;
+                }
                 $found = true;
                 $value = $header['value'];
-                break;
             }
         }
         $this->assertTrue($found);
@@ -109,6 +107,16 @@ class Zend_View_Helper_JsonTest extends PHPUnit_Framework_TestCase
 
     public function testJsonHelperSetsResponseHeader()
     {
+        $this->helper->json('foobar');
+        $this->verifyJsonHeader();
+    }
+
+    /**
+     * @group ZF-10675
+     */
+    public function testJsonHelperReplacesContentTypeReponseHeaderIfAlreadySet()
+    {
+        $this->response->setHeader('Content-Type', 'text/html');
         $this->helper->json('foobar');
         $this->verifyJsonHeader();
     }
@@ -134,6 +142,44 @@ class Zend_View_Helper_JsonTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($layout->isEnabled());
         $data = $this->helper->json(array('foobar'), true);
         $this->assertTrue($layout->isEnabled());
+    }
+
+    /**
+     * @group ZF-12397
+     */
+    public function testJsonHelperWithKeepLayoutAsArray()
+    {
+        $layout = Zend_Layout::startMvc();
+        $this->assertTrue($layout->isEnabled());
+        $data = $this->helper->json(
+            array(
+                 'foobar',
+            ),
+            array(
+                 'keepLayouts' => true,
+                 'encodeData'  => false,
+            )
+        );
+        $this->assertTrue($layout->isEnabled());
+        $this->assertSame(array('foobar'), $data);
+    }
+    
+    /**
+     * @group ZF-10977
+     */
+    public function testJsonHelperWillAcceptPreencodedJson()
+    {
+        $data = $this->helper->json(Zend_Json::encode(array('f')), false, false);
+        $this->assertEquals('["f"]', $data);
+    }
+    
+    /**
+     * @group ZF-10977
+     */
+    public function testJsonHelperWillSendHeadersWhenProvidedWithPreencodedJson()
+    {
+        $data = $this->helper->json(Zend_Json::encode(array('f')), false, false);
+        $this->verifyJsonHeader();
     }
 }
 

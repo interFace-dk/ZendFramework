@@ -15,17 +15,15 @@
  * @category   Zend
  * @package    Zend_View
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: FormCheckboxTest.php 24825 2012-05-29 20:42:55Z rob $
  */
 
 // Call Zend_View_Helper_FormCheckboxTest::main() if this source file is executed directly.
 if (!defined("PHPUnit_MAIN_METHOD")) {
     define("PHPUnit_MAIN_METHOD", "Zend_View_Helper_FormCheckboxTest::main");
 }
-
-require_once dirname(__FILE__) . '/../../../TestHelper.php';
 
 require_once 'Zend/View/Helper/FormCheckbox.php';
 require_once 'Zend/View.php';
@@ -39,7 +37,7 @@ require_once 'Zend/Registry.php';
  * @category   Zend
  * @package    Zend_View
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_View
  * @group      Zend_View_Helper
@@ -146,7 +144,7 @@ class Zend_View_Helper_FormCheckboxTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @see ZF-2230
+     * @group ZF-2230
      */
     public function testDoesNotRenderHiddenElementsForCheckboxArray()
     {
@@ -158,7 +156,7 @@ class Zend_View_Helper_FormCheckboxTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @see ZF-3149
+     * @group ZF-3149
      */
     public function testShouldRenderHiddenElementShowingUncheckedOptionForNonArrayNames()
     {
@@ -215,7 +213,7 @@ class Zend_View_Helper_FormCheckboxTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @see ZF-3149
+     * @group ZF-3149
      */
     public function testCheckedAttributeNotRenderedIfItEvaluatesToFalse()
     {
@@ -230,7 +228,7 @@ class Zend_View_Helper_FormCheckboxTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @see ZF-3149
+     * @group ZF-3149
      */
     public function testShouldCheckValueIfValueMatchesCheckedOption()
     {
@@ -244,7 +242,7 @@ class Zend_View_Helper_FormCheckboxTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @see ZF-3149
+     * @group ZF-3149
      */
     public function testShouldOnlySetValueIfValueMatchesCheckedOption()
     {
@@ -253,7 +251,7 @@ class Zend_View_Helper_FormCheckboxTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @see ZF-3149
+     * @group ZF-3149
      */
     public function testShouldNotCheckValueIfValueDoesNotMatchCheckedOption()
     {
@@ -275,35 +273,75 @@ class Zend_View_Helper_FormCheckboxTest extends PHPUnit_Framework_TestCase
         $this->assertContains(' />', $test);
     }
 
-   /**
-    * @see ZF-6467
-    */
-   public function testShouldNotShowHiddenFieldIfDisableIsTrue()
-   {
-       $test = $this->helper->formCheckbox('foo', 'bar', array('disable' => true));
-       $this->assertNotContains('type="hidden"', $test);
-   }
+    /**
+     * @group ZF-6467
+     */
+    public function testShouldNotShowHiddenFieldIfDisableIsTrue()
+    {
+        $test = $this->helper->formCheckbox('foo', 'bar', array('disable' => true));
+        $this->assertNotContains('type="hidden"', $test);
+    }
 
-   public function testIntValueIsChecked()
-   {
-       $test = $this->helper->formCheckbox('foo', '1', array(), array('checked'=>1, 'unchecked'=>0));
-       $this->assertContains('checked="checked"', $test);
+    public function testIntValueIsChecked()
+    {
+        $test = $this->helper->formCheckbox('foo', '1', array(), array('checked'=>1, 'unchecked'=>0));
+        $this->assertContains('checked="checked"', $test);
 
-       $test = $this->helper->formCheckbox('foo', '1', array(), array(1,0));
-       $this->assertContains('checked="checked"', $test);
+        $test = $this->helper->formCheckbox('foo', '1', array(), array(1,0));
+        $this->assertContains('checked="checked"', $test);
 
-       $test = $this->helper->formCheckbox('foo', 1, array(), array('checked'=>1, 'unchecked'=>0));
-       $this->assertContains('checked="checked"', $test);
+        $test = $this->helper->formCheckbox('foo', 1, array(), array('checked'=>1, 'unchecked'=>0));
+        $this->assertContains('checked="checked"', $test);
 
-       $test = $this->helper->formCheckbox('foo', 1, array(), array(1,0));
-       $this->assertContains('checked="checked"', $test);
+        $test = $this->helper->formCheckbox('foo', 1, array(), array(1,0));
+        $this->assertContains('checked="checked"', $test);
 
-       $test = $this->helper->formCheckbox('foo', 0, array(), array('checked'=>1, 'unchecked'=>0));
-       $this->assertNotContains('checked="checked"', $test);
+        $test = $this->helper->formCheckbox('foo', 0, array(), array('checked'=>1, 'unchecked'=>0));
+        $this->assertNotContains('checked="checked"', $test);
 
-       $test = $this->helper->formCheckbox('foo', 0, array(), array(1,0));
-       $this->assertNotContains('checked="checked"', $test);
-   }
+        $test = $this->helper->formCheckbox('foo', 0, array(), array(1,0));
+        $this->assertNotContains('checked="checked"', $test);
+    }
+
+    /**
+     * @group ZF-6624
+     */
+    public function testRenderingWithoutHiddenElement()
+    {
+        $html = $this->helper->formCheckbox(
+            'foo',
+            'bar',
+            array(
+                 'disableHidden' => true,
+            )
+        );
+        $this->assertSame(
+            '<input type="checkbox" name="foo" id="foo" value="bar">',
+            $html
+        );
+
+        $html = $this->helper->formCheckbox(
+            'foo',
+            'bar');
+
+        $this->assertSame(
+            '<input type="hidden" name="foo" value="0"><input type="checkbox" name="foo" id="foo" value="bar">',
+            $html
+        );
+
+        $html = $this->helper->formCheckbox(
+            'foo',
+            'bar',
+            array(
+                 'disableHidden' => false,
+            )
+        );
+
+        $this->assertSame(
+            '<input type="hidden" name="foo" value="0"><input type="checkbox" name="foo" id="foo" value="bar">',
+            $html
+        );
+    }
 }
 
 // Call Zend_View_Helper_FormCheckboxTest::main() if this source file is executed directly.

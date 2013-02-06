@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Filter
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: $
  */
@@ -23,11 +23,6 @@
 if (!defined('PHPUnit_MAIN_METHOD')) {
     define('PHPUnit_MAIN_METHOD', 'Zend_Filter_Compress_ZipTest::main');
 }
-
-/**
- * Test helper
- */
-require_once dirname(__FILE__) . '/../../../TestHelper.php';
 
 /**
  * @see Zend_Filter_Compress_Zip
@@ -39,7 +34,7 @@ require_once 'Zend/Filter/Compress/Zip.php';
  * @package    Zend_Filter
  * @subpackage UnitTests
  * @group      Zend_Filter
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Filter_Compress_ZipTest extends PHPUnit_Framework_TestCase
@@ -329,7 +324,7 @@ class Zend_Filter_Compress_ZipTest extends PHPUnit_Framework_TestCase
         $content = file_get_contents(dirname(__FILE__) . '/../_files/zip.tmp');
         $this->assertEquals('compress me', $content);
     }
-    
+
     /**
      * @group RS
      * @expectedException Zend_Filter_Exception
@@ -340,14 +335,14 @@ class Zend_Filter_Compress_ZipTest extends PHPUnit_Framework_TestCase
             $this->markTestSkipped('This test is to run on PHP less than 5.2.8');
             return;
         }
-        
+
         $filter  = new Zend_Filter_Compress_Zip(
             array(
                 'archive' => dirname(__FILE__) . '/../_files/compressed.zip',
                 'target'  => dirname(__FILE__) . '/../_files/evil.zip'
                 )
             );
-        
+
         $filter->decompress(dirname(__FILE__) . '/../_files/evil.zip');
     }
 }

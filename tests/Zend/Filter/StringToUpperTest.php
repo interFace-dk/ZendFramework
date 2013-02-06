@@ -15,16 +15,10 @@
  * @category   Zend
  * @package    Zend_Filter
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: StringToUpperTest.php 24593 2012-01-05 20:35:02Z matthew $
  */
-
-
-/**
- * Test helper
- */
-require_once dirname(__FILE__) . '/../../TestHelper.php';
 
 /**
  * @see Zend_Filter_StringToUpper
@@ -36,7 +30,7 @@ require_once 'Zend/Filter/StringToUpper.php';
  * @category   Zend
  * @package    Zend_Filter
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Filter
  */
@@ -168,5 +162,17 @@ class Zend_Filter_StringToUpperTest extends PHPUnit_Framework_TestCase
         } catch (Zend_Filter_Exception $e) {
             $this->assertContains('mbstring is required', $e->getMessage());
         }
+    }
+
+    /**
+     * @group ZF-9854
+     */
+    public function testDetectMbInternalEncoding()
+    {
+        if (!function_exists('mb_internal_encoding')) {
+            $this->markTestSkipped("Function 'mb_internal_encoding' not available");
+        }
+
+        $this->assertEquals(mb_internal_encoding(), $this->_filter->getEncoding());
     }
 }

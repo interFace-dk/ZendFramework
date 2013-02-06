@@ -15,15 +15,10 @@
  * @category   Zend
  * @package    Zend_Mime
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id $
  */
-
-/**
- * Test helper
- */
-require_once dirname(dirname(__FILE__)) . DIRECTORY_SEPARATOR . 'TestHelper.php';
 
 /** Zend_Mail */
 require_once 'Zend/Mail.php';
@@ -31,17 +26,11 @@ require_once 'Zend/Mail.php';
 /** Zend_Mime */
 require_once 'Zend/Mime.php';
 
-/** PHPUnit test case */
-require_once 'PHPUnit/Framework/TestCase.php';
-
-/** Zend_MailTest */
-require_once dirname(__FILE__) . '/MailTest.php';
-
 /**
  * @category   Zend
  * @package    Zend_Mime
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Mime
  */
@@ -84,6 +73,17 @@ class Zend_MimeTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(quoted_printable_decode($qp), $text);
     }
 
+    /**
+     * @group ZF-10074
+     */
+    public function testEncodeQuotedPrintableWhenTextHasZeroAtTheEnd()
+    {
+        $raw = str_repeat('x',72) . '0';
+        $quoted = Zend_Mime::encodeQuotedPrintable($raw, 72);
+        $expected = quoted_printable_decode($quoted);        
+        $this->assertEquals($expected, $raw);
+    }
+
     public function testBase64()
     {
         $content = str_repeat("\x88\xAA\xAF\xBF\x29\x88\xAA\xAF\xBF\x29\x88\xAA\xAF", 4);
@@ -100,6 +100,7 @@ class Zend_MimeTest extends PHPUnit_Framework_TestCase
         $mail->addTo('test@email.com');
 
         // test with generic transport
+        require_once 'Mail/MailTest.php';
         $mock = new Zend_Mail_Transport_Sendmail_Mock();
         $mail->send($mock);
         $body = quoted_printable_decode($mock->body);

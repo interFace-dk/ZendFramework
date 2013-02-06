@@ -15,19 +15,16 @@
  * @category   Zend
  * @package    Zend_Http
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: CommonHttpTests.php 24593 2012-01-05 20:35:02Z matthew $
  */
-
 // Read local configuration
 if (! defined('TESTS_ZEND_HTTP_CLIENT_BASEURI') &&
     is_readable('TestConfiguration.php')) {
 
     require_once 'TestConfiguration.php';
 }
-
-require_once realpath(dirname(__FILE__) . '/../../../') . '/TestHelper.php';
 
 require_once 'Zend/Http/Client.php';
 
@@ -50,7 +47,7 @@ require_once 'Zend/Uri/Http.php';
  * @category   Zend
  * @package    Zend_Http_Client
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Http
  * @group      Zend_Http_Client
@@ -197,6 +194,51 @@ abstract class Zend_Http_Client_CommonHttpTests extends PHPUnit_Framework_TestCa
         $res = $this->client->request('POST');
         $this->assertEquals(serialize($params), $res->getBody(), "POST data integrity test failed");
     }
+    
+    /**
+     * Test we can properly send PUT parameters with
+     * application/x-www-form-urlencoded content type
+     *
+     * @dataProvider parameterArrayProvider
+     */
+    public function testPutDataUrlEncoded($params)
+    {
+        $this->client->setUri($this->baseuri . 'testPutData.php');
+        $this->client->setEncType(Zend_Http_Client::ENC_URLENCODED);
+        $this->client->setParameterPost($params);
+        $res = $this->client->request('PUT');
+        $this->assertEquals(serialize($params), $res->getBody(), "PUT data integrity test failed");
+    }
+    
+    /**
+     * Test we can properly send PUT parameters without
+     * content type, relying on default content type (urlencoded)
+     *
+     * @dataProvider parameterArrayProvider
+     */
+    public function testPutDataDefault($params)
+    {
+        $this->client->setUri($this->baseuri . 'testPutData.php');
+        // note that no content type is set
+        $this->client->setParameterPost($params);
+        $res = $this->client->request('PUT');
+        $this->assertEquals(serialize($params), $res->getBody(), "PUT data integrity test failed for default content-type");
+    }
+    
+    /**
+     * Test we can properly send parameters with
+     * application/x-www-form-urlencoded content type
+     *
+     * @dataProvider parameterArrayProvider
+     */
+    public function testDeleteDataUrlEncoded($params)
+    {
+        $this->client->setUri($this->baseuri . 'testDeleteData.php');
+        $this->client->setEncType(Zend_Http_Client::ENC_URLENCODED);
+        $this->client->setParameterPost($params);
+        $res = $this->client->request('DELETE');
+        $this->assertEquals(serialize($params), $res->getBody(), "DELETE data integrity test failed");
+    }
 
     /**
      * Test we can properly send POST parameters with
@@ -212,6 +254,100 @@ abstract class Zend_Http_Client_CommonHttpTests extends PHPUnit_Framework_TestCa
         $res = $this->client->request('POST');
         $this->assertEquals(serialize($params), $res->getBody(), "POST data integrity test failed");
     }
+    
+    /**
+     * Test we can properly send PUT parameters with
+     * multipart/form-data content type
+     *
+     * @dataProvider parameterArrayProvider
+     */
+    public function testPutDataMultipart($params)
+    {
+        $this->client->setUri($this->baseuri . 'testRawPutData.php');
+        $this->client->setParameterPost($params);
+        $this->client->setMethod(Zend_Http_Client::PUT);
+        $this->client->setEncType(Zend_Http_Client::ENC_FORMDATA);
+        $response = $this->client->request();
+        $responseText = $response->getBody();
+        $this->_checkPresence($responseText, $params);
+    }
+    
+    /**
+     * Checks the presence of keys (non-numeric only) and values
+     * in the raw form data reponse for a PUT or DELETE request recursively
+     * 
+     * An example response (I do not know of a better way to check it):
+     * -----ZENDHTTPCLIENT-c63973519a6bb3ec45495876f5e15828
+     * Content-Disposition: form-data; name="quest"
+     * 
+     * To seek the holy grail
+     * -----ZENDHTTPCLIENT-c63973519a6bb3ec45495876f5e15828
+     * Content-Disposition: form-data; name="YourMother"
+     * 
+     * Was a hamster
+     * -----ZENDHTTPCLIENT-c63973519a6bb3ec45495876f5e15828
+     * Content-Disposition: form-data; name="specialChars"
+     * 
+     * <>$+ &?=[]^%
+     * -----ZENDHTTPCLIENT-c63973519a6bb3ec45495876f5e15828
+     * Content-Disposition: form-data; name="array[]"
+     * 
+     * firstItem
+     * -----ZENDHTTPCLIENT-c63973519a6bb3ec45495876f5e15828
+     * Content-Disposition: form-data; name="array[]"
+     * 
+     * secondItem
+     * -----ZENDHTTPCLIENT-c63973519a6bb3ec45495876f5e15828
+     * Content-Disposition: form-data; name="array[]"
+     * 
+     * 3rdItem
+     * -----ZENDHTTPCLIENT-c63973519a6bb3ec45495876f5e15828--
+     * @param string $responseText
+     * @param string|integer|array $needle
+     */
+    protected function _checkPresence($responseText, $needle)
+    {
+        if (is_array($needle)) {
+            foreach ($needle as $key => $value) {
+                // treat array values recursively, let them re-enter this function
+                if (is_array($value)) {
+                    $this->_checkPresence($responseText, $value);
+                    continue;
+                }
+                // continue with non array keys and values
+                // numeric keys will not be present in the response
+                if (!is_int($key)) {
+                    $this->assertGreaterThan(
+                        0,
+                        strpos($responseText, $key), 
+                        "key '$key' is missing from the reponse for raw multipart PUT or DELETE request"
+                    );
+                }
+                $this->assertGreaterThan(
+                    0,
+                    strpos($responseText, $value), 
+                    "value '$value' is missing from the reponse for raw multipart PUT or DELETE request"
+                );
+            }
+        }
+    }
+    
+    /**
+     * Test we can properly send DELETE parameters with
+     * multipart/form-data content type
+     *
+     * @dataProvider parameterArrayProvider
+     */
+    public function testDeleteDataMultipart($params)
+    {
+        $this->client->setUri($this->baseuri . 'testRawDeleteData.php');
+        $this->client->setParameterPost($params);
+        $this->client->setMethod(Zend_Http_Client::DELETE);
+        $this->client->setEncType(Zend_Http_Client::ENC_FORMDATA);
+        $response = $this->client->request();
+        $responseText = $response->getBody();
+        $this->_checkPresence($responseText, $params);
+    }
 
     /**
      * Test using raw HTTP POST data
@@ -223,6 +359,38 @@ abstract class Zend_Http_Client_CommonHttpTests extends PHPUnit_Framework_TestCa
 
         $res = $this->client->setRawData($data, 'text/html')->request('POST');
         $this->assertEquals($data, $res->getBody(), 'Response body does not contain the expected data');
+    }
+    
+    /**
+     * Test using raw HTTP PUT data
+     *
+     * @group ZF-11030
+     * 
+     */
+    public function testRawPutData()
+    {
+        $data = "Chuck Norris never wet his bed as a child. The bed wet itself out of fear.";
+        $this->client->setUri($this->baseuri . 'testRawPutData.php');
+        $this->client->setRawData($data, 'text/plain');
+        $this->client->setMethod(Zend_Http_Client::PUT);
+        $response = $this->client->request();
+        $this->assertEquals($data, $response->getBody(), 'Response body does not contain the expected data');
+    }
+    
+    /**
+     * Test using raw HTTP DELETE data
+     *
+     * @group ZF-11030
+     * 
+     */
+    public function testRawDeleteData()
+    {
+        $data = "Chuck Norris never wet his bed as a child. The bed wet itself out of fear.";
+        $this->client->setUri($this->baseuri . 'testRawDeleteData.php');
+        $this->client->setRawData($data, 'text/plain');
+        $this->client->setMethod(Zend_Http_Client::DELETE);
+        $response = $this->client->request();
+        $this->assertEquals($data, $response->getBody(), 'Response body does not contain the expected data');
     }
 
     /**
@@ -237,9 +405,9 @@ abstract class Zend_Http_Client_CommonHttpTests extends PHPUnit_Framework_TestCa
             'specialChars' => '<>$+ &?=[]^%',
             'array' => array('firstItem', 'secondItem', '3rdItem')
         );
-        
+
         $headers = array("X-Foo" => "bar");
-        
+
         $this->client->setParameterPost($params);
         $this->client->setParameterGet($params);
         $this->client->setHeaders($headers);
@@ -742,7 +910,7 @@ abstract class Zend_Http_Client_CommonHttpTests extends PHPUnit_Framework_TestCa
         if (!ini_get('file_uploads')) {
             $this->markTestSkipped('File uploads disabled.');
         }
-        
+
         $this->client->setUri($this->baseuri. 'testUploads.php');
 
         $rawdata = file_get_contents(__FILE__);
@@ -762,7 +930,7 @@ abstract class Zend_Http_Client_CommonHttpTests extends PHPUnit_Framework_TestCa
         if (!ini_get('file_uploads')) {
             $this->markTestSkipped('File uploads disabled.');
         }
-        
+
         $this->client->setUri($this->baseuri. 'testUploads.php');
         $this->client->setFileUpload(__FILE__, 'uploadfile', null, 'text/x-foo-bar');
         $res = $this->client->request('POST');
@@ -778,7 +946,7 @@ abstract class Zend_Http_Client_CommonHttpTests extends PHPUnit_Framework_TestCa
         if (!ini_get('file_uploads')) {
             $this->markTestSkipped('File uploads disabled.');
         }
-        
+
         $detect = null;
         if (function_exists('finfo_file')) {
             $f = @finfo_open(FILEINFO_MIME);
@@ -810,7 +978,7 @@ abstract class Zend_Http_Client_CommonHttpTests extends PHPUnit_Framework_TestCa
         if (!ini_get('file_uploads')) {
             $this->markTestSkipped('File uploads disabled.');
         }
-        
+
         $this->client->setUri($this->baseuri. 'testUploads.php');
 
         $rawdata = file_get_contents(__FILE__);
@@ -842,7 +1010,7 @@ abstract class Zend_Http_Client_CommonHttpTests extends PHPUnit_Framework_TestCa
         if (!ini_get('file_uploads')) {
             $this->markTestSkipped('File uploads disabled.');
         }
-        
+
         $rawData = 'Some test raw data here...';
 
         $this->client->setUri($this->baseuri . 'testUploads.php');
@@ -856,7 +1024,6 @@ abstract class Zend_Http_Client_CommonHttpTests extends PHPUnit_Framework_TestCa
         }
 
         $res = $this->client->request('POST');
-
         $this->assertEquals($expectedBody, $res->getBody(), 'Response body does not include expected upload parameters');
     }
 
@@ -874,111 +1041,160 @@ abstract class Zend_Http_Client_CommonHttpTests extends PHPUnit_Framework_TestCa
         $expected = $this->_getTestFileContents('ZF4238-zerolineresponse.txt');
         $this->assertEquals($expected, $got);
     }
-    
+
     public function testStreamResponse()
     {
         if(!($this->client->getAdapter() instanceof Zend_Http_Client_Adapter_Stream)) {
               $this->markTestSkipped('Current adapter does not support streaming');
-              return;   
+              return;
         }
         $this->client->setUri($this->baseuri . 'staticFile.jpg');
         $this->client->setStream();
 
         $response = $this->client->request();
-        
+
         $this->assertTrue($response instanceof Zend_Http_Response_Stream, 'Request did not return stream response!');
         $this->assertTrue(is_resource($response->getStream()), 'Request does not contain stream!');
-        
+
         $stream_name = $response->getStreamName();
-     
+
         $stream_read = stream_get_contents($response->getStream());
         $file_read = file_get_contents($stream_name);
-        
+
         $expected = $this->_getTestFileContents('staticFile.jpg');
 
         $this->assertEquals($expected, $stream_read, 'Downloaded stream does not seem to match!');
         $this->assertEquals($expected, $file_read, 'Downloaded file does not seem to match!');
     }
-    
+
     public function testStreamResponseBody()
     {
         if(!($this->client->getAdapter() instanceof Zend_Http_Client_Adapter_Stream)) {
               $this->markTestSkipped('Current adapter does not support streaming');
-              return;   
+              return;
         }
         $this->client->setUri($this->baseuri . 'staticFile.jpg');
         $this->client->setStream();
 
         $response = $this->client->request();
-        
+
         $this->assertTrue($response instanceof Zend_Http_Response_Stream, 'Request did not return stream response!');
         $this->assertTrue(is_resource($response->getStream()), 'Request does not contain stream!');
-        
+
         $body = $response->getBody();
-        
+
         $expected = $this->_getTestFileContents('staticFile.jpg');
         $this->assertEquals($expected, $body, 'Downloaded stream does not seem to match!');
     }
-    
+
     public function testStreamResponseNamed()
     {
         if(!($this->client->getAdapter() instanceof Zend_Http_Client_Adapter_Stream)) {
               $this->markTestSkipped('Current adapter does not support streaming');
-              return;   
+              return;
         }
         $this->client->setUri($this->baseuri . 'staticFile.jpg');
         $outfile = tempnam(sys_get_temp_dir(), "outstream");
         $this->client->setStream($outfile);
 
         $response = $this->client->request();
-        
+
         $this->assertTrue($response instanceof Zend_Http_Response_Stream, 'Request did not return stream response!');
         $this->assertTrue(is_resource($response->getStream()), 'Request does not contain stream!');
-        
+
         $this->assertEquals($outfile, $response->getStreamName());
-     
+
         $stream_read = stream_get_contents($response->getStream());
         $file_read = file_get_contents($outfile);
-        
+
         $expected = $this->_getTestFileContents('staticFile.jpg');
 
         $this->assertEquals($expected, $stream_read, 'Downloaded stream does not seem to match!');
         $this->assertEquals($expected, $file_read, 'Downloaded file does not seem to match!');
     }
-       
+
     public function testStreamRequest()
     {
         if(!($this->client->getAdapter() instanceof Zend_Http_Client_Adapter_Stream)) {
               $this->markTestSkipped('Current adapter does not support streaming');
-              return;   
+              return;
         }
-        $data = fopen(dirname(realpath(__FILE__)) . DIRECTORY_SEPARATOR . '_files' . DIRECTORY_SEPARATOR . 'staticFile.jpg', "r"); 
+        $data = fopen(dirname(realpath(__FILE__)) . DIRECTORY_SEPARATOR . '_files' . DIRECTORY_SEPARATOR . 'staticFile.jpg', "r");
         $res = $this->client->setRawData($data, 'image/jpeg')->request('PUT');
         $expected = $this->_getTestFileContents('staticFile.jpg');
         $this->assertEquals($expected, $res->getBody(), 'Response body does not contain the expected data');
     }
-    
+
     /**
      * Test that we can deal with double Content-Length headers
-     * 
+     *
      * @link http://framework.zend.com/issues/browse/ZF-9404
      */
     public function testZF9404DoubleContentLengthHeader()
     {
         $this->client->setUri($this->baseuri . 'ZF9404-doubleContentLength.php');
         $expect = filesize(dirname(realpath(__FILE__)) . DIRECTORY_SEPARATOR . '_files' . DIRECTORY_SEPARATOR . 'ZF9404-doubleContentLength.php');
-        
+
         $response = $this->client->request();
         if (! $response->isSuccessful()) {
             throw new ErrorException("Error requesting test URL");
         }
-        
+
         $clen = $response->getHeader('content-length');
         if (! (is_array($clen))) {
             $this->markTestSkipped("Didn't get multiple Content-length headers");
         }
-        
+
         $this->assertEquals($expect, strlen($response->getBody()));
+    }
+
+    /**
+     * @group ZF-10645
+     */
+    public function testPutRequestsHonorSpecifiedContentType()
+    {
+        $this->client->setUri($this->baseuri . 'ZF10645-PutContentType.php');
+        $this->client->setMethod(Zend_Http_Client::PUT);
+        $data = array('foo' => 'bar');
+        $this->client->setRawData(http_build_query($data), 'text/html; charset=ISO-8859-1');
+
+        $response = $this->client->request();
+        $request  = $this->client->getLastRequest();
+
+        $this->assertContains('text/html; charset=ISO-8859-1', $request, $request);
+        $this->assertContains('REQUEST_METHOD: PUT', $response->getBody(), $response->getBody());
+    }
+
+
+    /**
+     * @group ZF-11418
+     */
+    public function testMultiplePuts()
+    {
+        $this->client->setUri($this->baseuri . 'ZF10645-PutContentType.php');
+        $data= 'test';
+        $this->client->setRawData($data, 'text/plain');
+        $this->client->setMethod(Zend_Http_Client::PUT);
+        $response = $this->client->request();
+        $this->assertContains('REQUEST_METHOD: PUT', $response->getBody(), $response->getBody());
+
+        $this->client->resetParameters(true);
+        $this->client->setUri($this->baseuri . 'ZF10645-PutContentType.php');
+        $this->client->setMethod(Zend_Http_Client::PUT);
+        $response = $this->client->request();
+        $request= $this->client->getLastRequest();
+        $this->assertNotContains('Content-Type: text/plain', $request);
+
+    }
+    
+    /**
+     * @group ZF-11598
+     */
+    public function testGetAdapterWithoutSet()
+    {
+        $client  = new Zend_Http_Client(null, $this->config);
+        $adapter = $client->getAdapter();
+        $this->assertTrue(!empty($adapter));
     }
     
     /**

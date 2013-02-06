@@ -15,12 +15,10 @@
  * @category   Zend
  * @package    Zend_Feed
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: AllTests.php 25160 2012-12-18 15:17:16Z matthew $
  */
-
-require_once dirname(dirname(dirname(__FILE__))) . DIRECTORY_SEPARATOR . 'TestHelper.php';
 
 if (!defined('PHPUnit_MAIN_METHOD')) {
     define('PHPUnit_MAIN_METHOD', 'Zend_Feed_AllTests::main');
@@ -34,6 +32,8 @@ require_once 'Zend/Feed/ElementTest.php';
 require_once 'Zend/Feed/ImportTest.php';
 require_once 'Zend/Feed/IteratorTest.php';
 require_once 'Zend/Feed/Entry/RssTest.php';
+require_once 'Zend/Feed/AtomTest.php';
+require_once 'Zend/Feed/RssTest.php';
 
 require_once 'Zend/Feed/ReaderTest.php';
 require_once 'Zend/Feed/Reader/Feed/RssTest.php';
@@ -68,7 +68,7 @@ require_once 'Zend/Feed/Pubsubhubbub/AllTests.php';
  * @category   Zend
  * @package    Zend_Feed
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Feed
  */
@@ -91,6 +91,8 @@ class Zend_Feed_AllTests
         $suite->addTestSuite('Zend_Feed_ImportTest');
         $suite->addTestSuite('Zend_Feed_IteratorTest');
         $suite->addTestSuite('Zend_Feed_Entry_RssTest');
+        $suite->addTestSuite('Zend_Feed_AtomTest');
+        $suite->addTestSuite('Zend_Feed_RssTest');
 
         /* Zend_Feed_Reader tests */
         // Base parent class
@@ -118,7 +120,7 @@ class Zend_Feed_AllTests
         $suite->addTestSuite('Zend_Feed_Reader_Integration_WordpressAtom10Test');
         $suite->addTestSuite('Zend_Feed_Reader_Integration_LautDeRdfTest');
         $suite->addTestSuite('Zend_Feed_Reader_Integration_HOnlineComAtom10Test');
-        
+
         $suite->addTestSuite('Zend_Feed_Writer_FeedTest');
         $suite->addTestSuite('Zend_Feed_Writer_EntryTest');
         $suite->addTestSuite('Zend_Feed_Writer_DeletedTest');
@@ -126,10 +128,10 @@ class Zend_Feed_AllTests
         $suite->addTestSuite('Zend_Feed_Writer_Renderer_Feed_RssTest');
         $suite->addTestSuite('Zend_Feed_Writer_Renderer_Entry_AtomTest');
         $suite->addTestSuite('Zend_Feed_Writer_Renderer_Entry_RssTest');
-        
+
         $suite->addTestSuite('Zend_Feed_Writer_Extension_ITunes_EntryTest');
         $suite->addTestSuite('Zend_Feed_Writer_Extension_ITunes_FeedTest');
-        
+
         $suite->addTest(Zend_Feed_Pubsubhubbub_AllTests::suite());
 
         return $suite;

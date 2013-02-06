@@ -15,20 +15,19 @@
  * @category   Zend
  * @package    Zend_Crypt
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: RsaTest.php 24808 2012-05-17 19:56:09Z rob $
  */
 
 require_once 'Zend/Crypt/Rsa.php';
-require_once 'PHPUnit/Framework/TestCase.php';
 
 
 /**
  * @category   Zend
  * @package    Zend_Crypt
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Crypt
  */
@@ -39,8 +38,12 @@ class Zend_Crypt_RsaTest extends PHPUnit_Framework_TestCase
 
     protected $_testPemPath = null;
 
-    public function setup()
+    public function setUp()
     {
+        if (!extension_loaded('openssl')) {
+            $this->markTestSkipped('Zend_Crypt_Rsa requires openssl extension to be loaded.');
+        }
+        
         $this->_testPemString = <<<RSAKEY
 -----BEGIN RSA PRIVATE KEY-----
 MIIBOgIBAAJBANDiE2+Xi/WnO+s120NiiJhNyIButVu6zxqlVzz0wy2j4kQVUC4Z
@@ -126,6 +129,9 @@ CERT;
 
     public function testConstructorSetsHashOption()
     {
+        if (!defined('OPENSSL_ALGO_MD2')) {
+            $this->markTestSkipped('The OPENSSL_ALGO_MD2 constant is not defined in this PHP instance.');
+        }
         $rsa = new Zend_Crypt_Rsa(array('hashAlgorithm'=>'md2'));
         $this->assertEquals(OPENSSL_ALGO_MD2, $rsa->getHashAlgorithm());
     }
@@ -261,6 +267,12 @@ CERT;
     public function testKeyGenerationCreatesArrayObjectResult()
     {
         $rsa = new Zend_Crypt_Rsa;
+        // check to see if openssl.cnf can be found by trying to generate a key
+        $test = openssl_pkey_new();
+        if (!$test) {
+            $this->markTestSkipped('Cannot generate a private key with openssl_pkey_new()');
+        }
+
         $keys = $rsa->generateKeys(array('private_key_bits'=>512));
         $this->assertType('ArrayObject', $keys);
     }
@@ -268,6 +280,12 @@ CERT;
     public function testKeyGenerationCreatesPrivateKeyInArrayObject()
     {
         $rsa = new Zend_Crypt_Rsa;
+        // check to see if openssl.cnf can be found by trying to generate a key
+        $test = openssl_pkey_new();
+        if (!$test) {
+            $this->markTestSkipped('Cannot generate a private key with openssl_pkey_new()');
+        }
+
         $keys = $rsa->generateKeys(array('private_key_bits'=>512));
         $this->assertType('Zend_Crypt_Rsa_Key_Private', $keys->privateKey);
     }
@@ -275,6 +293,12 @@ CERT;
     public function testKeyGenerationCreatesPublicKeyInArrayObject()
     {
         $rsa = new Zend_Crypt_Rsa;
+        // check to see if openssl.cnf can be found by trying to generate a key
+        $test = openssl_pkey_new();
+        if (!$test) {
+            $this->markTestSkipped('Cannot generate a private key with openssl_pkey_new()');
+        }
+
         $keys = $rsa->generateKeys(array('privateKeyBits'=>512));
         $this->assertType('Zend_Crypt_Rsa_Key_Public', $keys->publicKey);
     }
@@ -282,6 +306,12 @@ CERT;
     public function testKeyGenerationCreatesPassphrasedPrivateKey()
     {
         $rsa = new Zend_Crypt_Rsa;
+        // check to see if openssl.cnf can be found by trying to generate a key
+        $test = openssl_pkey_new();
+        if (!$test) {
+            $this->markTestSkipped('Cannot generate a private key with openssl_pkey_new()');
+        }
+
         $config = array(
             'privateKeyBits' => 512,
             'passPhrase' => '0987654321'
@@ -300,6 +330,12 @@ CERT;
     public function testConstructorLoadsPassphrasedKeys()
     {
         $rsa = new Zend_Crypt_Rsa;
+        // check to see if openssl.cnf can be found by trying to generate a key
+        $test = openssl_pkey_new();
+        if (!$test) {
+            $this->markTestSkipped('Cannot generate a private key with openssl_pkey_new()');
+        }
+        
         $config = array(
             'privateKeyBits' => 512,
             'passPhrase' => '0987654321'

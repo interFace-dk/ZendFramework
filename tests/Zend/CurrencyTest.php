@@ -15,15 +15,10 @@
  * @category   Zend
  * @package    Zend_Currency
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: CurrencyTest.php 24855 2012-06-01 00:12:25Z adamlundrigan $
  */
-
-/**
- * Test helper
- */
-require_once dirname(dirname(__FILE__)) . DIRECTORY_SEPARATOR . 'TestHelper.php';
 
 /**
  * Zend_Currency
@@ -31,16 +26,12 @@ require_once dirname(dirname(__FILE__)) . DIRECTORY_SEPARATOR . 'TestHelper.php'
 require_once 'Zend/Locale.php';
 require_once 'Zend/Currency.php';
 
-/**
- * PHPUnit test case
- */
-require_once 'PHPUnit/Framework.php';
 
 /**
  * @category   Zend
  * @package    Zend_Currency
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Currency
  */
@@ -824,5 +815,39 @@ class Zend_CurrencyTest extends PHPUnit_Framework_TestCase
     {
         $currency = new Zend_Currency(array('value' => 1000, 'locale' => 'de_AT'));
         $this->assertEquals('€ 2.000,00', $currency->toCurrency(null, array('value' => 2000)));
+    }
+
+    /**
+     * @group ZF-10751
+     */
+    public function testSetService()
+    {
+        $currency = new Zend_Currency();
+        $currency->setService('Zend_Currency_Service');
+        $this->assertTrue($currency->getService() instanceof Zend_Currency_Service);
+    }
+
+    /**
+     * @group ZF-11798
+     * @dataProvider providerConstructorAllowsOverridingCurrencyDisplayFormat
+     */
+    public function testConstructorAllowsOverridingCurrencyDisplayFormat($display, $expected)
+    {
+        $currency = new Zend_Currency(array('value' => 100, 'display' => $display), 'en_US');
+        $this->assertEquals($expected, $currency->toString());
+    }
+
+    /**
+     * Data Provider for testConstructorAllowsOverridingCurrencyDisplayFormat
+     * @see ZF-11798
+     */
+    public function providerConstructorAllowsOverridingCurrencyDisplayFormat()
+    {
+        return array(
+            array(Zend_Currency::NO_SYMBOL, '100.00'),
+            array(Zend_Currency::USE_SYMBOL, '$100.00'),
+            array(Zend_Currency::USE_SHORTNAME, 'USD100.00'),
+            array(Zend_Currency::USE_NAME, 'US Dollar100.00')
+        );
     }
 }

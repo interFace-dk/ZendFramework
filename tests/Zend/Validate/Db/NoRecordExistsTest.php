@@ -15,16 +15,15 @@
  * @category   Zend
  * @package    Zend_Validate
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: NoRecordExistsTest.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 
 /**
  * PHPUnit_Framework_TestCase
  */
-require_once 'PHPUnit/Framework/TestCase.php';
 
 
 /**
@@ -62,7 +61,7 @@ require_once dirname(__FILE__) . '/_files/Db/MockHasResult.php';
  * @category   Zend
  * @package    Zend_Validate
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Validate
  */
@@ -243,5 +242,23 @@ class Zend_Validate_Db_NoRecordExistsTest extends PHPUnit_Framework_TestCase
         } catch (Exception $e) {
             $this->markTestSkipped('No database available');
         }
+    }
+    
+    /**
+     * 
+     * @group ZF-10705
+     */
+    public function testCreatesQueryBasedOnNamedOrPositionalAvailablity()
+    {
+        Zend_Db_Table_Abstract::setDefaultAdapter(null);
+        $this->_adapterHasResult->setSupportsParametersValues(array('named' => false, 'positional' => true));
+        $validator = new Zend_Validate_Db_RecordExists('users', 'field1', null, $this->_adapterHasResult);
+        $wherePart = $validator->getSelect()->getPart('where');
+        $this->assertEquals($wherePart[0], '("field1" = ?)');
+        
+        $this->_adapterHasResult->setSupportsParametersValues(array('named' => true, 'positional' => true));
+        $validator = new Zend_Validate_Db_RecordExists('users', 'field1', null, $this->_adapterHasResult);
+        $wherePart = $validator->getSelect()->getPart('where');
+        $this->assertEquals($wherePart[0], '("field1" = :value)');
     }
 }

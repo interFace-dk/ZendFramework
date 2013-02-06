@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Queue
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: ActivemqTest.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /*
@@ -28,24 +28,30 @@
  * an exception.
  */
 
-/** PHPUnit Test Case */
-require_once 'PHPUnit/Framework/TestCase.php';
-
-/** TestHelp.php */
-require_once dirname(__FILE__) . '/../../../TestHelper.php';
-
 require_once 'Zend/Queue/Adapter/AdapterTest.php';
 
 /**
  * @category   Zend
  * @package    Zend_Queue
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Queue
  */
 class Zend_Queue_Adapter_ActivemqTest extends Zend_Queue_Adapter_AdapterTest
 {
+    /**
+     * Test setup
+     */
+    public function setUp()
+    {
+        if (!TESTS_ZEND_QUEUE_ACTIVEMQ_ENABLED) {
+            $this->markTestSkipped('TESTS_ZEND_QUEUE_ACTIVEMQ_ENABLED is not enabled in TestConfiguration.php');
+        }
+        parent::setUp();
+    }
+
+
     /**
      * getAdapterName() is an method to help make AdapterTest work with any
      * new adapters
@@ -63,13 +69,13 @@ class Zend_Queue_Adapter_ActivemqTest extends Zend_Queue_Adapter_AdapterTest
     {
         $driverOptions = array();
         if (defined('TESTS_ZEND_QUEUE_ACTIVEMQ_HOST')) {
-            $driverOptions['host'] = TESTS_ZEND_QUEUE_APACHEMQ_HOST;
+            $driverOptions['host'] = TESTS_ZEND_QUEUE_ACTIVEMQ_HOST;
         }
         if (defined('TESTS_ZEND_QUEUE_ACTIVEMQ_PORT')) {
-            $driverOptions['port'] = TESTS_ZEND_QUEUE_APACHEMQ_PORT;
+            $driverOptions['port'] = TESTS_ZEND_QUEUE_ACTIVEMQ_PORT;
         }
         if (defined('TESTS_ZEND_QUEUE_ACTIVEMQ_SCHEME')) {
-            $driverOptions['scheme'] = TESTS_ZEND_QUEUE_APACHEMQ_SCHEME;
+            $driverOptions['scheme'] = TESTS_ZEND_QUEUE_ACTIVEMQ_SCHEME;
         }
         return array('driverOptions' => $driverOptions);
     }
@@ -91,5 +97,22 @@ class Zend_Queue_Adapter_ActivemqTest extends Zend_Queue_Adapter_AdapterTest
         $this->assertTrue(is_string(Zend_Queue_Adapter_Activemq::DEFAULT_SCHEME));
         $this->assertTrue(is_string(Zend_Queue_Adapter_Activemq::DEFAULT_HOST));
         $this->assertTrue(is_integer(Zend_Queue_Adapter_Activemq::DEFAULT_PORT));
+    }
+    
+    /**
+     * @group ZF-7650
+     */
+    public function testReceiveWillRetrieveZeroItems()
+    {
+        $options = array('driverOptions' => $this->getTestConfig());
+
+        $queue = new Zend_Queue('Activemq', $options);
+        $queue2 = $queue->createQueue('queue');
+
+        $queue->send('My Test Message 1');
+        $queue->send('My Test Message 2');
+
+        $messages = $queue->receive(0);
+        $this->assertEquals(0, count($messages));
     }
 }

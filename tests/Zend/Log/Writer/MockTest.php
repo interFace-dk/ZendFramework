@@ -15,13 +15,14 @@
  * @category   Zend
  * @package    Zend_Log
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: MockTest.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
-/** PHPUnit_Framework_TestCase */
-require_once 'PHPUnit/Framework/TestCase.php';
+if (!defined('PHPUnit_MAIN_METHOD')) {
+    define('PHPUnit_MAIN_METHOD', 'Zend_Log_Writer_MockTest::main');
+}
 
 /** Zend_Log_Writer_Mock */
 require_once 'Zend/Log/Writer/Mock.php';
@@ -30,12 +31,18 @@ require_once 'Zend/Log/Writer/Mock.php';
  * @category   Zend
  * @package    Zend_Log
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Log
  */
 class Zend_Log_Writer_MockTest extends PHPUnit_Framework_TestCase
 {
+    public static function main()
+    {
+        $suite  = new PHPUnit_Framework_TestSuite(__CLASS__);
+        $result = PHPUnit_TextUI_TestRunner::run($suite);
+    }
+
     public function testWrite()
     {
         $writer = new Zend_Log_Writer_Mock();
@@ -52,7 +59,12 @@ class Zend_Log_Writer_MockTest extends PHPUnit_Framework_TestCase
             'writerName' => "Mock"
         )));
 
+        require_once 'Zend/Log.php';
         $logger = Zend_Log::factory($cfg['log']);
         $this->assertTrue($logger instanceof Zend_Log);
     }
+}
+
+if (PHPUnit_MAIN_METHOD == 'Zend_Log_Writer_MockTest::main') {
+    Zend_Log_Writer_MockTest::main();
 }

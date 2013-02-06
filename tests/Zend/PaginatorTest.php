@@ -15,20 +15,15 @@
  * @category   Zend
  * @package    Zend_Paginator
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: PaginatorTest.php 24754 2012-05-05 02:30:56Z adamlundrigan $
  */
 
 // Call Zend_PaginatorTest::main() if this source file is executed directly.
 if (!defined('PHPUnit_MAIN_METHOD')) {
     define('PHPUnit_MAIN_METHOD', 'Zend_PaginatorTest::main');
 }
-
-/**
- * Test helper
- */
-require_once dirname(__FILE__) . '/../TestHelper.php';
 
 /**
  * @see Zend_Paginator
@@ -43,7 +38,6 @@ require_once 'Zend/Paginator/AdapterAggregate.php';
 /**
  * @see PHPUnit_Framework_TestCase
  */
-require_once 'PHPUnit/Framework/TestCase.php';
 
 /**
  * @see Zend_Config_Xml
@@ -91,10 +85,15 @@ require_once 'Zend/Cache.php';
 require_once 'Zend/Filter/Callback.php';
 
 /**
+ * @see Zend_Paginator_Adapter_DbSelect
+ */
+require_once 'Zend/Paginator/Adapter/DbSelect.php';
+
+/**
  * @category   Zend
  * @package    Zend_Paginator
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Paginator
  */
@@ -1018,6 +1017,110 @@ class Zend_PaginatorTest extends PHPUnit_Framework_TestCase
         $this->assertFalse(isset($items[3]));
         $this->assertEquals(0, $items->key());
     }
+
+    /**
+     * @group ZF-9174
+     */
+    public function testSetDefaultPageRange()
+    {
+        Zend_Paginator::setConfig(new Zend_Config(array()));
+
+        $paginator = Zend_Paginator::factory(range(1, 10));
+        $this->assertEquals(10, $paginator->getPageRange());
+
+        Zend_Paginator::setDefaultPageRange(20);
+        $this->assertEquals(20, Zend_Paginator::getDefaultPageRange());
+
+        $paginator = Zend_Paginator::factory(range(1, 10));
+        $this->assertEquals(20, $paginator->getPageRange());
+
+        $this->_restorePaginatorDefaults();
+    }
+
+    /**
+    * @group ZF-6989
+    */
+    public function testCurrentItemCountIsRetrievedFromCacheIfCachingIsEnabled()
+    {
+    	$dbAdapter = $this->getMockForAbstractClass('Zend_Db_Adapter_Abstract', array(''), '', false);
+    	$select    = new Zend_Db_Select($dbAdapter);
+    	$select->from('ZF_6989');
+    
+    	$paginatorAdapter = new Zend_Paginator_Adapter_DbSelect($select);
+    	$paginatorAdapter->setRowCount(6989);
+    
+    	$paginator       = new Zend_Paginator_TestCache($paginatorAdapter);
+    	$expectedCacheId = md5($paginator->getCacheInternalId() . '_itemCount');
+    
+    	$cache = $this->getMock('Zend_Cache_Core', array('load'), array(), '', false);
+    	$cache->expects($this->once())
+    	       ->method('load')
+    	       ->with($expectedCacheId)
+    	       ->will($this->returnValue(6989));
+    
+    	$paginator->setCacheEnabled(true)
+    	          ->setCache($cache);
+    
+    	$this->assertSame(6989, $paginator->getTotalItemCount(), 'Total item count incorrect!');
+    }
+    
+    /**
+     * @group ZF-6989
+     */
+    public function testPaginatorGeneratesSameCacheIdentifierForDbSelectAdaptersWithIdenticalSqlStatements()
+    {
+        $dbAdapterOne = $this->getMockForAbstractClass('Zend_Db_Adapter_Abstract', array(''),
+                                                       __FUNCTION__ . 'DbAdapterOne', false);
+        $selectOne    = new Zend_Db_Select($dbAdapterOne);
+        $selectOne->from('ZF_6989');
+
+        $paginatorAdapterOne = new Zend_Paginator_Adapter_DbSelect($selectOne);
+        $paginatorAdapterOne->setRowCount(6989);
+
+        $paginatorOne = new Zend_Paginator_TestCache($paginatorAdapterOne);
+
+        $dbAdapterTwo = $this->getMockForAbstractClass('Zend_Db_Adapter_Abstract', array(''), 
+                                                       __FUNCTION__ . 'DbAdapterTwo', false);
+        $selectTwo = new Zend_Db_Select($dbAdapterTwo);
+        $selectTwo->from('ZF_6989');
+   
+        $paginatorAdapterTwo = new Zend_Paginator_Adapter_DbSelect($selectTwo);
+        $paginatorAdapterTwo->setRowCount(6989);
+
+        $paginatorTwo = new Zend_Paginator_TestCache($paginatorAdapterTwo);
+
+        $this->assertSame($paginatorOne->getCacheInternalId(), $paginatorTwo->getCacheInternalId(),
+                          'DbSelect adapters with identical select statements should have the same cache internal IDs!');
+    }
+    
+    /**
+    * @group ZF-6989
+    */
+    public function testPaginatorGeneratesSameCacheIdentifierForDbTableSelectAdaptersWithIdenticalSqlStatements()
+    {
+        $dbAdapterOne = $this->getMockForAbstractClass('Zend_Db_Adapter_Abstract', array(''),
+                                                       __FUNCTION__ . 'DbAdapterOne', false);
+        $selectOne    = new Zend_Db_Select($dbAdapterOne);
+        $selectOne->from('ZF_6989');
+    
+        $paginatorAdapterOne = new Zend_Paginator_Adapter_DbSelect($selectOne);
+        $paginatorAdapterOne->setRowCount(6989);
+    
+        $paginatorOne = new Zend_Paginator_TestCache($paginatorAdapterOne);
+    
+        $dbAdapterTwo = $this->getMockForAbstractClass('Zend_Db_Adapter_Abstract', array(''), 
+                                                       __FUNCTION__ . 'DbAdapterTwo', false);
+        $selectTwo = new Zend_Db_Select($dbAdapterTwo);
+        $selectTwo->from('ZF_6989');
+         
+        $paginatorAdapterTwo = new Zend_Paginator_Adapter_DbSelect($selectTwo);
+        $paginatorAdapterTwo->setRowCount(6989);
+    
+        $paginatorTwo = new Zend_Paginator_TestCache($paginatorAdapterTwo);
+    
+        $this->assertSame($paginatorOne->getCacheInternalId(), $paginatorTwo->getCacheInternalId(),
+                              'DbSelect adapters with identical select statements should have the same cache internal IDs!');
+    }
 }
 
 class Zend_Paginator_TestArrayAggregate implements Zend_Paginator_AdapterAggregate
@@ -1025,6 +1128,22 @@ class Zend_Paginator_TestArrayAggregate implements Zend_Paginator_AdapterAggrega
     public function getPaginatorAdapter()
     {
         return new Zend_Paginator_Adapter_Array(array(1, 2, 3, 4));
+    }
+}
+
+/**
+ * Wrapper around Zend_Paginator to provide access to cache internal ID method 
+ * for testing purposes.
+ */
+class Zend_Paginator_TestCache extends Zend_Paginator
+{
+    /**
+     * Returns the cache internal ID.
+     * @return string
+     */
+    public function getCacheInternalId()
+    {
+        return $this->_getCacheInternalId();
     }
 }
 

@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_OpenId
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: ProviderTest.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
@@ -25,23 +25,21 @@
  */
 require_once 'Zend/OpenId/Provider.php';
 
-
-/**
- * PHPUnit test case
- */
-require_once 'PHPUnit/Framework.php';
-
-
 /**
  * Zend_OpenId_ResponseHelper
  */
 require_once 'Zend/OpenId/ResponseHelper.php';
 
 /**
+ * @see Zend_OpenId_Provider_User_Session
+ */
+require_once 'Zend/OpenId/Provider/User/Session.php';
+
+/**
  * @category   Zend
  * @package    Zend_OpenId
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_OpenId
  */

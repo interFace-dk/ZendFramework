@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Form
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: FileTest.php 25067 2012-11-03 14:20:28Z rob $
  */
 
 // Call Zend_Form_Decorator_FileTest::main() if this source file is executed directly.
@@ -25,14 +25,11 @@ if (!defined("PHPUnit_MAIN_METHOD")) {
     define("PHPUnit_MAIN_METHOD", "Zend_Form_Decorator_FileTest::main");
 }
 
-require_once dirname(__FILE__) . '/../../../TestHelper.php';
-require_once "PHPUnit/Framework/TestCase.php";
-require_once "PHPUnit/Framework/TestSuite.php";
-
 require_once 'Zend/Form/Decorator/File.php';
 
 require_once 'Zend/Form/Element/File.php';
 require_once 'Zend/View.php';
+require_once 'Zend/View/Helper/FormElement.php';
 
 /**
  * Test class for Zend_Form_Decorator_Errors
@@ -40,7 +37,7 @@ require_once 'Zend/View.php';
  * @category   Zend
  * @package    Zend_Form
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Form
  */
@@ -53,7 +50,6 @@ class Zend_Form_Decorator_FileTest extends PHPUnit_Framework_TestCase
      */
     public static function main()
     {
-        require_once "PHPUnit/TextUI/TestRunner.php";
 
         $suite  = new PHPUnit_Framework_TestSuite("Zend_Form_Decorator_FileTest");
         $result = PHPUnit_TextUI_TestRunner::run($suite);
@@ -174,6 +170,26 @@ class Zend_Form_Decorator_FileTest extends PHPUnit_Framework_TestCase
         $file = $this->decorator->render('content');
         $this->assertRegexp('#<input[^>]*>.*?(content)#s', $file, $file);
     }
+    
+    /**
+     * @group ZF-10519
+     */
+    public function testCanChangeViewHelper()
+    {
+        $element = new Zend_Form_Element_File('foo');
+        $element->setView($this->getView());
+        
+        // Get output using default view helper
+        $defaultOutput = $element->render();
+        
+        // Get output using mock view helper
+        $element->helper = "formFileMock";
+        $mockOutput = $element->render();
+        
+        // Ensure the view helper was changed
+        $this->assertRegexp('/FormFileMock/s', $mockOutput);
+        $this->assertNotEquals($defaultOutput, $mockOutput);
+    }
 
     private function _convertIniToInteger($setting)
     {
@@ -196,6 +212,14 @@ class Zend_Form_Decorator_FileTest extends PHPUnit_Framework_TestCase
         }
 
         return (integer) $setting;
+    }
+}
+
+class Zend_View_Helper_FormFileMock extends Zend_View_Helper_FormElement
+{
+    public function formFileMock($name, $attribs=NULL)
+    {
+        return "FormFileMock";
     }
 }
 

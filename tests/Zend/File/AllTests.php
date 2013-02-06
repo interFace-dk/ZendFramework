@@ -15,24 +15,23 @@
  * @category   Zend
  * @package    Zend_File
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: AllTests.php 24678 2012-03-15 18:07:48Z matthew $
  */
-
-require_once dirname(dirname(dirname(__FILE__))) . DIRECTORY_SEPARATOR . 'TestHelper.php';
 
 if (!defined('PHPUnit_MAIN_METHOD')) {
     define('PHPUnit_MAIN_METHOD', 'Zend_File_AllTests::main');
 }
 
 require_once 'Zend/File/Transfer/AllTests.php';
+require_once 'Zend/File/ClassFileLocatorTest.php';
 
 /**
  * @category   Zend
  * @package    Zend_File
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_File
  */
@@ -47,6 +46,7 @@ class Zend_File_AllTests
     {
         $suite = new PHPUnit_Framework_TestSuite('Zend Framework - Zend_File');
 
+        $suite->addTestSuite('Zend_File_ClassFileLocatorTest');
         $suite->addTest(Zend_File_Transfer_AllTests::suite());
 
         return $suite;

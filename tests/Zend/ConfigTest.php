@@ -15,15 +15,10 @@
  * @category   Zend
  * @package    Zend_Config
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: ConfigTest.php 24593 2012-01-05 20:35:02Z matthew $
  */
-
-/**
- * Test helper
- */
-require_once dirname(__FILE__) . '/../TestHelper.php';
 
 /**
  * Zend_Config
@@ -34,7 +29,7 @@ require_once 'Zend/Config.php';
  * @category   Zend
  * @package    Zend_Config
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Config
  */
@@ -201,8 +196,7 @@ class Zend_ConfigTest extends PHPUnit_Framework_TestCase
 
         ob_start();
         print_r($config->toArray());
-        $contents = ob_get_contents();
-        ob_end_clean();
+        $contents = ob_get_clean();
 
         $this->assertContains('Array', $contents);
         $this->assertContains('[hostname] => all', $contents);

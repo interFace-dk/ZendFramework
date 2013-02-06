@@ -15,16 +15,10 @@
  * @category   Zend
  * @package    Zend_Validate
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: HostnameTest.php 25061 2012-11-02 21:24:09Z rob $
  */
-
-
-/**
- * Test helper
- */
-require_once dirname(__FILE__) . '/../../TestHelper.php';
 
 /**
  * @see Zend_Validate_Hostname
@@ -36,7 +30,7 @@ require_once 'Zend/Validate/Hostname.php';
  * @category   Zend
  * @package    Zend_Validate
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Validate
  */
@@ -280,8 +274,8 @@ class Zend_Validate_HostnameTest extends PHPUnit_Framework_TestCase
     /**
      * Test changed with ZF-6676, as IP check is only involved when IP patterns match
      *
-     * @see ZF-2861
-     * @see ZF-6676
+     * @group ZF-2861
+     * @group ZF-6676
      */
     public function testValidatorMessagesShouldBeTranslated()
     {
@@ -307,7 +301,7 @@ class Zend_Validate_HostnameTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @see ZF-6033
+     * @group ZF-6033
      */
     public function testNumberNames()
     {
@@ -326,7 +320,7 @@ class Zend_Validate_HostnameTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @see ZF-6133
+     * @group ZF-6133
      */
     public function testPunycodeDecoding()
     {
@@ -363,7 +357,7 @@ class Zend_Validate_HostnameTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @see ZF-7277
+     * @group ZF-7277
      */
     public function testDifferentIconvEncoding()
     {
@@ -389,4 +383,83 @@ class Zend_Validate_HostnameTest extends PHPUnit_Framework_TestCase
     {
         $this->assertFalse($this->_validator->isValid('test.com / http://www.test.com'));
     }
+
+    /**
+     * @group ZF-10267
+     */
+    public function testURI()
+    {
+        $valuesExpected = array(
+            array(Zend_Validate_Hostname::ALLOW_URI, true, array('localhost', 'example.com', '~ex%20ample')),
+            array(Zend_Validate_Hostname::ALLOW_URI, false, array('§bad', 'don?t.know', 'thisisaverylonghostnamewhichextendstwohundredfiftysixcharactersandthereforshouldnotbeallowedbythisvalidatorbecauserfc3986limitstheallowedcharacterstoalimitoftwohunderedfiftysixcharactersinsumbutifthistestwouldfailthenitshouldreturntruewhichthrowsanexceptionbytheunittest')),
+        );
+        foreach ($valuesExpected as $element) {
+            $validator = new Zend_Validate_Hostname($element[0]);
+            foreach ($element[2] as $input) {
+                $this->assertEquals($element[1], $validator->isValid($input), implode("\n", $validator->getMessages()) . $input);
+            }
+        }
+    }
+
+    /**
+     * Ensure that a trailing "." in a local hostname is permitted
+     *
+     * @group ZF-6363
+     */
+    public function testTrailingDot()
+    {
+        $valuesExpected = array(
+            array(Zend_Validate_Hostname::ALLOW_ALL, true, array('example.', 'example.com.', '~ex%20ample.com.')),
+            array(Zend_Validate_Hostname::ALLOW_ALL, false, array('example..',)),
+            array(Zend_Validate_Hostname::ALLOW_ALL, true, array('1.2.3.4.')),
+            array(Zend_Validate_Hostname::ALLOW_DNS, false, array('example..', '~ex%20ample..')),
+            array(Zend_Validate_Hostname::ALLOW_LOCAL, true, array('example.', 'example.com.')),
+        );
+
+        foreach ($valuesExpected as $element) {
+            $validator = new Zend_Validate_Hostname($element[0]);
+            foreach ($element[2] as $input) {
+                $this->assertEquals($element[1], $validator->isValid($input), implode("\n", $validator->getMessages()) . $input);
+            }
+        }
+    }
+    
+    /**
+     * @group ZF-11334
+     * @see http://www.ietf.org/rfc/rfc2732.txt
+     */
+    public function testSupportsIpv6AddressesWhichContainHexDigitF()
+    {
+        $validator = new Zend_Validate_Hostname(Zend_Validate_Hostname::ALLOW_ALL);
+        
+        $this->assertTrue($validator->isValid('FEDC:BA98:7654:3210:FEDC:BA98:7654:3210'));
+        $this->assertTrue($validator->isValid('1080:0:0:0:8:800:200C:417A'));
+        $this->assertTrue($validator->isValid('3ffe:2a00:100:7031::1'));
+        $this->assertTrue($validator->isValid('1080::8:800:200C:417A'));
+        $this->assertTrue($validator->isValid('::192.9.5.5'));
+        $this->assertTrue($validator->isValid('::FFFF:129.144.52.38'));
+        $this->assertTrue($validator->isValid('2010:836B:4179::836B:4179'));
+    }
+    
+    /**
+     * @group ZF-11796
+     */
+    public function testIDNSI()
+    {
+        $validator = new Zend_Validate_Hostname(Zend_Validate_Hostname::ALLOW_ALL);
+        
+        $this->assertTrue($validator->isValid('Test123.si'));
+        $this->assertTrue($validator->isValid('țest123.si'));
+        $this->assertTrue($validator->isValid('tĕst123.si'));
+        $this->assertTrue($validator->isValid('tàrø.si'));
+        $this->assertFalse($validator->isValid('رات.si'));
+    }
+    /**
+     * @ZF-12314
+     */
+    public function testDKSpecialChars()
+    {
+        $this->assertTrue($this->_validator->isValid('testæøå.dk'));
+    }
+
 }

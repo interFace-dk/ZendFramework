@@ -15,12 +15,10 @@
  * @category   Zend
  * @package    Zend_Http_Client
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: StaticTest.php 24761 2012-05-05 03:10:28Z adamlundrigan $
  */
-
-require_once realpath(dirname(__FILE__) . '/../../../') . '/TestHelper.php';
 
 require_once 'Zend/Http/Client.php';
 
@@ -35,7 +33,7 @@ require_once 'Zend/Http/Client/Adapter/Test.php';
  * @category   Zend
  * @package    Zend_Http_Client
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Http
  * @group      Zend_Http_Client
@@ -293,6 +291,50 @@ class Zend_Http_Client_StaticTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test that when the encodecookies flag is set to FALSE, cookies captured
+     * from a response by Zend_Http_CookieJar are not encoded
+     *
+     * @group ZF-1850
+     */
+    public function testCaptureCookiesNoEncodeZF1850()
+    {
+        $cookieName = "cookieWithSpecialChars";
+        $cookieValue = "HID=XXXXXX&UN=XXXXXXX&UID=XXXXX";
+
+        $adapter = new Zend_Http_Client_Adapter_Test();
+        $adapter->setResponse(
+        	"HTTP/1.0 200 OK\r\n" .
+            "Content-type: text/plain\r\n" .
+            "Content-length: 2\r\n" .
+            "Connection: close\r\n" .
+            "Set-Cookie: $cookieName=$cookieValue; path=/\r\n" .
+            "\r\n" .
+            "OK"
+        );
+
+        $this->_client->setUri('http://example.example/test');
+        $this->_client->setConfig(array(
+            'adapter'       => $adapter,
+            'encodecookies' => false
+        ));
+
+        $this->_client->setCookieJar();
+
+        // First request is expected to set the cookie
+        $this->_client->request();
+
+        // Next request should contain the cookie
+        $this->_client->request();
+
+        $request = $this->_client->getLastRequest();
+        if (! preg_match("/^Cookie: $cookieName=([^;]+)/m", $request, $match)) {
+            $this->fail("Could not find cookie in request");
+        }
+
+        $this->assertEquals($cookieValue, $match[1]);
+    }
+
+    /**
      * Configuration Handling
      */
 
@@ -507,6 +549,54 @@ class Zend_Http_Client_StaticTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group ZF-4236
+     */
+    public function testFormFileUpload()
+    {
+        $this->_client->setAdapter('Zend_Http_Client_Adapter_Test');
+        $this->_client->setUri('http://example.com');
+        $this->_client->setFileUpload('testFile.name', 'testFile', 'TESTDATA12345', 'text/plain');
+        $this->_client->request('POST');
+
+        $expectedLines = file(dirname(__FILE__) . '/_files/ZF4236-fileuploadrequest.txt');
+        $gotLines = explode("\n", trim($this->_client->getLastRequest()));
+
+        $this->assertEquals(count($expectedLines), count($gotLines));
+        while (($expected = array_shift($expectedLines)) &&
+               ($got = array_shift($gotLines))) {
+
+            $expected = trim($expected);
+            $got = trim($got);
+            $this->assertRegExp("/^$expected$/", $got);
+        }
+    }
+
+    /**
+     * @group ZF-4236
+     */
+    public function testClientBodyRetainsFieldOrdering()
+    {
+        $this->_client->setAdapter('Zend_Http_Client_Adapter_Test');
+        $this->_client->setUri('http://example.com');
+        $this->_client->setParameterPost('testFirst', 'foo');
+        $this->_client->setFileUpload('testFile.name', 'testFile', 'TESTDATA12345', 'text/plain');
+        $this->_client->setParameterPost('testLast', 'bar');
+        $this->_client->request('POST');
+
+        $expectedLines = file(dirname(__FILE__) . '/_files/ZF4236-clientbodyretainsfieldordering.txt');
+        $gotLines = explode("\n", trim($this->_client->getLastRequest()));
+
+        $this->assertEquals(count($expectedLines), count($gotLines));
+        while (($expected = array_shift($expectedLines)) &&
+               ($got = array_shift($gotLines))) {
+
+            $expected = trim($expected);
+            $got = trim($got);
+            $this->assertRegExp("/^$expected$/", $got);
+        }
+    }
+
+    /**
      * Test that we properly calculate the content-length of multibyte-encoded
      * request body
      *
@@ -542,10 +632,10 @@ class Zend_Http_Client_StaticTest extends PHPUnit_Framework_TestCase
         // if the bug exists this call should creates a fatal error
         $client->setAuth(false);
     }
-    
+
 	/**
      * Testing if the connection isn't closed
-     * 
+     *
      * @group ZF-9685
      */
     public function testOpenTempStreamWithValidFileDoesntThrowsException()
@@ -564,10 +654,10 @@ class Zend_Http_Client_StaticTest extends PHPUnit_Framework_TestCase
 		// @todo verify link is still active
 		return;
     }
-    
+
     /**
      * Testing if the connection can be closed
-     * 
+     *
      * @group ZF-9685
      */
     public function testOpenTempStreamWithBogusFileClosesTheConnection()
@@ -586,6 +676,57 @@ class Zend_Http_Client_StaticTest extends PHPUnit_Framework_TestCase
 		}
     }
 
+	/**
+     * Test that we can handle trailing space in location header
+     *
+     * @group ZF-11283
+     * @link http://framework.zend.com/issues/browse/ZF-11283
+     */
+    public function testRedirectWithTrailingSpaceInLocationHeaderZF11283()
+    {
+        $this->_client->setUri('http://example.com/');
+        $this->_client->setAdapter('Zend_Http_Client_Adapter_Test');
+
+        $adapter = $this->_client->getAdapter(); /* @var $adapter Zend_Http_Client_Adapter_Test */
+
+        $adapter->setResponse(<<<RESPONSE
+HTTP/1.1 302 Redirect
+Content-Type: text/html; charset=UTF-8
+Location: /test
+Server: Microsoft-IIS/7.0
+Date: Tue, 19 Apr 2011 11:23:48 GMT
+
+RESPONSE
+        );
+
+        $res = $this->_client->request('GET');
+
+        $lastUri = $this->_client->getUri();
+
+        $this->assertEquals("/test", $lastUri->getPath());
+    }
+
+    /**
+     * @group ZF-11162
+     */
+    function testClientDoesNotModifyPassedUri() {
+        $uri = Zend_Uri_Http::fromString('http://example.org/');
+        $orig = clone $uri;
+        $client = new Zend_Http_Client($uri);
+        $this->assertEquals((string)$orig, (string)$uri);
+    }
+    /*
+     * @group ZF-9206
+     */
+    function testStreamWarningRewind()
+    {
+        $httpClient = new Zend_Http_Client();
+        $httpClient->setUri('http://example.org');
+        $httpClient->setMethod(Zend_Http_Client::GET);
+        ob_start();
+        $httpClient->setStream('php://output')->request();
+        ob_clean();
+    }
     /**
      * Data providers
      */

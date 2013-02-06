@@ -15,17 +15,15 @@
  * @category   Zend
  * @package    Zend_Captcha
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: FigletTest.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 // Call Zend_Captcha_FigletTest::main() if this source file is executed directly.
 if (!defined("PHPUnit_MAIN_METHOD")) {
     define("PHPUnit_MAIN_METHOD", "Zend_Captcha_FigletTest::main");
 }
-
-require_once dirname(__FILE__) . '/../../TestHelper.php';
 
 require_once 'Zend/Form/Element/Captcha.php';
 require_once 'Zend/Captcha/Adapter.php';
@@ -35,7 +33,7 @@ require_once 'Zend/Config.php';
  * @category   Zend
  * @package    Zend_Captcha
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Captcha
  */
@@ -115,7 +113,6 @@ class Zend_Captcha_FigletTest extends PHPUnit_Framework_TestCase
     }
 
     /*
-     * @see ZF-8268
      * @group ZF-8268
      */
     public function testLabelIdIsCorrect()
@@ -129,7 +126,7 @@ class Zend_Captcha_FigletTest extends PHPUnit_Framework_TestCase
         $expect = sprintf('for="comment-%s-input"', $this->element->getName());
         $this->assertRegexp("/<label [^>]*?$expect/", $html, $html);
     }
-    
+
     public function testTimeoutPopulatedByDefault()
     {
         $ttl = $this->captcha->getTimeout();
@@ -298,7 +295,7 @@ class Zend_Captcha_FigletTest extends PHPUnit_Framework_TestCase
         $input = array("id" => $this->captcha->getId(), "input" => $this->captcha->getWord());
         $this->assertTrue($this->element->isValid($input));
     }
-    
+
     /**
      * @group ZF-5728
      */

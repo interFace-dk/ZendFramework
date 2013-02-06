@@ -15,12 +15,12 @@
  * @category   Zend
  * @package    Zend_Form
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: Foo.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
-require_once 'Zend/Filter/File/LowerCase.php'
+require_once 'Zend/Filter/File/LowerCase.php';
 
 /**
  * custom filter for use with file element tests
@@ -28,7 +28,7 @@ require_once 'Zend/Filter/File/LowerCase.php'
  * @category   Zend
  * @package    Zend_Form
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Form_Element_Test_Filter_Foo extends Zend_Filter_File_LowerCase

@@ -16,7 +16,7 @@
  * @category   Zend
  * @package    Zend_Gdata_App
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id $
  */
@@ -28,7 +28,7 @@ require_once 'Zend/Gdata/App.php';
  * @category   Zend
  * @package    Zend_Gdata_App
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Gdata
  * @group      Zend_Gdata_App
@@ -265,5 +265,18 @@ class Zend_Gdata_App_FeedTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($testString22, $result);
         $result = $feed->lookupNamespace($prefix, null, 1);
         $this->assertEquals($testString21, $result);
+    }
+
+    /**
+     * @group ZF-10242
+     */
+    public function testCount()
+    {
+        $feed =  new Zend_Gdata_App_Feed();
+        $feed->addEntry('foo')
+             ->addEntry('bar');
+
+        $this->assertEquals(2, $feed->count());
+        $this->assertEquals(2, count($feed));
     }
 }

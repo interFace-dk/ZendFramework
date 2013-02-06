@@ -15,17 +15,15 @@
  * @category   Zend
  * @package    Zend_Captcha
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: ImageTest.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 // Call Zend_Captcha_ImageTest::main() if this source file is executed directly.
 if (!defined("PHPUnit_MAIN_METHOD")) {
     define("PHPUnit_MAIN_METHOD", "Zend_Captcha_ImageTest::main");
 }
-
-require_once dirname(__FILE__) . '/../../TestHelper.php';
 
 require_once 'Zend/Form/Element/Captcha.php';
 require_once 'Zend/Captcha/Adapter.php';
@@ -34,7 +32,7 @@ require_once 'Zend/Captcha/Adapter.php';
  * @category   Zend
  * @package    Zend_Captcha
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Captcha
  */
@@ -49,7 +47,6 @@ class Zend_Captcha_ImageTest extends PHPUnit_Framework_TestCase
      */
     public static function main()
     {
-        require_once "PHPUnit/TextUI/TestRunner.php";
 
         $suite  = new PHPUnit_Framework_TestSuite("Zend_Captcha_ImageTest");
         $result = PHPUnit_TextUI_TestRunner::run($suite);
@@ -348,6 +345,21 @@ class Zend_Captcha_ImageTest extends PHPUnit_Framework_TestCase
         $this->testCaptchaIsRendered();
         $input = array("id" => $this->captcha->getId(), "input" => $this->captcha->getWord());
         $this->assertTrue($this->element->isValid($input));
+    }
+    
+    /**
+     * @group ZF-11483
+     */
+    public function testImageTagRenderedProperlyBasedUponDoctype()
+    {
+        $this->testCaptchaIsRendered();        
+        $view = new Zend_View();
+        
+        $view->doctype('XHTML1_STRICT');        
+        $this->assertRegExp('#/>$#', $this->captcha->render($view));
+        
+        $view->doctype('HTML4_STRICT');        
+        $this->assertRegExp('#[^/]>$#', $this->captcha->render($view));
     }
 }
 

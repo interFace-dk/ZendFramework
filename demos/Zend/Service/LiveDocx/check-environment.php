@@ -5,7 +5,7 @@ include_once './common.php';
 define('TEST_PASS',       'PASS');
 define('TEST_FAIL',       'FAIL');
 
-define('MIN_PHP_VERSION', '5.2.4');
+define('MIN_PHP_VERSION', '5.2.11');
 define('MIN_ZF_VERSION',  '1.10.0beta');
 
 define('SOCKET_TIMEOUT',   5); // seconds
@@ -163,7 +163,7 @@ $counter ++;
 
 // -----------------------------------------------------------------------------
 
-$geoData = @file_get_contents('http://ipinfodb.com/ip_query.php');
+$geoData = @file_get_contents('http://api.ipinfodb.com/v2/ip_query.php?key=332bde528d94fe578455e18ad225a01cba8dd359ee915ee46b70ca5e67137252');
 
 $keys = array (
     'Ip'          => 'IP address',
@@ -259,9 +259,10 @@ print(Demos_Zend_Service_LiveDocx_Helper::wrapLine(PHP_EOL . $message . PHP_EOL 
 /**
  * Print result line
  *
- * @param $counter
- * @param $testString
- * @param $testResult
+ * @param int    $counter
+ * @param string $testString
+ * @param mixed  $testResult
+ * @return void
  */
 function printLine($counter, $testString, $testResult)
 {
